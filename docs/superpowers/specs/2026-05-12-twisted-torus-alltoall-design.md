@@ -122,14 +122,18 @@ Built on PuLP with CBC by default; Gurobi optional via solver argument.
 
 ### Variables
 
-- `x[f, i, t] ∈ {0, 1}` for flow `f`, hop index `i ∈ [0, len(path(f)))`, step `t ∈ [0, T)`.
-- Interpretation: a unit of flow `f` traverses `path(f)[i]` at step `t`.
+A flow of size `m` is unrolled into `m` independent **units** sharing the same path (matches the simulator semantics in §6).
+
+- `x[u, i, t] ∈ {0, 1}` for unit `u`, hop index `i ∈ [0, len(path(u)))`, step `t ∈ [0, T)`.
+- Interpretation: unit `u` traverses `path(u)[i]` at step `t`.
+
+(For pure analytical work we set `m = 1`, in which case the per-unit and per-flow views coincide.)
 
 ### Constraints
 
-1. **Per-hop fire-once.** `Σ_t x[f, i, t] == size(f)` for every `(f, i)`. With `m = 1` this is 1.
-2. **Causal order (store-and-forward).** For every `(f, i, s)`: `Σ_{t ≤ s} x[f, i+1, t] ≤ Σ_{t ≤ s-1} x[f, i, t]`.
-3. **Link capacity.** For every `(e, t)`: `Σ x[f, i, t] over (f, i) with path(f)[i] = e ≤ 1`.
+1. **Per-hop fire-once.** `Σ_t x[u, i, t] == 1` for every `(u, i)`.
+2. **Causal order (store-and-forward).** For every `(u, i, s)`: `Σ_{t ≤ s} x[u, i+1, t] ≤ Σ_{t ≤ s-1} x[u, i, t]`.
+3. **Link capacity.** For every `(e, t)`: `Σ x[u, i, t] over (u, i) with path(u)[i] = e ≤ 1`.
 
 ### Objective
 

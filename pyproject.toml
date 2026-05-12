@@ -1,0 +1,25 @@
+[project]
+name = "twisted-analysis"
+version = "0.1.0"
+description = "AllToAll performance-gap analysis on twisted-torus topologies"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pulp>=2.8",
+    "matplotlib>=3.8",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-xdist>=3.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["twisted_analysis"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

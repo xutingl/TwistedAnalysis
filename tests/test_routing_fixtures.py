@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from twisted_analysis.topology import Topology, DORRouter
+from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 
 FIXT = Path(__file__).parent.parent / "fixtures"
 
@@ -30,4 +30,18 @@ def test_4x8_fixture_matches_router():
     t = Topology(slice=(4, 8))
     r = DORRouter(t)
     for src_s, dst_s, hops, _ in _load("4x8"):
+        assert len(r.path(eval(src_s), eval(dst_s))) == hops
+
+
+def test_2x4_ilp_fixture_matches_router():
+    t = Topology(slice=(2, 4))
+    r = ILPRouter(t)
+    for src_s, dst_s, hops, _ in _load("ilp_2x4"):
+        assert len(r.path(eval(src_s), eval(dst_s))) == hops
+
+
+def test_4x8_ilp_fixture_matches_router():
+    t = Topology(slice=(4, 8))
+    r = ILPRouter(t)
+    for src_s, dst_s, hops, _ in _load("ilp_4x8"):
         assert len(r.path(eval(src_s), eval(dst_s))) == hops

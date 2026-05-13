@@ -1,54 +1,101 @@
 # Results
 
-## Headline Numbers (First Eval Run, 2026-05-12)
+## Headline Numbers (Eval Run, 2026-05-13)
 
-Source: `results/2026-05-12/headlines.csv`
+Source: `results/2026-05-13/`
 
-| Experiment | Topology | Schedule | Coverage | Schedule LB | Full-AllToAll LB | Makespan | Ratio |
-|---|---|---|---:|---:|---:|---:|---:|
-| `2x4_ilp` | 2×4 | ILP-optimal | 56/56 | 4 | 4 | **4** | **1.00** |
-| `2x4_dim_phased` | 2×4 | DimPhased | 32/56 | 3 | 4 | 5 | 1.67 |
-| `2x4_rr` | 2×4 | RoundRobin | 56/56 | 4 | 4 | 13 | 3.25 |
-| `4x8_dim_phased` | 4×8 | DimPhased | 320/992 | 10 | 26 | 18 | 1.80 |
-| `4x8_rr` | 4×8 | RoundRobin | 992/992 | 26 | 26 | 116 | 4.46 |
-| `4x4x8_dim_phased` | 4×4×8 | DimPhased | 1664/16256 | 10 | 86 | 23 | 2.30 |
-| `4x4x8_rr` | 4×4×8 | RoundRobin | 16256/16256 | 86 | 86 | 650 | 7.56 |
+Column definitions:
 
-`Schedule LB` = max link load over the flows the schedule actually injects.
-`Full-AllToAll LB` = max link load over all `N·(N-1)` flows (the project's headline LB).
-`Ratio = makespan / Schedule LB`. For full-coverage schedules (ILP, RR), the two LBs are equal. Reproduced with `bash eval/run_all.sh`.
+- `router` — routing strategy: `ilp` (ILPRouter, load-balanced minimal) or `dor` (dimension-order).
+- `sched` — schedule name.
+- `sched-LB` — max link load over flows the schedule actually injects.
+- `full-LB` — max link load over all `N·(N-1)` flows (headline lower bound).
+- `flows` — coverage (flows injected / total AllToAll flows).
+- `makespan` — realized steps to completion.
+- `ratio` — `makespan / sched-LB`.
+
+## DOR vs ILP Routing (Impact on LB)
+
+For full-coverage schedules, `full-LB` equals `sched-LB`. ILPRouter lowers the max
+link load by distributing traffic across all minimal paths.
+
+| Topology | DOR LB | ILP LB | Reduction |
+|----------|--------|--------|-----------|
+| 2×4      | 4      | 3      | 25%       |
+| 4×8      | 26     | 21     | 19%       |
+| 4×4×8    | 86     | 74     | 14%       |
+
+## Schedule Comparison (with ILP Routing)
+
+| name                   | router | sched                 | sched-LB | full-LB | flows         | makespan | ratio |
+|------------------------|--------|-----------------------|----------|---------|---------------|----------|-------|
+| 2x4_dim_phased         | ilp    | dim_phased            | 3        | 3       | 32/56         | 3        | 1.00  |
+| 2x4_ilp                | ilp    | ilp_optimal           | 3        | 3       | 56/56         | 3        | 1.00  |
+| 2x4_ilp_symmetric      | ilp    | ilp_optimal_symmetric | 3        | 3       | 56/56         | 3        | 1.00  |
+| 2x4_rr                 | ilp    | round_robin           | 3        | 3       | 56/56         | 13       | 4.33  |
+| 4x8_dim_phased         | ilp    | dim_phased            | 8        | 21      | 320/992       | 13       | 1.62  |
+| 4x8_ilp_symmetric      | ilp    | ilp_optimal_symmetric | 21       | 21      | 992/992       | 21       | 1.00  |
+| 4x8_rr                 | ilp    | round_robin           | 21       | 21      | 992/992       | 122      | 5.81  |
+| 4x4x8_dim_phased       | ilp    | dim_phased            | 8        | 74      | 1664/16256    | 18       | 2.25  |
+| 4x4x8_rr               | ilp    | round_robin           | 74       | 74      | 16256/16256   | 637      | 8.61  |
+
+## DOR Routing Reference
+
+| name                   | router | sched                 | sched-LB | full-LB | flows         | makespan | ratio |
+|------------------------|--------|-----------------------|----------|---------|---------------|----------|-------|
+| 2x4_dim_phased_dor     | dor    | dim_phased            | 3        | 4       | 32/56         | 5        | 1.67  |
+| 2x4_ilp_dor            | dor    | ilp_optimal           | 4        | 4       | 56/56         | 4        | 1.00  |
+| 2x4_rr_dor             | dor    | round_robin           | 4        | 4       | 56/56         | 13       | 3.25  |
+| 4x8_dim_phased_dor     | dor    | dim_phased            | 10       | 26      | 320/992       | 18       | 1.80  |
+| 4x8_rr_dor             | dor    | round_robin           | 26       | 26      | 992/992       | 116      | 4.46  |
+| 4x4x8_dim_phased_dor   | dor    | dim_phased            | 10       | 86      | 1664/16256    | 23       | 2.30  |
+| 4x4x8_rr_dor           | dor    | round_robin           | 86       | 86      | 16256/16256   | 650      | 7.56  |
 
 ## Key Findings
 
-**1. ILP achieves the lower bound on 2×4.**
-For the 2×4 topology under dimension-order routing with `m=1`, the ILP produces
-`makespan = 4 = LB`. The routing table has no intrinsic gap; the bandwidth lower
-bound is achievable, so `gap_routing = M_opt / LB = 1.00`. There is no inherent
-loss from the twisted-torus DOR on this topology.
+**1. ILP routing reduces LB by 14–25% across topologies.**
+Distributing traffic across all minimal paths (ILPRouter) lowers the max-link load
+versus DOR's lexicographic tie-breaking:
 
-**2. Round-robin is far from optimal; the gap grows with topology size.**
+| Topology | DOR LB | ILP LB | Reduction |
+|----------|--------|--------|-----------|
+| 2×4      | 4      | 3      | 25%       |
+| 4×8      | 26     | 21     | 19%       |
+| 4×4×8    | 86     | 74     | 14%       |
 
-| Topology | RR ratio |
-|---|---|
-| 2×4 | 3.25× |
-| 4×8 | 4.46× |
-| 4×4×8 | 7.56× |
+**2. Symmetric ILP scheduling on 4×8 achieves LB exactly.**
+With ILP routing (LB = 21), the symmetric ILP scheduler (factor-32 variable
+reduction; ~14 s solve) produces `makespan = 21 = LB`, ratio = 1.00. This is the
+first zero-gap result on 4×8.
+
+**3. The previous 4×8 gap was a DOR artifact, not an intrinsic topology limit.**
+Under DOR routing (LB = 26), the full ILP gives `makespan = 4 = LB` only on 2×4.
+On 4×8, DOR's poor tie-breaking raises LB by 24% relative to ILP routing, making
+the lower bound harder to achieve. Switching to ILP routing eliminates the gap.
+
+**4. Round-robin is still far from optimal across all topologies.**
+
+| Topology | Router | RR makespan | LB  | Ratio |
+|----------|--------|-------------|-----|-------|
+| 2×4      | ilp    | 13          | 3   | 4.33  |
+| 4×8      | ilp    | 122         | 21  | 5.81  |
+| 4×4×8    | ilp    | 637         | 74  | 8.61  |
 
 The Latin-square round-robin schedule accumulates phase-makespan overhead across
-`N-1` back-to-back phases. Since the ILP achieves `LB` on 2×4, the round-robin gap
-is a **scheduling** inefficiency — specifically, phase-boundary idle time — not a
-routing problem.
+`N-1` back-to-back phases. The gap is a **scheduling** inefficiency (phase-boundary
+idle time), not a routing problem.
 
-**3. DimPhased is not a full AllToAll — interpret with care.**
-DimPhased covers only `(src, dst)` pairs that differ in exactly one dimension
-(57% of flows on 2×4, 32% on 4×8, 10% on 4×4×8). The reported `Ratio` is computed
-against DimPhased's own subset LB so it is honest (≥ 1.0) and comparable to
-RoundRobin on the same denominator-shape. The `Full-AllToAll LB` column is shown
-for context: DimPhased's makespan against the full-workload LB *would* look
-artificially small, since the denominator's workload is much larger than what
-DimPhased actually runs. Bottom line: DimPhased's `Ratio` quantifies its
-inefficiency *for the subset it covers*; it is not directly comparable to
-RoundRobin's `Ratio` (different workloads).
+**5. DimPhased ratios improve with ILP routing.**
+ILP routing lowers both the schedule LB and the realized makespan for DimPhased:
+
+| Topology | DOR ratio | ILP ratio |
+|----------|-----------|-----------|
+| 2×4      | 1.67      | 1.00      |
+| 4×8      | 1.80      | 1.62      |
+| 4×4×8    | 2.30      | 2.25      |
+
+DimPhased on 2×4 is now optimal (ratio = 1.00) under ILP routing. Recall that
+DimPhased is still partial-coverage (see Caveats).
 
 ## Caveats
 
@@ -57,22 +104,27 @@ weighted-average completion time (sum of `(t+1) * x[u, last, t]`), not the
 makespan. Its value can be below `LB`. It is not a tight makespan bound. See
 [lp_formulation.md](lp_formulation.md) for the precise statement.
 
-**ILP not run on 4×8 or 4×4×8.** Whether those topologies' lower bounds are
-achievable is still open. The variable count for 4×8 is ~90,000 and for 4×4×8 is
-~27 million; both require symmetry reduction or LP relaxation only. Future work:
-run ILP on 4×8 with orbit-based symmetry breaking.
+**DimPhased is not a full AllToAll — interpret with care.**
+DimPhased covers only `(src, dst)` pairs that differ in exactly one dimension
+(57% of flows on 2×4, 32% on 4×8, 10% on 4×4×8). The `Ratio` column uses
+`sched-LB` (the subset's own lower bound), so it is internally consistent, but not
+directly comparable to RoundRobin or ILP ratios which cover the full workload.
+The `full-LB` column is shown for context.
+
+**Symmetric ILP not attempted on 4×4×8.** The 4×4×8 symmetric ILP would have
+~47,000 binary variables at T = LB; tractability is unknown. LP relaxation only
+for this topology.
 
 ## Future Work
 
-- Run ILP on 4×8 to determine `gap_routing` (whether `LB` is achievable).
-- DOR dim-order ablation (smallest-first vs. largest-first): effect on `LB` and
-  makespan.
-- `m` sweep (`msg_size ∈ {1, 4, 16}`): test whether the ratio is invariant to
-  message size as predicted by the bandwidth-only model.
-- Improve RoundRobin by reordering phases by twist-induced shape, or by overlapping
-  phases (pipelined injection).
+- Run symmetric ILP on 4×4×8 (or estimate solve time vs. LB horizon).
+- `m` sweep (`msg_size ∈ {1, 4, 16}`): test whether ratio is invariant to message
+  size as predicted by the bandwidth-only model.
+- Improve RoundRobin by overlapping phases (pipelined injection) to close the 4–8×
+  gap.
 - Bisection-bandwidth lower bound: compute min-cut bound and report
   `max(LB_link, LB_bisection)`.
+- DOR dim-order ablation (smallest-first vs. largest-first): effect on LB and makespan.
 
 ## How to Regenerate
 

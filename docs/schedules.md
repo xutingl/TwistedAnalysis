@@ -89,7 +89,35 @@ phase, the flows form independent rings (one ring per slice along that dim), so
 the bottleneck is the per-ring AllToAll makespan. The twist only affects phases
 in the smaller dims (where the wraparound cross-shifts the larger dim coordinate).
 
-## Schedule C: LP-Optimal
+## Schedule C: ILP-Optimal (Symmetric)
+
+**Module:** `twisted_analysis/schedules/lp_optimal_symmetric.py`
+
+**Construction.** The symmetric ILP (see [lp_formulation.md](lp_formulation.md))
+produces an assignment `y[orbit, hop_idx, step]` giving the step at which each
+orbit traverses each hop. `symmetric_lp_assignment_to_injections` expands orbit
+assignments back to per-unit `Injection` records by applying the `N` translations:
+
+```python
+def symmetric_lp_assignment_to_injections(flows, router, orbit_assignment) -> list[Injection]:
+    # For each orbit o and each translated copy v:
+    #   src = (0 + v) mod topology
+    #   dst = (canonical_dst + v) mod topology
+    #   start_step  = orbit_assignment fire step at hop 0
+    #   hop_schedule = tuple of fire steps for every hop
+    ...
+```
+
+**Scope.** Only applicable when the topology has full translational symmetry and
+ILPRouter is used for routing. Falls back to the full `ILPOptimal` schedule otherwise.
+
+**Validation.** Same as Schedule D (below): the realized simulator makespan is
+asserted to equal `M_opt` for every instance.
+
+**Performance.** On 4×8 with ILP routing, `makespan = 21 = LB` — the lower bound
+is exactly achieved. Solve time ~14 s (CBC).
+
+## Schedule D: LP-Optimal
 
 **Module:** `twisted_analysis/schedules/lp_optimal.py`
 

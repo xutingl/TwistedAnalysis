@@ -135,8 +135,85 @@ where `H = Σ_f (m × len(path(f)))`.
   reported.
 - **4×4×8**: LP relaxation only; full ILP is not tractable.
 
+## Symmetric Scheduling ILP (Translational Orbits)
+
+**File:** `twisted_analysis/lp/ilp_symmetric.py`
+
+### Motivation
+
+The full ILP scales as `O(H × T)` variables. For 4×8, `H ≈ 3,000` and
+`T ≈ 84` under ILP routing, yielding ~252,000 binary variables — marginally tractable
+but slow. Translational symmetry reduces this by a factor of `N` (32 for 4×8).
+
+### Orbit Definition
+
+The `N` translations of the network are automorphisms: if we shift every node index
+by a constant vector `v` (mod topology shape), the link structure is preserved. Any
+feasible schedule `x[u, i, t]` can be translated to give another feasible schedule
+of equal makespan. We collect all units whose `(src, dst)` pair belongs to the same
+translated orbit into one **orbit class**.
+
+### Variables
+
+For each orbit class `o`, hop index `i`, and time step `t`:
+
+```
+y[o, i, t] ∈ {0, 1}
+```
+
+Interpretation: every unit in orbit `o` traverses hop `i` of its (translated) path
+at step `t`. Within a single orbit, all `N` translated units fire at the same
+relative step.
+
+### Constraints
+
+**1. Fire-once.** Each orbit fires each hop exactly once:
+
+```
+∀ o, i:   Σ_t y[o, i, t] == 1
+```
+
+**2. Causal order.** Same store-and-forward rule as the full ILP, applied per orbit:
+
+```
+∀ o, i, s:   Σ_{t=0}^{s} y[o, i+1, t]  ≤  Σ_{t=0}^{s-1} y[o, i, t]
+```
+
+**3. Edge-orbit capacity.** At each time step, the directed links visited by orbit
+`o` at hop `i` are determined by the canonical unit's path. Because of translational
+symmetry, each orbit's hop covers a disjoint set of `N` directed links (one per
+translated copy). The capacity constraint on any single directed link is therefore:
+
+```
+∀ e, t:   Σ_{(o,i) : canonical_path(o)[i] = e} y[o, i, t]  ≤  1
+```
+
+The number of orbits equals the number of distinct `(src, dst)` pairs with `src = 0`
+(i.e., `N - 1`), a factor-`N` reduction over the full ILP.
+
+### Symmetry Assumption
+
+The reduction is valid when the topology has full translational symmetry (all `N`
+translations are automorphisms). This holds for all topologies in the `{S, 2S}`
+family. If ILP routing produces a non-symmetric path assignment (different canonical
+paths for different translated copies of the same pair), the symmetric ILP does not
+apply; in that case fall back to the full ILP with symmetry-breaking constraints.
+
+### Solve Performance
+
+| Topology | Orbits | Variables at T=LB | Solve time |
+|----------|--------|--------------------|------------|
+| 2×4      | 7      | ~126               | <1s        |
+| 4×8      | 31     | ~2,604             | ~14s       |
+| 4×4×8    | 127    | ~47,000            | not attempted |
+
+The 4×8 symmetric ILP solves in ~14 s with CBC and achieves `makespan = 21 = LB`
+under ILP routing — confirming the lower bound is tight and the previous gap was an
+artifact of DOR's tie-breaking, not an intrinsic limit of the topology.
+
 ## See Also
 
 - [algorithm.md](algorithm.md) — the cost model this ILP encodes.
 - [schedules.md](schedules.md) — how the LP assignment becomes an executable schedule.
-- [results.md](results.md) — ILP results for 2×4; LP relaxation notes for larger instances.
+- [results.md](results.md) — ILP results for 2×4 and 4×8; LP relaxation notes for 4×4×8.
+- [topology.md](topology.md) — ILPRouter and translational symmetry of the routing LP.

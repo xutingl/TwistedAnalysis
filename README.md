@@ -1,17 +1,21 @@
 # TwistedAnalysis
 
-Quantifies the AllToAll performance gap on twisted-torus topologies under fixed
-dimension-order routing.
+Quantifies the AllToAll performance gap on twisted-torus topologies under
+load-balanced minimal routing (ILPRouter) and dimension-order routing (DOR).
 
 ## What
 
 For twisted-torus topologies in the `{S, 2S}` shape family (e.g., 2x4, 4x8, 4x4x8),
 we compute:
 
-1. The bandwidth lower bound `LB` from max directed-link load under fixed DOR.
-2. The ILP-optimal makespan `M_opt` (small instances) and the LP relaxation `M_LP`.
+1. The bandwidth lower bound `LB` from max directed-link load. The default router is
+   **ILPRouter** (load-balanced minimal routing, LP-based); `router: dor` selects
+   dimension-order routing. ILP routing reduces LB by 14–25% vs. DOR.
+2. The ILP-optimal makespan `M_opt` (small instances). A symmetric ILP variant
+   (translational orbits) made 4×8 tractable (~14 s, ratio = 1.00). LP relaxation
+   `M_LP` is used for 4×4×8.
 3. The makespan `M_S` for two heuristic schedules: Latin-square round-robin, and
-   dimension-ordered phased.
+   dimension-ordered phased (partial coverage only).
 
 The headline metric is `gap(S) = M_S / LB`. A gap of 1 means the routing+schedule
 saturate every bottleneck link; >1 quantifies the inefficiency.
@@ -28,7 +32,7 @@ cat results/$(date +%Y-%m-%d)/headlines.csv   # aggregated summary
 
 ## Layout
 
-- `twisted_analysis/topology/` — twisted-torus lattice + DOR router.
+- `twisted_analysis/topology/` — twisted-torus lattice, DOR router, ILPRouter.
 - `twisted_analysis/model/` — AllToAll workload, link load, lower bound.
 - `twisted_analysis/schedules/` — RoundRobin, DimPhased, LP-optimal.
 - `twisted_analysis/simulator/` — step-synchronous engine + instrumentation.

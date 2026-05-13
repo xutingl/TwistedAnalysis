@@ -182,7 +182,59 @@ the walk rather than computing the displacement algebraically.
 **Validation.** `len(DOR.path(s, d)) == BFS.dist(s, d)` for every `(s, d)` on every
 topology (asserted in `tests/test_router.py`).
 
+## ILPRouter (Load-Balanced Minimal Routing)
+
+**Class:** `ILPRouter` in `twisted_analysis/topology/ilp_router.py`
+
+### Motivation
+
+DOR tie-breaking is lexicographic and can concentrate traffic on a subset of minimal
+paths, raising the max-link load `LB`. The ILPRouter solves an LP to distribute each
+`(src, dst)` flow across its set of minimal paths so that the max directed-link load
+is minimized. This is the standard load-balanced minimal routing approach (ported from
+the btowles framework).
+
+### Formulation
+
+Let `P(s,d)` be the set of hop-minimal paths from `s` to `d`. For each path
+`p ∈ P(s,d)` introduce a variable `λ[s,d,p] ≥ 0` with `Σ_p λ[s,d,p] = 1`. The
+LP minimizes the max directed-link load:
+
+```
+minimize  L
+subject to:
+    Σ_{p ∋ e} λ[s,d,p]  ≤  L     ∀ directed link e (summed over all (s,d) flows)
+    Σ_p λ[s,d,p]         = 1      ∀ (s, d)
+    λ[s,d,p]             ≥ 0
+```
+
+The resulting `LB = L*` is the routing lower bound under load-balanced minimal routing.
+
+### Translational Symmetry Reduction
+
+On an `N`-node topology, the N translations `(s,d) → (s+v, d+v)` (mod topology) are
+automorphisms. All flows from a given canonical origin `s=0` cover the full orbit via
+the symmetry, so the LP only needs variables for the `N-1` pairs with `src = 0`
+(canonical origin). The resulting `λ` values are then replicated to all `N` translated
+copies. This reduces the LP variable count by a factor of `N`.
+
+### Impact on Lower Bound
+
+ILP routing reduces `LB` relative to DOR on every topology:
+
+| Topology | DOR LB | ILP LB | Reduction |
+|----------|--------|--------|-----------|
+| 2×4      | 4      | 3      | 25%       |
+| 4×8      | 26     | 21     | 19%       |
+| 4×4×8    | 86     | 74     | 14%       |
+
+The reduction is most pronounced on smaller topologies where DOR's lexicographic
+tie-breaking has fewer paths to choose from. On 2×4, ILP routing makes the `LB`
+achievable by the symmetric ILP scheduler (makespan = LB = 3; see
+[lp_formulation.md](lp_formulation.md)).
+
 ## See Also
 
 - [algorithm.md](algorithm.md) — how link load is computed from paths.
 - [schedules.md](schedules.md) — how the routing table determines phase structure.
+- [lp_formulation.md](lp_formulation.md) — symmetric scheduling ILP formulation.

@@ -43,8 +43,8 @@ for r in range(1, N):
 does not start until the slowest flow of the current phase drains. Gaps between
 phases accumulate, leading to a large total makespan.
 
-**Observed gap.** On 2×4, `makespan = 13` vs `LB = 4`, a 3.25× gap. On 4×4×8,
-`makespan = 650` vs `LB = 86`, a 7.56× gap. The gap grows with topology size.
+**Observed gap.** On 2×4, `makespan = 13` vs `LB = 3`, a 4.33× gap. On 4×4×8,
+`makespan = 637` vs `LB = 74`, a 8.61× gap. The gap grows with topology size.
 Analysis suggests this is a scheduling inefficiency (phase-makespan accumulation)
 rather than a routing problem; see [results.md](results.md).
 
@@ -91,15 +91,15 @@ in the smaller dims (where the wraparound cross-shifts the larger dim coordinate
 
 ## Schedule C: ILP-Optimal (Symmetric)
 
-**Module:** `twisted_analysis/schedules/lp_optimal_symmetric.py`
+**Module:** `twisted_analysis/schedules/lp_symmetric.py`
 
 **Construction.** The symmetric ILP (see [lp_formulation.md](lp_formulation.md))
 produces an assignment `y[orbit, hop_idx, step]` giving the step at which each
-orbit traverses each hop. `symmetric_lp_assignment_to_injections` expands orbit
+orbit traverses each hop. `symmetric_assignment_to_injections` expands orbit
 assignments back to per-unit `Injection` records by applying the `N` translations:
 
 ```python
-def symmetric_lp_assignment_to_injections(flows, router, orbit_assignment) -> list[Injection]:
+def symmetric_assignment_to_injections(flows, router, orbit_assignment) -> list[Injection]:
     # For each orbit o and each translated copy v:
     #   src = (0 + v) mod topology
     #   dst = (canonical_dst + v) mod topology

@@ -8,9 +8,9 @@ This reduces variable count by N.
 from __future__ import annotations
 import collections
 import itertools
+import warnings
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Iterable
 
 import pulp
 
@@ -159,8 +159,18 @@ class ILPRouter:
             "PULP_CBC_CMD", msg=False, timeLimit=int(self.ilp_timeout_seconds)
         )
         prob.solve(solver)
-        if pulp.LpStatus[prob.status] not in ("Optimal", "Not Solved"):
-            raise RuntimeError(f"ILP router failed: {pulp.LpStatus[prob.status]}")
+        status = pulp.LpStatus[prob.status]
+        if status == "Optimal":
+            pass  # all good
+        elif status in ("Not Solved", "Undefined"):
+            warnings.warn(
+                f"ILPRouter ILP did not reach optimal (status: {status}). "
+                f"Routing falls back to first-candidate paths for unresolved choices; "
+                f"reported LB may not reflect the true minimum-load routing.",
+                RuntimeWarning, stacklevel=2,
+            )
+        else:
+            raise RuntimeError(f"ILP router failed: {status}")
 
         chosen: dict[Node, tuple[int, ...]] = {}
         for dst, deltas in minimal.items():

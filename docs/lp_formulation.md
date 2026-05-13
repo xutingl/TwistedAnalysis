@@ -69,11 +69,11 @@ Invoke as:
 
 ```python
 from twisted_analysis.lp.ilp import solve_makespan
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, ILPRouter
 from twisted_analysis.model import AllToAll
 
 t = Topology(slice=(2, 4))
-r = Router(t)
+r = ILPRouter(t)
 w = AllToAll(t, r, 1)
 T_opt, assignment = solve_makespan(t, r, list(w.flows), T_upper=w.lower_bound * 4)
 print(T_opt)  # 4 for (2,4) with m=1
@@ -137,7 +137,7 @@ where `H = Σ_f (m × len(path(f)))`.
 
 ## Symmetric Scheduling ILP (Translational Orbits)
 
-**File:** `twisted_analysis/lp/ilp_symmetric.py`
+**File:** `twisted_analysis/lp/symmetric.py`
 
 ### Motivation
 

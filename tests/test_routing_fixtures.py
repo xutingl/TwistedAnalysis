@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 
 FIXT = Path(__file__).parent.parent / "fixtures"
 
@@ -18,7 +18,7 @@ def _load(name: str) -> list[tuple[str, str, int, str]]:
 
 def test_2x4_fixture_matches_router():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     for src_s, dst_s, hops, path_str in _load("2x4"):
         src = eval(src_s)
         dst = eval(dst_s)
@@ -28,6 +28,6 @@ def test_2x4_fixture_matches_router():
 
 def test_4x8_fixture_matches_router():
     t = Topology(slice=(4, 8))
-    r = Router(t)
+    r = DORRouter(t)
     for src_s, dst_s, hops, _ in _load("4x8"):
         assert len(r.path(eval(src_s), eval(dst_s))) == hops

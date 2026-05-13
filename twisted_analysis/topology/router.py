@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 from itertools import product
+from typing import Protocol, runtime_checkable
 
 from twisted_analysis.topology.lattice import Topology, Node, DirectedLink
 
@@ -9,8 +10,18 @@ from twisted_analysis.topology.lattice import Topology, Node, DirectedLink
 Path = tuple[DirectedLink, ...]
 
 
+@runtime_checkable
+class Router(Protocol):
+    """Structural protocol for routers. Any object with .path(src, dst) -> Path
+    is a Router. The two concrete implementations are DORRouter (dimension-order)
+    and ILPRouter (load-balanced minimal routing).
+    """
+    topology: "Topology"
+    def path(self, src: "Node", dst: "Node") -> "Path": ...
+
+
 @dataclass(frozen=True)
-class Router:
+class DORRouter:
     """Twist-aware DOR router. Resolves dims in order of decreasing slice size.
 
     For each (src, dst), enumerates candidate wrap choices, picks the minimum

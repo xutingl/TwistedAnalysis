@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.schedules.dim_phased import DimPhasedSchedule
@@ -29,7 +29,7 @@ def run_experiment(cfg: dict) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     t = Topology(slice=slice_)
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=msg_size)
 
     if sched_name == "ilp_optimal":

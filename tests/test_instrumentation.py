@@ -1,4 +1,4 @@
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.simulator import Simulator
@@ -7,7 +7,7 @@ from twisted_analysis.simulator.instrumentation import collect_idle_trace, gantt
 
 def test_idle_trace_returns_dict_keyed_by_edge():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     sched = RoundRobinSchedule()
     sim = Simulator(t, r, list(w.flows), record_history=True)
@@ -20,7 +20,7 @@ def test_idle_trace_returns_dict_keyed_by_edge():
 
 def test_gantt_log_has_one_row_per_unit_per_hop():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     sched = RoundRobinSchedule()
     sim = Simulator(t, r, list(w.flows), record_history=True)

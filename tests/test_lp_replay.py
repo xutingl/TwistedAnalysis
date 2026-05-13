@@ -1,4 +1,4 @@
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.lp.ilp import solve_makespan
 from twisted_analysis.schedules.lp_optimal import lp_assignment_to_injections
@@ -7,7 +7,7 @@ from twisted_analysis.simulator import Simulator
 
 def test_lp_assignment_replays_to_same_makespan_2x4():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     m_opt, assignment = solve_makespan(t, r, list(w.flows), T_upper=w.lower_bound * 4)
     flows_list = list(w.flows)

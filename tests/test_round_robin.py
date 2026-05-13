@@ -1,4 +1,4 @@
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.simulator import Simulator
@@ -6,7 +6,7 @@ from twisted_analysis.simulator import Simulator
 
 def test_round_robin_emits_n_minus_1_phases_worth():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     sched = RoundRobinSchedule()
     injections = sched.emit(w)
@@ -16,7 +16,7 @@ def test_round_robin_emits_n_minus_1_phases_worth():
 
 def test_round_robin_makespan_at_least_lb():
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     sched = RoundRobinSchedule()
     sim = Simulator(t, r, list(w.flows))
@@ -29,7 +29,7 @@ def test_round_robin_makespan_at_least_lb():
 def test_round_robin_phases_dont_overlap():
     # Phase r's flows all share the same start_step.
     t = Topology(slice=(2, 4))
-    r = Router(t)
+    r = DORRouter(t)
     w = AllToAll(t, r, msg_size=1)
     sched = RoundRobinSchedule()
     injs = sched.emit(w)

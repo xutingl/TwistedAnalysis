@@ -3,14 +3,14 @@ import csv
 import sys
 from pathlib import Path
 
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 
 OUT = Path(__file__).parent.parent / "fixtures"
 
 
 def dump(slice_: tuple[int, ...], name: str) -> None:
     t = Topology(slice=slice_)
-    r = Router(t)
+    r = DORRouter(t)
     out_path = OUT / f"routing_{name}.csv"
     with out_path.open("w", newline="") as f:
         w = csv.writer(f)

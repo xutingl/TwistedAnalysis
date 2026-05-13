@@ -11,6 +11,7 @@ class Injection:
     flow: Flow
     start_step: int
     priority: int = 0  # lower = higher priority at link contention; default FIFO
+    hop_schedule: tuple[int, ...] = ()  # LP-derived fire step per hop; empty = use priority only
 
 
 @dataclass(frozen=True)

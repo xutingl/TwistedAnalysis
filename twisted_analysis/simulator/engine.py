@@ -16,6 +16,7 @@ class _Unit:
     next_hop_idx: int = 0
     priority: int = 0
     seq: int = 0  # tie-break for deterministic ordering
+    hop_schedule: tuple[int, ...] = ()  # LP fire step per hop; empty = use static priority
 
     @property
     def at_link(self) -> DirectedLink:
@@ -24,6 +25,17 @@ class _Unit:
     @property
     def delivered(self) -> bool:
         return self.next_hop_idx >= len(self.path)
+
+    def effective_priority(self) -> int:
+        """Return the priority to use for this unit's current hop.
+
+        If a per-hop LP schedule is available, use the LP-assigned fire step for
+        the current hop as the priority (lower step = higher priority). Otherwise
+        fall back to the static `priority` field.
+        """
+        if self.hop_schedule and self.next_hop_idx < len(self.hop_schedule):
+            return self.hop_schedule[self.next_hop_idx]
+        return self.priority
 
 
 class Simulator:
@@ -59,6 +71,7 @@ class Simulator:
                     path=path,
                     priority=inj.priority,
                     seq=next(self._seq),
+                    hop_schedule=inj.hop_schedule,
                 )
                 self.units.append(u)
                 self.link_queue.setdefault(path[0], deque()).append(u)
@@ -76,12 +89,14 @@ class Simulator:
 
     def _step(self) -> int:
         """Each link picks one unit; chosen units advance one hop. Return # active links."""
-        # Selection: pick (priority, seq) minimum per link.
+        # Selection: pick (effective_priority, seq) minimum per link.
+        # effective_priority() uses the LP-assigned fire step for the current hop if available,
+        # otherwise falls back to the static priority field.
         chosen: list[tuple[DirectedLink, _Unit]] = []
         for link, q in self.link_queue.items():
             if not q:
                 continue
-            best = min(q, key=lambda u: (u.priority, u.seq))
+            best = min(q, key=lambda u: (u.effective_priority(), u.seq))
             q.remove(best)
             chosen.append((link, best))
         # Advance.

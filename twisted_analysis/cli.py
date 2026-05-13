@@ -50,17 +50,35 @@ def run_experiment(cfg: dict) -> dict:
         sim.inject(inj)
     makespan = sim.run()
 
+    # LB for THIS schedule's actual workload (= full-AllToAll LB when the
+    # schedule covers every (src,dst); subset LB when partial-coverage like
+    # DimPhased). This makes `ratio` ≥ 1 for any honest schedule and lets us
+    # also report the full-AllToAll LB separately as `full_alltoall_lb` for
+    # the partial-coverage caveat.
+    from collections import Counter
+    subset_load: Counter = Counter()
+    for f in sim_flows:
+        for e in r.path(f.src, f.dst):
+            subset_load[e] += f.size
+    schedule_lb = max(subset_load.values()) if subset_load else 0
+
     idle = collect_idle_trace(sim, w.bottleneck_edges())
     write_gantt_csv(sim, out_dir / "gantt.csv")
 
+    n_flows_covered = len(sim_flows)
+    n_flows_full = len(w.flows)
     summary = {
         "name": cfg["name"],
         "slice": list(slice_),
         "msg_size": msg_size,
         "schedule": sched_name,
-        "lower_bound": w.lower_bound,
+        "lower_bound": schedule_lb,
+        "full_alltoall_lb": w.lower_bound,
+        "n_flows_covered": n_flows_covered,
+        "n_flows_full": n_flows_full,
+        "coverage": n_flows_covered / n_flows_full if n_flows_full else 0.0,
         "makespan": makespan,
-        "ratio": makespan / w.lower_bound if w.lower_bound else 0.0,
+        "ratio": makespan / schedule_lb if schedule_lb else 0.0,
         "bottleneck_edges": [list(map(list, [e[0], e[1]])) + [e[2], e[3]]
                               for e in w.bottleneck_edges()],
         "idle_steps_on_bottleneck": {

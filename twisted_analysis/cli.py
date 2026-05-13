@@ -10,6 +10,7 @@ from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.schedules.dim_phased import DimPhasedSchedule
+from twisted_analysis.schedules.xla import XLASchedule
 from twisted_analysis.schedules.lp_optimal import lp_assignment_to_injections
 from twisted_analysis.simulator import Simulator
 from twisted_analysis.simulator.instrumentation import collect_idle_trace, write_gantt_csv
@@ -18,6 +19,7 @@ from twisted_analysis.simulator.instrumentation import collect_idle_trace, write
 SCHEDULES = {
     "round_robin": RoundRobinSchedule(),
     "dim_phased": DimPhasedSchedule(),
+    "xla": XLASchedule(),
 }
 
 

@@ -104,16 +104,27 @@ change is needed.
 uv run pytest          # or: .venv/bin/python -m pytest
 ```
 
-51 unit tests + 1 CLI test. Test categories:
+53 unit tests. Test categories:
 
 | File | What it checks |
 |---|---|
-| `tests/test_topology.py` | neighbor() matches reference; BFS == diameter |
+| `tests/test_topology_neighbor.py` | neighbor() correctness against reference |
+| `tests/test_topology_links_bfs.py` | BFS diameter equals expected value |
 | `tests/test_router.py` | DOR hop count equals BFS distance; deterministic |
+| `tests/test_routing_fixtures.py` | shared routing fixtures used across tests |
 | `tests/test_model.py` | load aggregation; LB = max load |
-| `tests/test_schedules.py` | makespan >= LB for every schedule |
-| `tests/test_simulator.py` | equivalence with LP-extracted schedule |
-| `tests/test_lp.py` | tiny instance solved to known optimum |
+| `tests/test_schedules_base.py` | Injection / Schedule base types |
+| `tests/test_round_robin.py` | RoundRobin makespan >= LB |
+| `tests/test_dim_phased.py` | DimPhased makespan and phase coverage |
+| `tests/test_simulator.py` | step-by-step simulation correctness |
+| `tests/test_instrumentation.py` | record_history / event logging |
+| `tests/test_ilp.py` | tiny ILP instance solved to known optimum |
+| `tests/test_lp_relaxation.py` | LP relaxation bound <= ILP optimum |
+| `tests/test_lp_replay.py` | LP-extracted schedule replays correctly |
+| `tests/test_bounds.py` | lower-bound computations |
+| `tests/test_cli.py` | CLI run command end-to-end |
+| `tests/test_viz.py` | plot functions write non-empty PNG files |
+| `tests/test_smoke.py` | full pipeline smoke test |
 
 ## Future Work / Ablations
 

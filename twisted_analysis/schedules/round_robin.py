@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 from twisted_analysis.model.flow import Flow, AllToAll
 from twisted_analysis.schedules.base import Injection, Schedule
-from twisted_analysis.simulator.engine import Simulator
 from twisted_analysis.topology import Topology, Router
 
 
@@ -17,6 +16,7 @@ class RoundRobinSchedule:
     name: str = "round_robin"
 
     def emit(self, workload: AllToAll) -> list[Injection]:
+        from twisted_analysis.simulator.engine import Simulator
         t = workload.topology
         r = workload.router
         nodes = list(t.nodes())

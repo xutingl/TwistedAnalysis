@@ -41,7 +41,13 @@ class _Unit:
 class Simulator:
     """Step-synchronous, store-and-forward, capacity-1 simulator."""
 
-    def __init__(self, topology: Topology, router: Router, flows: list[Flow]):
+    def __init__(
+        self,
+        topology: Topology,
+        router: Router,
+        flows: list[Flow],
+        record_history: bool = False,
+    ):
         self.topology = topology
         self.router = router
         self.flows = flows
@@ -53,6 +59,9 @@ class Simulator:
         self.busy_per_step: list[int] = []
         self.delivered_count = 0
         self.total_units = sum(f.size for f in flows)
+        self.record_history = record_history
+        self.history: list[tuple[int, DirectedLink, Flow, int]] = []
+        self.link_busy: dict[DirectedLink, list[bool]] = {}
 
     def inject(self, injection: Injection) -> None:
         self.pending_injections.append(injection)
@@ -80,18 +89,25 @@ class Simulator:
         step = 0
         while self.delivered_count < self.total_units and step < max_steps:
             self._enqueue_injections(step)
-            busy = self._step()
-            self.busy_per_step.append(busy)
+            busy_links = self._step(step)
+            self.busy_per_step.append(len(busy_links))
+            if self.record_history:
+                for e in self.topology.directed_links():
+                    self.link_busy.setdefault(e, []).append(e in busy_links)
             step += 1
         if self.delivered_count < self.total_units:
             raise RuntimeError(f"sim did not drain in {max_steps} steps")
         return step
 
-    def _step(self) -> int:
-        """Each link picks one unit; chosen units advance one hop. Return # active links."""
-        # Selection: pick (effective_priority, seq) minimum per link.
-        # effective_priority() uses the LP-assigned fire step for the current hop if available,
-        # otherwise falls back to the static priority field.
+    def _step(self, step: int) -> set[DirectedLink]:
+        """Each link picks one unit; chosen units advance one hop.
+
+        Returns the set of busy links this step.
+
+        Selection uses (effective_priority, seq) minimum per link.
+        effective_priority() uses the LP-assigned fire step for the current hop
+        if available, otherwise falls back to the static priority field.
+        """
         chosen: list[tuple[DirectedLink, _Unit]] = []
         for link, q in self.link_queue.items():
             if not q:
@@ -99,8 +115,11 @@ class Simulator:
             best = min(q, key=lambda u: (u.effective_priority(), u.seq))
             q.remove(best)
             chosen.append((link, best))
+        busy_links = {link for link, _ in chosen}
         # Advance.
         for link, u in chosen:
+            if self.record_history:
+                self.history.append((step, link, u.flow, u.next_hop_idx))
             u.next_hop_idx += 1
             if u.delivered:
                 self.delivered_count += 1
@@ -108,4 +127,4 @@ class Simulator:
                 self.link_queue.setdefault(u.at_link, deque()).append(u)
         # Cleanup empty queues to keep iteration sane.
         self.link_queue = {k: v for k, v in self.link_queue.items() if v}
-        return len(chosen)
+        return busy_links

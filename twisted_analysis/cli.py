@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from twisted_analysis.topology import Topology, DORRouter
+from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.schedules.dim_phased import DimPhasedSchedule
@@ -29,7 +29,13 @@ def run_experiment(cfg: dict) -> dict:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     t = Topology(slice=slice_)
-    r = DORRouter(t)
+    router_name = cfg.get("router", "ilp")  # default: ILP
+    if router_name == "ilp":
+        r = ILPRouter(t)
+    elif router_name == "dor":
+        r = DORRouter(t)
+    else:
+        raise ValueError(f"unknown router: {router_name}")
     w = AllToAll(t, r, msg_size=msg_size)
 
     if sched_name == "ilp_optimal":
@@ -72,6 +78,7 @@ def run_experiment(cfg: dict) -> dict:
         "slice": list(slice_),
         "msg_size": msg_size,
         "schedule": sched_name,
+        "router": router_name,
         "lower_bound": schedule_lb,
         "full_alltoall_lb": w.lower_bound,
         "n_flows_covered": n_flows_covered,

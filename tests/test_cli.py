@@ -48,3 +48,21 @@ def test_cli_uses_dor_router_when_requested(tmp_path):
     assert res.returncode == 0, res.stderr
     summary = json.loads((tmp_path / "out" / "summary.json").read_text())
     assert summary["router"] == "dor"
+
+
+def test_cli_symmetric_ilp_2x4(tmp_path):
+    cfg = tmp_path / "cfg.yaml"
+    cfg.write_text(
+        "name: smoke_sym\nslice: [2, 4]\nmsg_size: 1\n"
+        "schedule: ilp_optimal_symmetric\nrouter: ilp\n"
+        f"output_dir: {tmp_path}/out\n"
+    )
+    res = subprocess.run(
+        [sys.executable, "-m", "twisted_analysis.cli", "run", str(cfg)],
+        capture_output=True, text=True, check=False,
+    )
+    assert res.returncode == 0, res.stderr
+    summary = json.loads((tmp_path / "out" / "summary.json").read_text())
+    assert summary["schedule"] == "ilp_optimal_symmetric"
+    # On 2x4 with ILP routing, the LB and optimum match.
+    assert summary["makespan"] == summary["lower_bound"]

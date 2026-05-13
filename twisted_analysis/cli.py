@@ -44,6 +44,13 @@ def run_experiment(cfg: dict) -> dict:
             t, r, list(w.flows), T_upper=w.lower_bound * 4
         )
         injs = lp_assignment_to_injections(list(w.flows), r, assignment)
+    elif sched_name == "ilp_optimal_symmetric":
+        from twisted_analysis.lp.symmetric import solve_symmetric_makespan
+        from twisted_analysis.schedules.lp_symmetric import symmetric_assignment_to_injections
+        m_opt, assignment = solve_symmetric_makespan(
+            t, r, list(w.flows), T_upper=w.lower_bound * 4
+        )
+        injs = symmetric_assignment_to_injections(t, r, list(w.flows), assignment)
     else:
         sched = SCHEDULES[sched_name]
         injs = sched.emit(w)

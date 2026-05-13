@@ -66,14 +66,15 @@ Representative non-bottleneck loads:
 So `LB = 4`. The ILP achieves exactly `makespan = 4` (ratio 1.00); see
 [results.md](results.md).
 
-To reproduce:
+To reproduce (with DOR routing, which produces LB = 4 on 2×4 — switch to
+`ILPRouter` for LB = 3):
 
 ```python
-from twisted_analysis.topology import Topology, Router
+from twisted_analysis.topology import Topology, DORRouter
 from twisted_analysis.model import AllToAll
 
 t = Topology(slice=(2, 4))
-r = Router(t)
+r = DORRouter(t)
 w = AllToAll(t, r, 1)
 print(sorted(set(w.link_load.values())))  # [1, 2, 3, 4]
 print('LB=', w.lower_bound)               # LB= 4

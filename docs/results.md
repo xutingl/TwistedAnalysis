@@ -33,11 +33,14 @@ link load by distributing traffic across all minimal paths.
 | 2x4_ilp                | ilp    | ilp_optimal           | 3        | 3       | 56/56         | 3        | 1.00  |
 | 2x4_ilp_symmetric      | ilp    | ilp_optimal_symmetric | 3        | 3       | 56/56         | 3        | 1.00  |
 | 2x4_rr                 | ilp    | round_robin           | 3        | 3       | 56/56         | 13       | 4.33  |
+| 2x4_xla                | ilp    | xla                   | 3        | 3       | 56/56         | 13       | 4.33  |
 | 4x8_dim_phased         | ilp    | dim_phased            | 8        | 21      | 320/992       | 13       | 1.62  |
 | 4x8_ilp_symmetric      | ilp    | ilp_optimal_symmetric | 21       | 21      | 992/992       | 21       | 1.00  |
 | 4x8_rr                 | ilp    | round_robin           | 21       | 21      | 992/992       | 122      | 5.81  |
+| 4x8_xla                | ilp    | xla                   | 21       | 21      | 992/992       | 122      | 5.81  |
 | 4x4x8_dim_phased       | ilp    | dim_phased            | 8        | 74      | 1664/16256    | 18       | 2.25  |
 | 4x4x8_rr               | ilp    | round_robin           | 74       | 74      | 16256/16256   | 637      | 8.61  |
+| 4x4x8_xla              | ilp    | xla                   | 74       | 74      | 16256/16256   | 637      | 8.61  |
 
 ## DOR Routing Reference
 
@@ -46,10 +49,13 @@ link load by distributing traffic across all minimal paths.
 | 2x4_dim_phased_dor     | dor    | dim_phased            | 3        | 4       | 32/56         | 5        | 1.67  |
 | 2x4_ilp_dor            | dor    | ilp_optimal           | 4        | 4       | 56/56         | 4        | 1.00  |
 | 2x4_rr_dor             | dor    | round_robin           | 4        | 4       | 56/56         | 13       | 3.25  |
+| 2x4_xla_dor            | dor    | xla                   | 4        | 4       | 56/56         | 13       | 3.25  |
 | 4x8_dim_phased_dor     | dor    | dim_phased            | 10       | 26      | 320/992       | 18       | 1.80  |
 | 4x8_rr_dor             | dor    | round_robin           | 26       | 26      | 992/992       | 116      | 4.46  |
+| 4x8_xla_dor            | dor    | xla                   | 26       | 26      | 992/992       | 116      | 4.46  |
 | 4x4x8_dim_phased_dor   | dor    | dim_phased            | 10       | 86      | 1664/16256    | 23       | 2.30  |
 | 4x4x8_rr_dor           | dor    | round_robin           | 86       | 86      | 16256/16256   | 650      | 7.56  |
+| 4x4x8_xla_dor          | dor    | xla                   | 86       | 86      | 16256/16256   | 650      | 7.56  |
 
 ## Key Findings
 
@@ -96,6 +102,34 @@ ILP routing lowers both the schedule LB and the realized makespan for DimPhased:
 
 DimPhased on 2×4 is now optimal (ratio = 1.00) under ILP routing. Recall that
 DimPhased is still partial-coverage (see Caveats).
+
+**6. XLA's destination-core randomization gives the same makespan as round-robin in our model.**
+
+XLA's permutation formula `permute_idx = ((p · 33617 + 1299721) mod (N-1)) + 1`
+is a bijection on `{1..N-1}` for our N values (N=8, 32, 128), because
+`gcd(33617, N-1) = 1` holds in each case. As a result, the set of phase
+workloads produced by XLA is exactly a permutation of round-robin's: both visit
+the same set of `(src, dst)` displacements, just in a different order.
+
+In our step-synchronous cost model, phases execute back-to-back and the total
+makespan is the sum of per-phase makespans. Because per-phase makespan depends
+only on the displacement `permute_idx` in that phase — not on the order phases
+are visited — sum is commutative and both schedules accumulate identical
+phase-boundary idle time. Empirically:
+
+| Topology | RR makespan | XLA makespan |
+|----------|-------------|--------------|
+| 2×4 (ilp) | 13 | 13 |
+| 4×8 (ilp) | 122 | 122 |
+| 4×4×8 (ilp) | 637 | 637 |
+| 2×4 (dor) | 13 | 13 |
+| 4×8 (dor) | 116 | 116 |
+| 4×4×8 (dor) | 650 | 650 |
+
+XLA's randomization advantage over round-robin only manifests in cost models
+with phase overlap (pipelined injection), real-hardware effects (cache/queue/hotspot
+persistence), or background traffic — none of which we model. See
+[schedules.md](schedules.md) for the XLA phase construction.
 
 ## Caveats
 

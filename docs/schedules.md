@@ -48,6 +48,46 @@ phases accumulate, leading to a large total makespan.
 Analysis suggests this is a scheduling inefficiency (phase-makespan accumulation)
 rather than a routing problem; see [results.md](results.md).
 
+## Schedule A2: XLA (Destination-Core Randomization)
+
+**Class:** `XLASchedule` in `twisted_analysis/schedules/xla.py`
+
+**Phase structure.** Replicates XLA's native destination-core randomization for
+AllToAll lowering. Two static prime constants `A = 33617`, `B = 1299721`. For
+phase `p ∈ {0, ..., N-2}`:
+
+```
+permute_idx = ((p * A) + B) mod (N - 1) + 1
+dst         = (src + permute_idx) mod N         for every src
+```
+
+Each phase, like round-robin, has every node act as a source exactly once and a
+destination exactly once — guaranteeing zero endpoint contention within a phase.
+The pseudo-random permutation order is intended (in real hardware) to mitigate
+persistent hot-spot patterns across phases.
+
+**Bijection condition.** For `permute_idx` to visit every value in `{1, ..., N-1}`
+exactly once across the `N-1` phases, we need `gcd(A, N-1) = 1`. For our N values:
+
+| N | N-1 | gcd(33617, N-1) | Bijection? |
+|---|----:|----:|---|
+| 8 | 7 | 1 | ✓ |
+| 32 | 31 | 1 | ✓ |
+| 128 | 127 | 1 | ✓ |
+
+So the set of `(src, dst)` flows XLA emits is exactly a permutation of round-robin's.
+
+**Equivalence with RoundRobin in our cost model.**
+Because back-to-back phases each take a makespan determined only by their
+displacement (the set of flows in that phase), and total makespan is the sum,
+phase order is invariant: `Σ_δ makespan_phase(δ) = makespan_phase(π(δ))` for any
+permutation `π`. Empirically, XLA's makespan equals RoundRobin's in every cell
+(2x4/4x8/4x4x8 × {ilp, dor}); see [results.md](results.md).
+
+XLA's randomization only matters when the cost model breaks one of these
+assumptions: phase overlap (pipelined injection), real-hardware effects
+(cache/queue persistence), or background traffic. None of these are modeled here.
+
 ## Schedule B: Dimension-Ordered Phases (DimPhased)
 
 **Class:** `DimPhasedSchedule` in `twisted_analysis/schedules/dim_phased.py`

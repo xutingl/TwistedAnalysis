@@ -14,9 +14,14 @@ def lp_relax_lower_bound(
     T_upper: int,
     solver_name: str = "PULP_CBC_CMD",
 ) -> float:
-    """LP relaxation: minimize makespan T s.t. flow-conservation + capacity (fractional).
+    """LP relaxation of the time-indexed makespan ILP. Fractional x in [0, 1].
 
-    Returns the optimal T_LP, which satisfies LB <= T_LP <= ILP optimum.
+    Returns the optimal LP objective, which is the minimum *expected* completion
+    time across units (i.e. sum_t (t+1) * x[u, last, t]) — guaranteed to be <=
+    the ILP optimum, but with fractional x it can be looser than the link-load
+    lower bound. Treat this as `LP_relax <= ILP_opt`; do NOT assume it is tighter
+    than `AllToAll.lower_bound`. A truly makespan-tight LP relaxation requires a
+    different (and more expensive) formulation; out of scope for v1.
     """
     units = _unroll_units(router, flows)
     if not units:

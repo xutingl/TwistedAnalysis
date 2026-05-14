@@ -517,7 +517,7 @@ def main(argv=None) -> int:
 
     if args.out is None:
         slice_str = "_".join(str(s) for s in slice_)
-        out_path = _HERE / f"_ragged_a2a_kernel_orbit_greedy_{slice_str}.py"
+        out_path = _HERE / "outputs/" / f"_ragged_a2a_kernel_orbit_greedy_{slice_str}.py"
     else:
         out_path = Path(args.out)
     out_path.write_text(src)

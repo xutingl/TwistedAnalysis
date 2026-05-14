@@ -44,6 +44,15 @@ give 4–9× makespan gaps; dimension-phased schedules cover only a partial
 workload and are 1–3× sub-optimal even on their own subset. See
 [results.md](results.md).
 
+**Scope of this document.** We analyze only `OrbitGreedySchedule` with
+the `lpt_tail_asc` ordering. The companion `PipelinedOrbitSchedule`
+(same module) is a *constrained variant* that additionally requires
+each orbit's hops to fire at consecutive time steps (gap = 1). Its
+solution space is a strict subset of OrbitGreedy's; it is **not
+LB-optimal** in general (achieves LB on 7/10 cells) and is kept only as
+a pipelined-injection diagnostic. See [schedules.md](schedules.md) §B''
+for the separate discussion.
+
 ---
 
 This document presents the constructive scheduler used by

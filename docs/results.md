@@ -144,9 +144,18 @@ producing makespan=16=LB on this cell. Tests
 
 OrbitGreedy is the recommended scheduler: agrees with the ILP oracle on every
 solvable cell, microseconds vs minutes, no CBC dependency. Ordering matters:
-shortest-path-first gives a 5–16% gap; **PipelinedOrbit** (force gap=1 per
-orbit) gives 0–9% gap. See [schedules.md](schedules.md) for the algorithm and
-a Leighton-Maggs-Rao bound discussion.
+shortest-path-first gives a 5–16% gap.
+
+**PipelinedOrbit is a separate, more constrained algorithm — not the
+headline.** It uses the same orbit ordering as OrbitGreedy but adds the
+constraint that each orbit's hops fire at *consecutive* time steps
+(`t_{i+1} = t_i + 1`, gap = 1). Its solution space is a strict subset of
+OrbitGreedy's. It achieves LB on 7/10 cells; the four that miss are
+2×4×4 ilp (12 vs 11), 4×8 ilp (22 vs 21), 4×4×8 dor (90 vs 86),
+4×4×8 ilp (79 vs 74). PipelinedOrbit is included as a diagnostic for
+"does this cell admit a fully-pipelined LB-optimal schedule?", not as a
+production scheduler. See [schedules.md](schedules.md) §B' (OrbitGreedy)
+and §B'' (PipelinedOrbit) for separated discussions.
 
 **1. ILP routing reduces LB by 14–31% across topologies.**
 Distributing traffic across all minimal paths (ILPRouter) lowers the max-link load
@@ -259,9 +268,10 @@ no binary search above `LB` is needed). It is the binary-search starting at
 PuLP within reasonable time). With OrbitGreedy as a `T_upper = LB` oracle, the
 ILP is now an *independent verifier*, not a primary scheduler.
 
-**OrbitGreedy assumes uniform-AllToAll workload symmetry.** OrbitGreedy and
-PipelinedOrbit rely on `compute_orbits`, which assumes a translation-symmetric
-workload. For skewed traffic, fall back to `ilp_optimal` (Schedule D).
+**OrbitGreedy assumes uniform-AllToAll workload symmetry.** Both OrbitGreedy
+(headline) and PipelinedOrbit (constrained variant) rely on `compute_orbits`,
+which assumes a translation-symmetric workload. For skewed traffic, fall
+back to `ilp_optimal` (Schedule D).
 
 **OrbitGreedy LB-match is mechanically proven per cell.** On every one of the
 10 cells in the experiment matrix, `makespan = LB` follows from a König +

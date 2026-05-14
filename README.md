@@ -14,11 +14,16 @@ compute:
    dimension-order routing. ILP routing reduces LB by 14–31% vs. DOR.
 2. The makespan `M_S` for several schedules and report `gap(S) = M_S / LB`:
    - **OrbitGreedy** (constructive, no ILP, default order=`lpt_tail_asc`) —
-     `makespan = LB` on every (topology, router) cell tested (10/10).
-     Headline scheduler. The plain `lpt` variant (no tail-load tiebreak)
-     misses 2×4×4 DOR by 1 step; the tail-load-ascending tiebreak prevents
-     low-load tail edges from rolling the makespan past LB.
-   - **PipelinedOrbit** (constructive, gap=1 per orbit) — 0–8% gap.
+     **headline scheduler**. `makespan = LB` on every (topology, router) cell
+     tested (10/10). Plain `lpt` (no tail-load tiebreak) misses 2×4×4 DOR by
+     1 step; the tail-load-ascending tiebreak prevents low-load tail edges
+     from rolling the makespan past LB.
+   - **PipelinedOrbit** (constructive, **not optimal**) — same orbit ordering
+     as OrbitGreedy plus the extra constraint *gap=1 between consecutive hops
+     of the same orbit* (i.e., `t_{i+1} = t_i + 1`). Strict subset of
+     OrbitGreedy's solution space. Achieves LB on 7/10 cells; gaps of 1–5
+     steps on 4×8 ilp, 4×4×8 dor, 4×4×8 ilp, 2×4×4 ilp. Use as a
+     pipelined-injection diagnostic, not as the production scheduler.
    - Latin-square round-robin (full AllToAll, 4–9× gap due to phase-boundary idle).
    - XLA (destination-core randomization; bijection on phases, equal to RoundRobin in
      our model).
@@ -46,7 +51,7 @@ cat results/$(date +%Y-%m-%d)/headlines.csv   # aggregated summary
 
 - `twisted_analysis/topology/` — twisted-torus lattice, DOR router, ILPRouter.
 - `twisted_analysis/model/` — AllToAll workload, link load, lower bound.
-- `twisted_analysis/schedules/` — RoundRobin, XLA, DimPhased, OrbitGreedy / PipelinedOrbit, LP-optimal.
+- `twisted_analysis/schedules/` — RoundRobin, XLA, DimPhased, OrbitGreedy (headline), PipelinedOrbit (constrained variant), LP-optimal.
 - `twisted_analysis/simulator/` — step-synchronous engine + instrumentation.
 - `twisted_analysis/lp/` — time-indexed ILP + LP relaxation (PuLP/CBC).
 - `twisted_analysis/viz/` — matplotlib plot helpers.

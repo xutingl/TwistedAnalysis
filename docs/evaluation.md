@@ -117,9 +117,11 @@ Allowed `schedule` values:
 | `round_robin` | `RoundRobinSchedule` (Latin-square, full coverage) |
 | `xla` | `XLASchedule` (XLA destination-core randomization, full coverage) |
 | `dim_phased` | `DimPhasedSchedule` (partial coverage: one-dim-diff pairs only) |
-| `orbit_greedy` | `OrbitGreedySchedule(order="lpt")` (constructive, no ILP) |
+| `orbit_greedy` | `OrbitGreedySchedule(order="lpt_tail_asc")` — **headline scheduler**, constructive, no ILP, achieves LB on 10/10 cells. Path-internal gaps allowed. |
+| `orbit_greedy_lpt` | `OrbitGreedySchedule(order="lpt")` (no tail-load tiebreak; misses 2×4×4 DOR) |
 | `orbit_greedy_spt` | `OrbitGreedySchedule(order="spt")` (SPT ordering, for comparison) |
-| `pipelined_orbit` | `PipelinedOrbitSchedule(order="lpt")` (gap=1 per orbit) |
+| `pipelined_orbit` | `PipelinedOrbitSchedule(order="lpt_tail_asc")` — **constrained variant of OrbitGreedy**: adds the rule `t_{i+1} = t_i + 1` (gap = 1). Strict subset of OrbitGreedy's solution space; **not optimal** (achieves LB on 7/10 cells). Diagnostic only. |
+| `pipelined_orbit_lpt` | `PipelinedOrbitSchedule(order="lpt")` |
 | `pipelined_orbit_spt` | `PipelinedOrbitSchedule(order="spt")` |
 | `ilp_optimal` | runs full ILP, extracts LP-optimal schedule |
 | `ilp_optimal_symmetric` | runs symmetric ILP, extracts orbit-level schedule |

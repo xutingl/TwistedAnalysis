@@ -129,23 +129,25 @@ phase, the flows form independent rings (one ring per slice along that dim), so
 the bottleneck is the per-ring AllToAll makespan. The twist only affects phases
 in the smaller dims (where the wraparound cross-shifts the larger dim coordinate).
 
-## Schedule B': Orbit-Greedy and Pipelined-Orbit (constructive, no ILP)
+## Schedule B': OrbitGreedy (constructive, no ILP — headline scheduler)
 
-**Modules:** `twisted_analysis/schedules/orbit_greedy.py`
-(`OrbitGreedySchedule`, `PipelinedOrbitSchedule`)
+**Module:** `twisted_analysis/schedules/orbit_greedy.py` (`OrbitGreedySchedule`)
 
 **Motivation.** The symmetric ILP (Schedule C below) solves a time-indexed
 integer program over edge-orbit × time slots — 14s for 4×8, intractable for
-4×4×8. Inspecting its output ([scripts/inspect_symmetric_schedule.py](../scripts/inspect_symmetric_schedule.py))
+4×4×8 without a warm start. Inspecting its output
+([scripts/inspect_symmetric_schedule.py](../scripts/inspect_symmetric_schedule.py))
 showed the schedule has no closed-form shift pattern (only 5/31 orbits on 4×8
 are pipelined; hop-gaps range 1–18). The ILP is doing real combinatorial
-packing. So we replace it with two **polynomial-time greedy heuristics**.
+packing. OrbitGreedy is a **polynomial-time constructive replacement** that
+achieves the same optimum in microseconds.
 
-**Algorithm: OrbitGreedy.** Process translation orbits in some order (default:
+**Algorithm.** Process translation orbits in some order (default:
 **`lpt_tail_asc` = longest-path-first, tiebreak by ascending tail-edge load**).
 For each orbit, schedule its hops in path order at the earliest time strictly
 after the previous hop's time, skipping `(dim, dir, t)` slots already claimed
-by another orbit. Path-internal gaps are allowed when an edge orbit is contended.
+by another orbit. **Path-internal gaps are allowed** when an edge orbit is
+contended — this is the key flexibility OrbitGreedy uses.
 
 ```python
 edge_load = Counter((dim, dir) -> hits across all orbits' canonical paths)
@@ -158,11 +160,15 @@ for orbit_id in sorted(orbits, key=lambda o: (-len(path[o]), tail_load(o), o)):
     for i, (_, _, dim, dir) in enumerate(path[orbit_id]):
         t = prev_t + 1
         while t in edge_busy[(dim, dir)]:
-            t += 1
+            t += 1   # <-- this loop may skip slots: path-internal gaps allowed
         assignment[(orbit_id, i, t)] = 1.0
         edge_busy[(dim, dir)].add(t)
         prev_t = t
 ```
+
+The output `(orbit_id, hop_i, t)` is fed through `symmetric_assignment_to_injections`
+— the same adapter the symmetric ILP uses — so all `N` translations of each
+orbit become per-unit `Injection`s with `hop_schedule` populated.
 
 **Why the tail-load tiebreak matters.** Plain LPT scheduled two length-2
 orbits on 2×4×4 DOR — both ending on the low-load (0,−1) edge — back-to-back
@@ -171,21 +177,9 @@ on the bottleneck at t=14. Their tail hops then both wanted slot t=15 on
 tail-load tiebreak, the orbits with low-load tails get scheduled FIRST
 (while bottleneck slots are still abundant), claiming early bottleneck slots
 that leave their corresponding tail-edge slots open. Orbits with flexible
-high-load tails fill in around them. Empirically `lpt_tail_asc` hits
-`makespan = LB` on every (topology, router) cell tested; plain `lpt` hits
-LB on 9 of 10. Other orderings (`spt`, pure `tail_asc`) underperform.
+high-load tails fill in around them.
 
-The output `(orbit_id, hop_i, t)` is fed through `symmetric_assignment_to_injections`
-— the same adapter the symmetric ILP uses — so all 31 orbit × 32 translations
-become per-unit `Injection`s with `hop_schedule` populated.
-
-**Algorithm: PipelinedOrbit.** Stronger constraint: each orbit fires hops at
-`t = start, start+1, ..., start+L-1` (gap = 1). Pick the smallest `start` such
-that no `(dim, dir, t)` slot in the pipelined window is already claimed.
-
-**Why ordering matters.** Long-path orbits make the most edge demands and
-dominate the critical path. The tail-load tiebreak prevents low-load tail
-edges from becoming the makespan bottleneck. Empirically (see
+**Performance — optimal on every cell.** Empirically (see
 [results.md](results.md)):
 
 | Topology + Router | LB | default (lpt_tail_asc) | lpt | spt |
@@ -196,8 +190,8 @@ edges from becoming the makespan bottleneck. Empirically (see
 | 4×4×8 ilp | 74 | **74 (1.00)** | 74 (1.00) | 86 (1.16) |
 
 **OrbitGreedy with the default `lpt_tail_asc` ordering achieves
-`makespan = LB` on every (topology, router) cell we have tested** — 10/10.
-Plain `lpt` (no tiebreak) hits LB on 9/10, missing only the 2×4×4 DOR cell.
+`makespan = LB` on every (topology, router) cell tested — 10/10.** Plain
+`lpt` (no tiebreak) hits LB on 9/10, missing only the 2×4×4 DOR cell.
 Runtime is dominated by orbit/router setup (~21s on 4×4×8 for `ILPRouter`'s
 LP); the scheduling step itself takes microseconds.
 
@@ -219,15 +213,80 @@ machine-verified per cell by `scripts/verify_smith_proof.py`. A closed-form
 extension to all `{S, 2S}^n` shapes reduces to standard canonical-path
 enumeration.
 
-**Caveat — workload symmetry.** Both algorithms rely on `compute_orbits`,
-which assumes translation symmetry of the workload (uniform AllToAll). They
-do not handle skewed traffic patterns. The ILP-optimal schedules (C, D) make
+**Caveat — workload symmetry.** OrbitGreedy relies on `compute_orbits`,
+which assumes translation symmetry of the workload (uniform AllToAll). It
+does not handle skewed traffic patterns. The ILP-optimal schedules (C, D) make
 no such assumption.
 
 See [orbit_greedy_optimality.md](orbit_greedy_optimality.md) for the
 full proof: König-style bipartite-multi-graph setup, Smith's deadline
 reduction, worked 2×4 ILP proof (§4.3.14), and the 2×4×4 DOR failure-mode
 analysis.
+
+## Schedule B'': PipelinedOrbit (constrained variant — **not optimal**)
+
+**Module:** `twisted_analysis/schedules/orbit_greedy.py` (`PipelinedOrbitSchedule`)
+
+**Relationship to OrbitGreedy.** PipelinedOrbit is OrbitGreedy **with one
+extra constraint**: every orbit must fire its hops at *consecutive* time
+steps — `t_i = start + i` for `i = 0, …, L − 1`. No path-internal gaps are
+allowed. The orbit ordering, the use of `symmetric_assignment_to_injections`,
+and the `compute_orbits` dependency are all identical to OrbitGreedy; only
+the per-orbit hop-placement rule differs.
+
+```python
+# PipelinedOrbit: find the smallest `start` such that the *entire* contiguous
+# window (e_0, start), (e_1, start+1), ..., (e_{L-1}, start+L-1) is free.
+for orbit_id in sorted(orbits, key=...):  # same ordering as OrbitGreedy
+    path = canon[orbit_id]
+    start = 0
+    while True:
+        if all((start + i) not in edge_busy[(d, dr)]
+               for i, (_, _, d, dr) in enumerate(path)):
+            break
+        start += 1
+    # Commit the entire pipelined window
+    for i, (_, _, d, dr) in enumerate(path):
+        assignment[(orbit_id, i, start + i)] = 1.0
+        edge_busy[(d, dr)].add(start + i)
+```
+
+**Why PipelinedOrbit is strictly weaker than OrbitGreedy.** Any schedule
+PipelinedOrbit produces is also a valid OrbitGreedy output (it happens to
+have all gaps = 1). So PipelinedOrbit's solution space is a *strict subset*
+of OrbitGreedy's. When the optimal `makespan = LB` schedule requires some
+orbit to *wait* between its hops (e.g., because an intermediate edge is
+contended), PipelinedOrbit cannot produce it and must shift the orbit's
+entire window later — sometimes past `LB`.
+
+**Performance — sub-optimal on 3 of 10 cells.** PipelinedOrbit
+(`lpt_tail_asc` ordering) matches LB on 7 cells but misses on 3:
+
+| Topology + Router | LB | OrbitGreedy | PipelinedOrbit | Gap |
+|---|---:|---:|---:|---:|
+| 2×4 ilp/dor       | 3, 4   | LB | LB | 0 |
+| 2×2×4 ilp/dor     | 5, 7   | LB | LB | 0 |
+| 2×4×4 dor         | 16     | LB | LB | 0 |
+| 4×8 dor           | 26     | LB | LB | 0 |
+| **2×4×4 ilp**     | 11     | 11 | **12** | **+1 (1.09×)** |
+| **4×8 ilp**       | 21     | 21 | **22** | **+1 (1.05×)** |
+| **4×4×8 dor**     | 86     | 86 | **90** | **+4 (1.05×)** |
+| **4×4×8 ilp**     | 74     | 74 | **79** | **+5 (1.07×)** |
+
+PipelinedOrbit is therefore **not the headline scheduler**. It is included
+as:
+
+1. **A diagnostic** that answers the structural question "does this topology
+   admit a fully-pipelined LB-optimal schedule?" — sometimes yes (2×4,
+   2×2×4, 2×4×4 dor, 4×8 dor), sometimes no (the four cells above).
+2. **A simpler baseline** (no per-hop slot search; just find a contiguous
+   window). The simpler structure also makes it easier to analyze in
+   restricted settings.
+
+**Use OrbitGreedy as the production scheduler.** Use PipelinedOrbit only
+when the pipelined structure is independently desirable (e.g., for
+implementations that must inject orbit-hops back-to-back due to hardware
+constraints not modeled here).
 
 ## Schedule C: ILP-Optimal (Symmetric)
 

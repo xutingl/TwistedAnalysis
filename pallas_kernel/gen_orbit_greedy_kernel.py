@@ -359,20 +359,21 @@ def generate_kernel_source(
     L.append('')
 
     if not per_step_barrier:
-        # ---- single fori_loop over orbits, final drain ----
-        L.append('    # ---- main orbit loop: OrbitGreedy firing order ----')
-        L.append('    def _orbit_body(k, _state):')
+        # ---- single flat fori_loop, final drain ----
+        # packet_idx is OUTER, orbit-index is INNER — matches the reference's
+        # round-robin pattern (each consecutive iteration targets a different
+        # physical outgoing link, so per-link DMAs pipeline), and preserves
+        # the orbit-greedy column-permutation invariant per packet round.
+        L.append('    # ---- main orbit loop: packet outer, OrbitGreedy order inner ----')
+        L.append(f'    _NUM_ORBITS = {K}  # = axis_size - 1')
+        L.append('    def _body(i, _state):')
+        L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
+        L.append('        k = lax.rem(i, _NUM_ORBITS)')
         L.append('        dst_flat = dest_table_ref[my_flat, k]')
-        L.append('        dst_dev = {axis_name: dst_flat}')
-        L.append('')
-        L.append('        def _packet_body(packet_idx, _state2):')
-        L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
-        L.append('            return _state2')
-        L.append('')
-        L.append('        jax.lax.fori_loop(0, num_packets, _packet_body, None)')
+        L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
         L.append('        return _state')
         L.append('')
-        L.append(f'    jax.lax.fori_loop(0, {K}, _orbit_body, None)')
+        L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
         L.append('')
         L.append('    # ---- final drain (same dummy-DMA pattern as reference) ----')
         L.append('    send_amount = total_send_amount_ref[0]')

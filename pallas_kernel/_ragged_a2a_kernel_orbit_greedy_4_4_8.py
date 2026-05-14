@@ -374,19 +374,16 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
 
     jax.lax.fori_loop(0, num_packets, _self_body, None)
 
-    # ---- main orbit loop: OrbitGreedy firing order ----
-    def _orbit_body(k, _state):
+    # ---- main orbit loop: packet outer, OrbitGreedy order inner ----
+    _NUM_ORBITS = 127  # = axis_size - 1
+    def _body(i, _state):
+        packet_idx = lax.div(i, _NUM_ORBITS)
+        k = lax.rem(i, _NUM_ORBITS)
         dst_flat = dest_table_ref[my_flat, k]
-        dst_dev = {axis_name: dst_flat}
-
-        def _packet_body(packet_idx, _state2):
-            _issue_packet(packet_idx, dst_flat, dst_dev)
-            return _state2
-
-        jax.lax.fori_loop(0, num_packets, _packet_body, None)
+        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})
         return _state
 
-    jax.lax.fori_loop(0, 127, _orbit_body, None)
+    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)
 
     # ---- final drain (same dummy-DMA pattern as reference) ----
     send_amount = total_send_amount_ref[0]

@@ -1,18 +1,26 @@
 """Generator for orbit-greedy P2P AllToAll Pallas TPU kernels.
 
 Produces a self-contained Python file containing a kernel function with the
-same signature as `_ragged_a2a_kernel_point_to_point` (see reference_kernel.py
-in this directory), differing only in the *order* in which each device
-issues its remote DMA sends:
+**same signature as `_ragged_a2a_kernel_point_to_point` plus one extra Ref
+input `dest_table_ref`**:
 
   reference: `(i + (my_id+1) * groups_per_shard) % num_groups`  (rotation)
-  generated: `DEST_TABLE[my_flat, i]`                            (OrbitGreedy)
+  generated: `dest_table_ref[my_flat, i]`                       (OrbitGreedy)
 
-`DEST_TABLE` is an `[N, N-1]` int32 constant baked into the generated file. It
-encodes, for every source device coord and every orbit (in OrbitGreedy step
-order), the destination device's flat id under the *group composition* of the
-twisted torus. Per-source baking is required because on a {S, 2S}^n twisted
-torus the group operation is NOT elementwise modular addition — see README.md.
+`_DEST_TABLE_NP` is an `[N, N-1]` int32 NumPy constant at module level
+(no JAX dependency at import). It encodes, for every source device flat-id
+and every orbit (in OrbitGreedy step order), the destination device's
+flat-id under the *group composition* of the twisted torus. Per-source
+baking is required because on a {S, 2S}^n twisted torus the group operation
+is NOT elementwise modular addition — see README.md.
+
+The generated kernel takes the table as a kernel *input* (via Pallas
+`in_specs`), not a closure constant: Pallas raises "captures constants
+[i32[N,K]]" if the table is closed over instead of passed in.
+
+`axis_name` is a **single flat string** (e.g. `"x"`) — the kernel calls
+`jax.lax.axis_index(axis_name)` once to obtain the flat device id. The
+twist-aware destination lookup then makes per-axis decode unnecessary.
 
 Usage (CLI):
 
@@ -20,7 +28,6 @@ Usage (CLI):
         --slice 4,4,8 \\
         [--router ilp|dor] \\
         [--order lpt_tail_asc|lpt|spt|tail_asc] \\
-        [--axis-names x,y,z] \\
         [--per-step-barrier] \\
         [--out FILE]
 
@@ -100,36 +107,6 @@ def _dest_table_literal(table: np.ndarray) -> str:
     return "np.array([\n" + ",\n".join(rows) + ",\n], dtype=np.int32)"
 
 
-def _coord_decode_exprs(
-    flat_var: str, slice_: tuple[int, ...]
-) -> tuple[str, ...]:
-    """Per-axis decode expressions for `flat_var` given the slice layout."""
-    exprs = []
-    suffix_prod = 1
-    for s in reversed(slice_):
-        if suffix_prod == 1:
-            exprs.append(f"{flat_var} % {s}")
-        else:
-            exprs.append(f"({flat_var} // {suffix_prod}) % {s}")
-        suffix_prod *= s
-    return tuple(reversed(exprs))
-
-
-def _flat_encode_expr(
-    coord_vars: tuple[str, ...], slice_: tuple[int, ...]
-) -> str:
-    """Flat-id expression from per-axis variables and slice."""
-    terms = []
-    suffix_prod = 1
-    for var, s in zip(reversed(coord_vars), reversed(slice_)):
-        if suffix_prod == 1:
-            terms.append(var)
-        else:
-            terms.append(f"{var} * {suffix_prod}")
-        suffix_prod *= s
-    return " + ".join(reversed(terms))
-
-
 # ---------------------------------------------------------------------------
 # Main generator
 # ---------------------------------------------------------------------------
@@ -139,7 +116,6 @@ def generate_kernel_source(
     router=None,
     *,
     order: str = "lpt_tail_asc",
-    axis_names: tuple[str, ...] | None = None,
     function_name: str | None = None,
     per_step_barrier: bool = False,
     router_name_for_doc: str | None = None,
@@ -151,8 +127,6 @@ def generate_kernel_source(
         router: Router instance. None -> ILPRouter (recommended).
         order: OrbitGreedy ordering. Default "lpt_tail_asc" (achieves
             makespan = LB on every doc cell).
-        axis_names: Mesh axis names, one per topology dim. Defaults to
-            ("x", "y", "z", ...).
         function_name: Override generated function name.
         per_step_barrier: Emit per-OrbitGreedy-step barriers (best-effort,
             via dummy-DMA wait). Default False (rely on source-FIFO).
@@ -167,16 +141,6 @@ def generate_kernel_source(
     n_dim = topology.ndim
     slice_ = tuple(topology.slice)
     N = topology.n_nodes
-
-    if axis_names is None:
-        default_axes = ("x", "y", "z", "w", "v", "u")
-        if n_dim > len(default_axes):
-            raise ValueError(f"No default axis names for ndim={n_dim}")
-        axis_names = default_axes[:n_dim]
-    if len(axis_names) != n_dim:
-        raise ValueError(
-            f"axis_names length {len(axis_names)} != ndim {n_dim}"
-        )
 
     if function_name is None:
         slice_str = "_".join(str(s) for s in slice_)
@@ -202,26 +166,6 @@ def generate_kernel_source(
     LB = max(edge_load.values())
     observed_makespan = max(t for (_, _, t) in assignment.keys()) + 1
 
-    my_flat_encode = _flat_encode_expr(
-        tuple(f"my_{a}" for a in axis_names), slice_
-    )
-    dst_decode = _coord_decode_exprs("dst_flat", slice_)
-    # device_id dicts use *runtime* axis names from `axis_name[i]` so the user
-    # can pass any mesh-axis name tuple matching topology dim order.
-    device_id_dst = "{" + ", ".join(
-        f"axis_name[{i}]: dst_{a}" for i, a in enumerate(axis_names)
-    ) + "}"
-    device_id_self = "{" + ", ".join(
-        f"axis_name[{i}]: my_{a}" for i, a in enumerate(axis_names)
-    ) + "}"
-    axis_index_block = "\n".join(
-        f"    my_{a} = jax.lax.axis_index(axis_name[{i}])"
-        for i, a in enumerate(axis_names)
-    )
-    axis_size_expr = " * ".join(
-        f"jax.lax.axis_size(axis_name[{i}])" for i in range(len(axis_names))
-    )
-
     L = []
 
     # ---- header ------------------------------------------------------------
@@ -237,7 +181,6 @@ def generate_kernel_source(
     L.append(f'OrbitGreedy makespan (model): {observed_makespan} '
              f'(LB-ratio = {observed_makespan / LB:.3f})')
     L.append(f'Hop-0 steps:     {makespan_hop0}')
-    L.append(f'Mesh axes:       {axis_names}')
     L.append('')
     L.append('Regenerate via:')
     barrier_flag = " --per-step-barrier" if per_step_barrier else ""
@@ -246,22 +189,29 @@ def generate_kernel_source(
     L.append(f'        --router {router_name_for_doc.replace("Router", "").lower()} \\')
     L.append(f'        --order {order}{barrier_flag}')
     L.append('')
-    L.append('Drop-in replacement for `_ragged_a2a_kernel_point_to_point`. To use:')
+    L.append('Integration. The kernel has the same signature as')
+    L.append('`_ragged_a2a_kernel_point_to_point` PLUS one extra positional Ref')
+    L.append('input `dest_table_ref` (slot 6, between `num_packets_per_group_ref`')
+    L.append('and `x_ref`). To use:')
     L.append('  1. Copy this file next to reference_kernel.py.')
-    L.append('  2. In ragged_all_to_all() change the line')
-    L.append('         kernel = _ragged_a2a_kernel_point_to_point')
-    L.append('     to:')
-    L.append(f'         kernel = {function_name}')
-    L.append('  3. Call ragged_all_to_all(...) with')
-    L.append(f'         axis_name={axis_names}')
-    L.append('     (a tuple of mesh axes corresponding to topology dims).')
+    L.append(f'  2. Set `kernel = {function_name}` in ragged_all_to_all.')
+    L.append('  3. Insert an extra SMEM in_spec at slot 6 (before x):')
+    L.append('         pl.BlockSpec(memory_space=pltpu.SMEM)')
+    L.append('     and pass `jnp.asarray(_DEST_TABLE_NP)` as the corresponding')
+    L.append('     extra positional input to the pallas_call.')
+    L.append('  4. Shift `input_output_aliases` keys by +1: e.g. {7: 0} → {8: 0}.')
+    L.append('  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.')
+    L.append('         axis_name="x"')
+    L.append('     The orbit-greedy kernel does NOT decode per-axis coords; it')
+    L.append('     reads `my_flat = jax.lax.axis_index(axis_name)` once.')
+    L.append('')
+    L.append('Use `build_pallas_call_kwargs()` below for a copy-pasteable example.')
     L.append('')
     L.append('See README.md for the twist explanation and integration steps.')
     L.append('"""')
     L.append('from __future__ import annotations')
     L.append('')
     L.append('import jax')
-    L.append('import jax.numpy as jnp')
     L.append('import numpy as np')
     L.append('from jax import lax')
     L.append('from jax.experimental import pallas as pl')
@@ -273,23 +223,23 @@ def generate_kernel_source(
     L.append('')
     L.append('')
     L.append('# ----------------------------- baked schedule -------------------------------')
-    L.append('# DEST_TABLE[src_flat, k] = flat destination device id for orbit k')
+    L.append('# _DEST_TABLE_NP[src_flat, k] = flat destination device id for orbit k')
     L.append('# (in OrbitGreedy firing order) from source `src_flat`.')
     L.append('#')
-    L.append(f'# Flat layout: my_flat = {my_flat_encode}')
-    L.append(f'#   over mesh axes {axis_names} with sizes {slice_}.')
+    L.append('# Plain numpy at module level (NO jax.numpy here — importing this file')
+    L.append('# must NOT trigger JAX backend initialization, or imports of sibling')
+    L.append('# kernel files in the same module can fail).')
     L.append('#')
     L.append(f'# Per-source baking required because the {slice_} twisted-torus group')
     L.append('# composition is NOT elementwise modular. See README.md §Twist.')
     L.append(f'_DEST_TABLE_NP = {_dest_table_literal(dest_table)}')
     L.append(f'assert _DEST_TABLE_NP.shape == ({N}, {K}), (')
-    L.append('    f"DEST_TABLE shape mismatch: {_DEST_TABLE_NP.shape}"')
+    L.append('    f"_DEST_TABLE_NP shape mismatch: {_DEST_TABLE_NP.shape}"')
     L.append(')')
-    L.append('# JAX captures this as a closure constant when the kernel is traced.')
-    L.append('DEST_TABLE = jnp.asarray(_DEST_TABLE_NP)')
     L.append('')
-    L.append(f'# ORBIT_STEPS[t] = orbit indices firing at OrbitGreedy step t. {makespan_hop0} steps total.')
-    L.append('ORBIT_STEPS = [')
+    L.append(f'# _ORBIT_STEPS[t] = orbit indices firing at OrbitGreedy step t. '
+             f'{makespan_hop0} steps total.')
+    L.append('_ORBIT_STEPS = [')
     for t, step in enumerate(orbit_steps):
         L.append(f'    {step!r},  # step {t} ({len(step)} concurrent orbit(s))')
     L.append(']')
@@ -304,6 +254,7 @@ def generate_kernel_source(
     L.append('    total_send_amount_ref,')
     L.append('    total_recv_amount_ref,')
     L.append('    num_packets_per_group_ref,')
+    L.append('    dest_table_ref,  # int32[N, K] in SMEM — pass as extra pallas_call input')
     L.append('    x_ref,')
     L.append('    _,')
     L.append('    o_ref,')
@@ -319,12 +270,14 @@ def generate_kernel_source(
     L.append('):')
     L.append(f'    """Orbit-greedy P2P AllToAll kernel for slice={slice_}.')
     L.append('')
-    L.append('    Signature matches `_ragged_a2a_kernel_point_to_point`. Differences:')
-    L.append(f'      * `axis_name` MUST be a {n_dim}-tuple matching slice={slice_}.')
+    L.append('    Signature: same as `_ragged_a2a_kernel_point_to_point` PLUS one extra')
+    L.append('    Ref input `dest_table_ref` (int32[N, K] in SMEM, slot 6). Other')
+    L.append('    differences vs reference:')
     L.append('      * Iteration order = OrbitGreedy firing order (vs rotation).')
-    L.append('      * Destinations are looked up in DEST_TABLE (twist-aware).')
+    L.append('      * Destinations are looked up in `dest_table_ref` (twist-aware).')
     L.append('      * `transpose=True` is NOT supported (would need regen).')
     L.append('      * Assumes 1 group per device (uniform AllToAll).')
+    L.append('      * `axis_name` is a flat string (e.g. "x"), as in the reference.')
     L.append('    """')
     L.append('    assert scratch_ref is None')
     L.append('    del scratch_ref')
@@ -333,14 +286,12 @@ def generate_kernel_source(
     L.append('    assert not transpose, (')
     L.append('        "transpose=True not supported by orbit-greedy kernel; use reference."')
     L.append('    )')
-    L.append(f'    assert isinstance(axis_name, tuple) and len(axis_name) == {n_dim}, (')
-    L.append(f'        f"axis_name must be a {n_dim}-tuple matching slice={slice_}; got {{axis_name=}}"')
-    L.append('    )')
     L.append('')
-    L.append('    # Per-axis indices on this device:')
-    L.append(axis_index_block)
-    L.append(f'    my_flat = {my_flat_encode}')
-    L.append(f'    axis_size_local = {axis_size_expr}')
+    L.append('    # Flat device id under `axis_name` (a single mesh axis spanning all')
+    L.append(f'    # {N} devices). The twist is baked into dest_table_ref, so we do not')
+    L.append('    # decode per-axis coordinates here.')
+    L.append('    my_flat = jax.lax.axis_index(axis_name)')
+    L.append('    axis_size_local = jax.lax.axis_size(axis_name)')
     L.append('')
     L.append('    num_groups = sizes_ref.shape[0]')
     L.append(f'    assert num_groups == {N}, (')
@@ -401,7 +352,7 @@ def generate_kernel_source(
     L.append('')
     L.append('    # ---- self copy (group_idx = my_flat) ----')
     L.append('    def _self_body(packet_idx, _state):')
-    L.append(f'        _issue_packet(packet_idx, my_flat, {device_id_self})')
+    L.append('        _issue_packet(packet_idx, my_flat, {axis_name: my_flat})')
     L.append('        return _state')
     L.append('')
     L.append('    jax.lax.fori_loop(0, num_packets, _self_body, None)')
@@ -411,10 +362,8 @@ def generate_kernel_source(
         # ---- single fori_loop over orbits, final drain ----
         L.append('    # ---- main orbit loop: OrbitGreedy firing order ----')
         L.append('    def _orbit_body(k, _state):')
-        L.append('        dst_flat = DEST_TABLE[my_flat, k]')
-        for a, expr in zip(axis_names, dst_decode):
-            L.append(f'        dst_{a} = {expr}')
-        L.append(f'        dst_dev = {device_id_dst}')
+        L.append('        dst_flat = dest_table_ref[my_flat, k]')
+        L.append('        dst_dev = {axis_name: dst_flat}')
         L.append('')
         L.append('        def _packet_body(packet_idx, _state2):')
         L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
@@ -460,10 +409,8 @@ def generate_kernel_source(
         L.append('        ).wait()')
         L.append('')
         L.append('    def _issue_orbit(k):')
-        L.append('        dst_flat = DEST_TABLE[my_flat, k]')
-        for a, expr in zip(axis_names, dst_decode):
-            L.append(f'        dst_{a} = {expr}')
-        L.append(f'        dst_dev = {device_id_dst}')
+        L.append('        dst_flat = dest_table_ref[my_flat, k]')
+        L.append('        dst_dev = {axis_name: dst_flat}')
         L.append('        def _pb(packet_idx, _state):')
         L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
         L.append('            return _state')
@@ -472,7 +419,7 @@ def generate_kernel_source(
         L.append('    def _drain_step(step_indices):')
         L.append('        cum = 0')
         L.append('        for k in step_indices:')
-        L.append('            cum = cum + sizes_ref[DEST_TABLE[my_flat, k]]')
+        L.append('            cum = cum + sizes_ref[dest_table_ref[my_flat, k]]')
         L.append('        pltpu.make_async_copy(')
         L.append('            o_ref.at[pl.ds(0, cum)],')
         L.append('            o_ref.at[pl.ds(0, cum)],')
@@ -493,6 +440,29 @@ def generate_kernel_source(
             L.append('')
 
     L.append('')
+
+    # ---- integration helper -----------------------------------------------
+    L.append('')
+    L.append(f'def build_pallas_call_kwargs():')
+    L.append('    """Return a dict of pallas_call kwargs/inputs for this kernel.')
+    L.append('')
+    L.append('    The returned dict has 3 keys:')
+    L.append('      * "dest_table": jnp.ndarray to pass as the extra positional input')
+    L.append('         (slot 6, before x).')
+    L.append('      * "extra_in_spec": pl.BlockSpec for the dest_table input (SMEM).')
+    L.append('      * "input_output_aliases_shift": int 1 — add to every key in the')
+    L.append('         original `input_output_aliases` dict to account for the new')
+    L.append('         slot. The reference uses `{7: 0}`; with this kernel use `{8: 0}`.')
+    L.append('')
+    L.append('    Call this inside `ragged_all_to_all` (NOT at module load) so the')
+    L.append('    `jnp.asarray` of the table happens only when JAX is initialized.')
+    L.append('    """')
+    L.append('    import jax.numpy as jnp')
+    L.append('    return {')
+    L.append('        "dest_table": jnp.asarray(_DEST_TABLE_NP),')
+    L.append('        "extra_in_spec": pl.BlockSpec(memory_space=pltpu.SMEM),')
+    L.append('        "input_output_aliases_shift": 1,')
+    L.append('    }')
     return "\n".join(L)
 
 
@@ -524,8 +494,6 @@ def main(argv=None) -> int:
                    help="Routing table (default: ilp)")
     p.add_argument("--order", default="lpt_tail_asc",
                    choices=["lpt_tail_asc", "lpt", "spt", "tail_asc"])
-    p.add_argument("--axis-names", default=None,
-                   help="Comma-separated mesh axis names, e.g. x,y,z")
     p.add_argument("--per-step-barrier", action="store_true",
                    help="Emit per-OrbitGreedy-step barriers (best-effort).")
     p.add_argument("--function-name", default=None)
@@ -536,15 +504,11 @@ def main(argv=None) -> int:
     slice_ = _parse_slice(args.slice)
     topology = Topology(slice=slice_)
     router, router_disp = _build_router(args.router, topology)
-    axis_names = (
-        tuple(args.axis_names.split(",")) if args.axis_names else None
-    )
 
     src = generate_kernel_source(
         topology,
         router=router,
         order=args.order,
-        axis_names=axis_names,
         function_name=args.function_name,
         per_step_barrier=args.per_step_barrier,
         router_name_for_doc=f"{router_disp}Router",

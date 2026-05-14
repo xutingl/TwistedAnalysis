@@ -103,47 +103,104 @@ python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --router dor
 python pallas_kernel/gen_orbit_greedy_kernel.py --slice 2,4,4
 python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,8
 
-# Custom axis names matching your JAX mesh:
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --axis-names mesh_x,mesh_y,mesh_z
-
 # Per-step barriers (forces stricter ordering, less pipelining):
 python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --per-step-barrier
 ```
 
+The mesh axis name is chosen at *call site* (`axis_name="x"` argument to
+`ragged_all_to_all`) — no longer baked into the generator.
+
 ### Wire into `ragged_all_to_all`
 
+The orbit-greedy kernel has the same signature as
+`_ragged_a2a_kernel_point_to_point` **plus one extra positional `Ref` input
+`dest_table_ref`** (slot 6, between `num_packets_per_group_ref` and `x_ref`).
+This is required because Pallas refuses to capture large constants as
+closures — the destination table must be a `pallas_call` input.
+
+**Integration steps:**
+
 1. Copy the generated file into your project next to `reference_kernel.py`.
-2. In `ragged_all_to_all` (or wherever you set `kernel = ...`), change:
+
+2. In `ragged_all_to_all` (or wherever you set `kernel = ...`), switch the
+   kernel name:
 
    ```python
-   kernel = _ragged_a2a_kernel_point_to_point
-   ```
-
-   to:
-
-   ```python
+   from ._ragged_a2a_kernel_orbit_greedy_4_4_8 import (
+       _ragged_a2a_kernel_orbit_greedy_4_4_8,
+       build_pallas_call_kwargs,
+   )
    kernel = _ragged_a2a_kernel_orbit_greedy_4_4_8
    ```
 
-   The signature is identical. If you want both kernels co-resident, route
-   on a new `KernelImpl.ORBIT_GREEDY` enum value.
+3. **Inject the destination table as an extra `pallas_call` input.** The
+   helper `build_pallas_call_kwargs()` produces the JAX array (lazily, so no
+   JAX backend init at import) and the SMEM `BlockSpec`:
 
-3. **Call `ragged_all_to_all` with a tuple `axis_name`** matching the topology
-   dimension order:
+   ```python
+   kw = build_pallas_call_kwargs()
+   dest_table = kw["dest_table"]                    # jnp.ndarray, int32[N, K]
+   extra_in_spec = kw["extra_in_spec"]              # pl.BlockSpec(SMEM)
+   alias_shift = kw["input_output_aliases_shift"]   # 1
+   ```
+
+4. **Modify `in_specs` to insert `extra_in_spec` at slot 6** (between the
+   six scalar SMEM specs and the two ANY-memory specs for `x` and
+   `existing_out`):
+
+   ```python
+   in_specs = [
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # input_offsets    (slot 0)
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # output_offsets   (slot 1)
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # send_sizes       (slot 2)
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # total_send       (slot 3)
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # total_recv       (slot 4)
+       pl.BlockSpec(memory_space=pltpu.SMEM),  # num_packets      (slot 5)
+       extra_in_spec,                          # dest_table       (slot 6)  ← NEW
+       pl.BlockSpec(memory_space=pl.ANY),      # x                (slot 7)
+       pl.BlockSpec(memory_space=pl.ANY)       # existing_out     (slot 8)
+       if existing_out is not None else None,
+   ]
+   ```
+
+5. **Pass `dest_table` as an extra positional input** to the
+   `pallas_call(...)` call, between `num_packets_per_group` and `x`:
+
+   ```python
+   pallas_call(...)(
+       input_offsets,
+       output_offsets,
+       send_sizes,
+       total_send_amount,
+       total_recv_amount,
+       num_packets_per_group,
+       dest_table,                # ← NEW
+       x,
+       existing_out,
+   )
+   ```
+
+6. **Shift `input_output_aliases` keys by `alias_shift` (= 1).** The
+   reference uses `{7: 0}` (existing_out aliases output); with this kernel
+   it becomes `{8: 0}`.
+
+7. **Call `ragged_all_to_all` with `axis_name` as a single flat string**
+   spanning all `N = prod(slice)` devices:
 
    ```python
    out = ragged_all_to_all(
        x, routing_info,
        mesh=mesh,
-       axis_name=("x", "y", "z"),     # tuple of 3 mesh axis names
+       axis_name="x",          # flat single string (NOT a tuple)
        collective_id=k,
        ...
    )
    ```
 
-   The reference kernel accepts `axis_name: str | tuple[str, ...]`; the
-   orbit-greedy kernel *requires* a tuple of length matching the topology
-   `ndim`. Assert at line 1 of the kernel catches misuse.
+   The orbit-greedy kernel does *not* decode per-axis coordinates — it
+   calls `jax.lax.axis_index(axis_name)` once to get the flat device id and
+   looks up destinations in `dest_table_ref`. The twist is baked into the
+   table, not handled at runtime.
 
 ## Generator options reference
 
@@ -152,7 +209,6 @@ python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --per-step-barrier
 | `--slice` | required | Comma-separated topology shape, e.g. `4,4,8`. Must be in `{S, 2S}^n`. |
 | `--router` | `ilp` | `ilp` (load-balanced minimal — gives lower LB) or `dor` (dimension-order). |
 | `--order` | `lpt_tail_asc` | OrbitGreedy ordering. `lpt_tail_asc` achieves makespan = LB on every doc cell. |
-| `--axis-names` | `x,y,z,...` | Mesh axis names baked into doc comments. Runtime is flexible (uses `axis_name[i]`). |
 | `--per-step-barrier` | off | Insert dummy-DMA barriers between OrbitGreedy steps. Stricter ordering, less pipelining. |
 | `--function-name` | `_ragged_a2a_kernel_orbit_greedy_<slice>` | Override the generated function name. |
 | `--out` | `./pallas_kernel/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Output path. |
@@ -161,8 +217,8 @@ python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --per-step-barrier
 
 - **No TPU silicon yet.** The kernel cannot be tested locally. The generator
   output parses as Python (verified via `ast.parse`), but Pallas-specific
-  semantics (semaphore behaviour, `device_id` resolution under multi-axis mesh,
-  closure-capture placement of `DEST_TABLE`) need TPU validation.
+  semantics (semaphore behaviour, `device_id` resolution, SMEM bandwidth
+  for the `dest_table_ref` lookup) need TPU validation.
 - **`transpose=True` is not supported.** The orbit-to-destination map would
   need regeneration with reversed orbit direction. The kernel asserts.
 - **Assumes 1 group per device** (uniform AllToAll). For ragged use cases,

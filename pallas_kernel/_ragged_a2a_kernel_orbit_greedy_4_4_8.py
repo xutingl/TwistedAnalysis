@@ -9,7 +9,6 @@ Per-step barrier: False
 Bandwidth LB:    74
 OrbitGreedy makespan (model): 74 (LB-ratio = 1.000)
 Hop-0 steps:     68
-Mesh axes:       ('x', 'y', 'z')
 
 Regenerate via:
     python pallas_kernel/gen_orbit_greedy_kernel.py \
@@ -17,22 +16,29 @@ Regenerate via:
         --router ilp \
         --order lpt_tail_asc
 
-Drop-in replacement for `_ragged_a2a_kernel_point_to_point`. To use:
+Integration. The kernel has the same signature as
+`_ragged_a2a_kernel_point_to_point` PLUS one extra positional Ref
+input `dest_table_ref` (slot 6, between `num_packets_per_group_ref`
+and `x_ref`). To use:
   1. Copy this file next to reference_kernel.py.
-  2. In ragged_all_to_all() change the line
-         kernel = _ragged_a2a_kernel_point_to_point
-     to:
-         kernel = _ragged_a2a_kernel_orbit_greedy_4_4_8
-  3. Call ragged_all_to_all(...) with
-         axis_name=('x', 'y', 'z')
-     (a tuple of mesh axes corresponding to topology dims).
+  2. Set `kernel = _ragged_a2a_kernel_orbit_greedy_4_4_8` in ragged_all_to_all.
+  3. Insert an extra SMEM in_spec at slot 6 (before x):
+         pl.BlockSpec(memory_space=pltpu.SMEM)
+     and pass `jnp.asarray(_DEST_TABLE_NP)` as the corresponding
+     extra positional input to the pallas_call.
+  4. Shift `input_output_aliases` keys by +1: e.g. {7: 0} → {8: 0}.
+  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.
+         axis_name="x"
+     The orbit-greedy kernel does NOT decode per-axis coords; it
+     reads `my_flat = jax.lax.axis_index(axis_name)` once.
+
+Use `build_pallas_call_kwargs()` below for a copy-pasteable example.
 
 See README.md for the twist explanation and integration steps.
 """
 from __future__ import annotations
 
 import jax
-import jax.numpy as jnp
 import numpy as np
 from jax import lax
 from jax.experimental import pallas as pl
@@ -44,11 +50,12 @@ from megablox.collectives import ragged_collectives_utils  # type: ignore
 
 
 # ----------------------------- baked schedule -------------------------------
-# DEST_TABLE[src_flat, k] = flat destination device id for orbit k
+# _DEST_TABLE_NP[src_flat, k] = flat destination device id for orbit k
 # (in OrbitGreedy firing order) from source `src_flat`.
 #
-# Flat layout: my_flat = my_x * 32 + my_y * 8 + my_z
-#   over mesh axes ('x', 'y', 'z') with sizes (4, 4, 8).
+# Plain numpy at module level (NO jax.numpy here — importing this file
+# must NOT trigger JAX backend initialization, or imports of sibling
+# kernel files in the same module can fail).
 #
 # Per-source baking required because the (4, 4, 8) twisted-torus group
 # composition is NOT elementwise modular. See README.md §Twist.
@@ -183,13 +190,11 @@ _DEST_TABLE_NP = np.array([
     [ 41,  45,   2,   4,   9,  13,  16,  22,  33,  37,  40,  42,  44,  46,  49,  53,  64,  70,  73,  77,  82,  84, 102,  96, 109, 105, 116, 114,  30,  24,   1,   3,   5,   8,  10,  12,  14,  23,  17,  21,  61,  57,  32,  34,  36,  38,  47,  43,  48,  50,  52,  54,  92,  90,  71,  65,  69,  72,  74,  76,  78,  81,  83,  85, 123, 122, 124, 101, 103,  97, 108, 110, 104, 106, 115, 117, 113,  29,  25,   0,   6,  15,  11,  18,  20,  60,  62,  56,  58,  39,  35,  55,  51,  93,  89,  66,  68,  79,  75,  80,  86,  31,  91, 121, 125, 100,  98, 107, 111, 118, 112,  28,  26,   7,  19,  94,  88,  67,  87,  59,  63, 120, 126,  99, 119,  27,  95],
 ], dtype=np.int32)
 assert _DEST_TABLE_NP.shape == (128, 127), (
-    f"DEST_TABLE shape mismatch: {_DEST_TABLE_NP.shape}"
+    f"_DEST_TABLE_NP shape mismatch: {_DEST_TABLE_NP.shape}"
 )
-# JAX captures this as a closure constant when the kernel is traced.
-DEST_TABLE = jnp.asarray(_DEST_TABLE_NP)
 
-# ORBIT_STEPS[t] = orbit indices firing at OrbitGreedy step t. 68 steps total.
-ORBIT_STEPS = [
+# _ORBIT_STEPS[t] = orbit indices firing at OrbitGreedy step t. 68 steps total.
+_ORBIT_STEPS = [
     [0, 1, 22, 23, 65, 66],  # step 0 (6 concurrent orbit(s))
     [24],  # step 1 (1 concurrent orbit(s))
     [2, 3],  # step 2 (2 concurrent orbit(s))
@@ -268,6 +273,7 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
     total_send_amount_ref,
     total_recv_amount_ref,
     num_packets_per_group_ref,
+    dest_table_ref,  # int32[N, K] in SMEM — pass as extra pallas_call input
     x_ref,
     _,
     o_ref,
@@ -283,12 +289,14 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
 ):
     """Orbit-greedy P2P AllToAll kernel for slice=(4, 4, 8).
 
-    Signature matches `_ragged_a2a_kernel_point_to_point`. Differences:
-      * `axis_name` MUST be a 3-tuple matching slice=(4, 4, 8).
+    Signature: same as `_ragged_a2a_kernel_point_to_point` PLUS one extra
+    Ref input `dest_table_ref` (int32[N, K] in SMEM, slot 6). Other
+    differences vs reference:
       * Iteration order = OrbitGreedy firing order (vs rotation).
-      * Destinations are looked up in DEST_TABLE (twist-aware).
+      * Destinations are looked up in `dest_table_ref` (twist-aware).
       * `transpose=True` is NOT supported (would need regen).
       * Assumes 1 group per device (uniform AllToAll).
+      * `axis_name` is a flat string (e.g. "x"), as in the reference.
     """
     assert scratch_ref is None
     del scratch_ref
@@ -297,16 +305,12 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
     assert not transpose, (
         "transpose=True not supported by orbit-greedy kernel; use reference."
     )
-    assert isinstance(axis_name, tuple) and len(axis_name) == 3, (
-        f"axis_name must be a 3-tuple matching slice=(4, 4, 8); got {axis_name=}"
-    )
 
-    # Per-axis indices on this device:
-    my_x = jax.lax.axis_index(axis_name[0])
-    my_y = jax.lax.axis_index(axis_name[1])
-    my_z = jax.lax.axis_index(axis_name[2])
-    my_flat = my_x * 32 + my_y * 8 + my_z
-    axis_size_local = jax.lax.axis_size(axis_name[0]) * jax.lax.axis_size(axis_name[1]) * jax.lax.axis_size(axis_name[2])
+    # Flat device id under `axis_name` (a single mesh axis spanning all
+    # 128 devices). The twist is baked into dest_table_ref, so we do not
+    # decode per-axis coordinates here.
+    my_flat = jax.lax.axis_index(axis_name)
+    axis_size_local = jax.lax.axis_size(axis_name)
 
     num_groups = sizes_ref.shape[0]
     assert num_groups == 128, (
@@ -365,18 +369,15 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
 
     # ---- self copy (group_idx = my_flat) ----
     def _self_body(packet_idx, _state):
-        _issue_packet(packet_idx, my_flat, {axis_name[0]: my_x, axis_name[1]: my_y, axis_name[2]: my_z})
+        _issue_packet(packet_idx, my_flat, {axis_name: my_flat})
         return _state
 
     jax.lax.fori_loop(0, num_packets, _self_body, None)
 
     # ---- main orbit loop: OrbitGreedy firing order ----
     def _orbit_body(k, _state):
-        dst_flat = DEST_TABLE[my_flat, k]
-        dst_x = (dst_flat // 32) % 4
-        dst_y = (dst_flat // 8) % 4
-        dst_z = dst_flat % 8
-        dst_dev = {axis_name[0]: dst_x, axis_name[1]: dst_y, axis_name[2]: dst_z}
+        dst_flat = dest_table_ref[my_flat, k]
+        dst_dev = {axis_name: dst_flat}
 
         def _packet_body(packet_idx, _state2):
             _issue_packet(packet_idx, dst_flat, dst_dev)
@@ -404,3 +405,25 @@ def _ragged_a2a_kernel_orbit_greedy_4_4_8(
             o_ref.at[pl.ds(0, recv_amount)],
             recv_sem,
         ).wait()
+
+
+def build_pallas_call_kwargs():
+    """Return a dict of pallas_call kwargs/inputs for this kernel.
+
+    The returned dict has 3 keys:
+      * "dest_table": jnp.ndarray to pass as the extra positional input
+         (slot 6, before x).
+      * "extra_in_spec": pl.BlockSpec for the dest_table input (SMEM).
+      * "input_output_aliases_shift": int 1 — add to every key in the
+         original `input_output_aliases` dict to account for the new
+         slot. The reference uses `{7: 0}`; with this kernel use `{8: 0}`.
+
+    Call this inside `ragged_all_to_all` (NOT at module load) so the
+    `jnp.asarray` of the table happens only when JAX is initialized.
+    """
+    import jax.numpy as jnp
+    return {
+        "dest_table": jnp.asarray(_DEST_TABLE_NP),
+        "extra_in_spec": pl.BlockSpec(memory_space=pltpu.SMEM),
+        "input_output_aliases_shift": 1,
+    }

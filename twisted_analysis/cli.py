@@ -11,6 +11,9 @@ from twisted_analysis.model import AllToAll
 from twisted_analysis.schedules.round_robin import RoundRobinSchedule
 from twisted_analysis.schedules.dim_phased import DimPhasedSchedule
 from twisted_analysis.schedules.xla import XLASchedule
+from twisted_analysis.schedules.orbit_greedy import (
+    OrbitGreedySchedule, PipelinedOrbitSchedule,
+)
 from twisted_analysis.schedules.lp_optimal import lp_assignment_to_injections
 from twisted_analysis.simulator import Simulator
 from twisted_analysis.simulator.instrumentation import collect_idle_trace, write_gantt_csv
@@ -20,6 +23,12 @@ SCHEDULES = {
     "round_robin": RoundRobinSchedule(),
     "dim_phased": DimPhasedSchedule(),
     "xla": XLASchedule(),
+    "orbit_greedy": OrbitGreedySchedule(order="lpt_tail_asc"),
+    "orbit_greedy_lpt": OrbitGreedySchedule(order="lpt"),
+    "orbit_greedy_spt": OrbitGreedySchedule(order="spt"),
+    "pipelined_orbit": PipelinedOrbitSchedule(order="lpt_tail_asc"),
+    "pipelined_orbit_lpt": PipelinedOrbitSchedule(order="lpt"),
+    "pipelined_orbit_spt": PipelinedOrbitSchedule(order="spt"),
 }
 
 
@@ -40,17 +49,24 @@ def run_experiment(cfg: dict) -> dict:
         raise ValueError(f"unknown router: {router_name}")
     w = AllToAll(t, r, msg_size=msg_size)
 
+    # Allow YAML to override the binary-search upper bound. Default is 4*LB.
+    # Set to `lb` when you have an independent witness that LB is achievable
+    # (e.g. OrbitGreedy) — skips the expensive feasibility checks above LB.
+    t_upper_mult = cfg.get("ilp_T_upper_multiplier", 4)
+    t_upper = int(w.lower_bound * t_upper_mult)
+
     if sched_name == "ilp_optimal":
         from twisted_analysis.lp.ilp import solve_makespan
         m_opt, assignment = solve_makespan(
-            t, r, list(w.flows), T_upper=w.lower_bound * 4
+            t, r, list(w.flows), T_upper=t_upper,
         )
         injs = lp_assignment_to_injections(list(w.flows), r, assignment)
     elif sched_name == "ilp_optimal_symmetric":
         from twisted_analysis.lp.symmetric import solve_symmetric_makespan
         from twisted_analysis.schedules.lp_symmetric import symmetric_assignment_to_injections
         m_opt, assignment = solve_symmetric_makespan(
-            t, r, list(w.flows), T_upper=w.lower_bound * 4
+            t, r, list(w.flows), T_upper=t_upper,
+            time_limit_seconds=cfg.get("ilp_time_limit_seconds"),
         )
         injs = symmetric_assignment_to_injections(t, r, list(w.flows), assignment)
     else:

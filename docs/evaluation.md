@@ -2,17 +2,27 @@
 
 ## Experiment Matrix
 
-22 experiments per `eval/run_all.sh`: 3 topologies × 2 routers × {round_robin,
-xla, dim_phased, ilp_optimal, ilp_optimal_symmetric} where applicable.
+59 experiments per `eval/run_all.sh`: 5 topologies × 2 routers × {round_robin,
+xla, dim_phased, ilp_optimal, ilp_optimal_symmetric, orbit_greedy, pipelined_orbit}
+where applicable.
 
-| Topology | Router | RoundRobin | XLA | DimPhased | ILP-optimal | Symmetric ILP |
-|---|---|:---:|:---:|:---:|:---:|:---:|
-| 2×4 | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ |
-| 2×4 | dor | ✓ | ✓ | ✓ (partial) | ✓ | — |
-| 4×8 | ilp | ✓ | ✓ | ✓ (partial) | — (intractable) | ✓ (~14s) |
-| 4×8 | dor | ✓ | ✓ | ✓ (partial) | — | — |
-| 4×4×8 | ilp | ✓ | ✓ | ✓ (partial) | — | — (~47k vars) |
-| 4×4×8 | dor | ✓ | ✓ | ✓ (partial) | — | — |
+| Topology | Router | RoundRobin | XLA | DimPhased | OrbitGreedy | PipelinedOrbit | ILP-optimal | Symmetric ILP |
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 2×4   | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | ✓ | ✓ |
+| 2×4   | dor | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | ✓ | — |
+| 2×2×4 | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | ✓ (~8s) | ✓ (~1s) |
+| 2×2×4 | dor | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | ✓ (~16s) | — |
+| 2×4×4 | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — | ✓ (~1s) |
+| 2×4×4 | dor | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — | — |
+| 4×8   | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — (intractable) | ✓ (~14s) |
+| 4×8   | dor | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — | — |
+| 4×4×8 | ilp | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — | ✓ (~6 min, T=LB) |
+| 4×4×8 | dor | ✓ | ✓ | ✓ (partial) | ✓ | ✓ | — | — |
+
+The 4×4×8 symmetric ILP YAML pins `ilp_T_upper_multiplier: 1` (single feasibility
+check at `T = LB`) with a 1-hour CBC time limit. See [experiments/4x4x8_ilp_symmetric.yaml](../experiments/4x4x8_ilp_symmetric.yaml).
+The 2×2×4 and 2×4×4 topologies (added in this iteration) are 3D `{S, 2S}` shapes
+with two and one twisted dimensions respectively.
 
 Per experiment: makespan, ratio to `LB`, idle-step count on bottleneck edges,
 runtime.
@@ -95,6 +105,8 @@ slice: [2, 4]                    # topology shape; must satisfy {S, 2S} constrai
 msg_size: 1                      # message size in flow units (integer >= 1)
 schedule: round_robin            # see "Allowed schedule values" below
 router: ilp                      # ilp (default) or dor
+ilp_T_upper_multiplier: 4        # OPTIONAL. Multiplier on LB for ILP binary-search upper bound. Default 4. Set to 1 to pin T_upper = LB when you have an independent witness (e.g. OrbitGreedy) — skips expensive feasibility checks above LB.
+ilp_time_limit_seconds: 3600     # OPTIONAL. Per-feasibility-check CBC wall-clock cap (symmetric ILP only).
 output_dir: results/<name>       # overridden by run_all.sh; set for manual runs
 ```
 
@@ -105,6 +117,10 @@ Allowed `schedule` values:
 | `round_robin` | `RoundRobinSchedule` (Latin-square, full coverage) |
 | `xla` | `XLASchedule` (XLA destination-core randomization, full coverage) |
 | `dim_phased` | `DimPhasedSchedule` (partial coverage: one-dim-diff pairs only) |
+| `orbit_greedy` | `OrbitGreedySchedule(order="lpt")` (constructive, no ILP) |
+| `orbit_greedy_spt` | `OrbitGreedySchedule(order="spt")` (SPT ordering, for comparison) |
+| `pipelined_orbit` | `PipelinedOrbitSchedule(order="lpt")` (gap=1 per orbit) |
+| `pipelined_orbit_spt` | `PipelinedOrbitSchedule(order="spt")` |
 | `ilp_optimal` | runs full ILP, extracts LP-optimal schedule |
 | `ilp_optimal_symmetric` | runs symmetric ILP, extracts orbit-level schedule |
 
@@ -124,7 +140,7 @@ change is needed.
 uv run pytest          # or: .venv/bin/python -m pytest
 ```
 
-71 unit tests + 2 slow tests (gated by `-m slow`). Test categories:
+81 unit tests + 2 slow tests (gated by `-m slow`). Test categories:
 
 | File | What it checks |
 |---|---|
@@ -138,6 +154,7 @@ uv run pytest          # or: .venv/bin/python -m pytest
 | `tests/test_schedules_base.py` | Injection / Schedule base types |
 | `tests/test_round_robin.py` | RoundRobin makespan ≥ LB |
 | `tests/test_dim_phased.py` | DimPhased makespan and phase coverage |
+| `tests/test_orbit_greedy.py` | OrbitGreedy / PipelinedOrbit: coverage, sim-feasible, LB-match on 2×4 |
 | `tests/test_simulator.py` | step-by-step simulation correctness |
 | `tests/test_instrumentation.py` | record_history / event logging |
 | `tests/test_ilp.py` | tiny ILP instance solved to known optimum |
@@ -156,6 +173,13 @@ Run including slow: `uv run pytest -v`.
 
 ## Future Work / Ablations
 
+- **Prove (or refute) OrbitGreedy LPT achieves LB for every `{S, 2S}` twisted-torus
+  shape.** Empirical evidence is 6/6 cells tested, but no proof is known. A proof
+  would likely come from a König-type argument on the bipartite (orbit, edge-orbit)
+  hypergraph; a counterexample would be a topology/router pair where the greedy
+  hits an inversion.
+- **OrbitGreedy on skewed traffic.** Drop the uniform-AllToAll assumption and
+  evaluate on permutation patterns (random, bit-reversal, transpose).
 - **DOR dim-order ablation.** Smallest-dim-first vs. largest-dim-first routing:
   effect on `LB` and makespan.
 - **m-sweep.** Run all schedules with `msg_size ∈ {1, 4, 16}` to test gap invariance.

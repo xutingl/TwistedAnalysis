@@ -32,11 +32,19 @@ traverse `e` exactly once). Therefore at least `L` steps must elapse before all
 units crossing `e` are delivered, so `makespan ≥ L`. Since this holds for every
 edge `e`, taking the maximum gives `makespan ≥ max_e load(e) = LB`. QED.
 
-**Note on tightness.** The lower bound is not necessarily achieved. Whether `LB` is
-achievable — i.e., whether a schedule exists with `makespan = LB` — is exactly the
-question this project investigates. The ILP (see [lp_formulation.md](lp_formulation.md))
-finds the optimal makespan; the ratio `M_opt / LB` measures the intrinsic gap from
-routing alone.
+**Note on tightness.** `LB` is achieved by a polynomial-time constructive
+heuristic (Schedule B' / OrbitGreedy with default `lpt_tail_asc` ordering in
+[schedules.md](schedules.md)) on **all 10 `{S, 2S}` cells tested**: 2×4,
+2×2×4, 2×4×4, 4×8, 4×4×8 × {DOR, ILP routing}. The symmetric ILP
+independently confirms `makespan = LB` on every ILP-routed cell. The 2×4×4
+DOR cell was the trickiest: plain `lpt` ordering missed by 1 step until we
+discovered that orbits ending on low-load edges need to claim bottleneck
+slots first; the `lpt_tail_asc` tiebreak (tail-load ascending) closes that
+gap. The achievability of `LB` on each tested cell is mechanically proven
+via a König + Smith's-deadline-feasibility argument (see
+[orbit_greedy_optimality.md](orbit_greedy_optimality.md) §4.3); extending
+the proof in closed form to all `{S, 2S}^n` shapes reduces to standard
+canonical-path enumeration.
 
 ## Worked Example: (2,4) with m=1
 

@@ -83,8 +83,12 @@ def solve_symmetric_makespan(
     flows: list[Flow],
     T_upper: int,
     solver_name: str = "PULP_CBC_CMD",
+    time_limit_seconds: int | None = None,
 ) -> tuple[int, dict]:
-    """Binary-search makespan T for the symmetric scheduling ILP."""
+    """Binary-search makespan T for the symmetric scheduling ILP.
+
+    `time_limit_seconds`: per-feasibility-check CBC wall-clock cap. None = no cap.
+    """
     orbits = compute_orbits(topology)
 
     # Compute LB over edge orbits: how many times does each (dim, dir) class
@@ -100,7 +104,10 @@ def solve_symmetric_makespan(
             edge_orbit_load[(dim, dir)] += 1
     lb = max(edge_orbit_load.values()) if edge_orbit_load else 0
 
-    solver = pulp.getSolver(solver_name, msg=False)
+    solver_kwargs = {"msg": False}
+    if time_limit_seconds is not None:
+        solver_kwargs["timeLimit"] = int(time_limit_seconds)
+    solver = pulp.getSolver(solver_name, **solver_kwargs)
     lo, hi = lb, T_upper
     best_assignment: dict = {}
     while True:

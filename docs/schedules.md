@@ -129,6 +129,106 @@ phase, the flows form independent rings (one ring per slice along that dim), so
 the bottleneck is the per-ring AllToAll makespan. The twist only affects phases
 in the smaller dims (where the wraparound cross-shifts the larger dim coordinate).
 
+## Schedule B': Orbit-Greedy and Pipelined-Orbit (constructive, no ILP)
+
+**Modules:** `twisted_analysis/schedules/orbit_greedy.py`
+(`OrbitGreedySchedule`, `PipelinedOrbitSchedule`)
+
+**Motivation.** The symmetric ILP (Schedule C below) solves a time-indexed
+integer program over edge-orbit × time slots — 14s for 4×8, intractable for
+4×4×8. Inspecting its output ([scripts/inspect_symmetric_schedule.py](../scripts/inspect_symmetric_schedule.py))
+showed the schedule has no closed-form shift pattern (only 5/31 orbits on 4×8
+are pipelined; hop-gaps range 1–18). The ILP is doing real combinatorial
+packing. So we replace it with two **polynomial-time greedy heuristics**.
+
+**Algorithm: OrbitGreedy.** Process translation orbits in some order (default:
+**`lpt_tail_asc` = longest-path-first, tiebreak by ascending tail-edge load**).
+For each orbit, schedule its hops in path order at the earliest time strictly
+after the previous hop's time, skipping `(dim, dir, t)` slots already claimed
+by another orbit. Path-internal gaps are allowed when an edge orbit is contended.
+
+```python
+edge_load = Counter((dim, dir) -> hits across all orbits' canonical paths)
+def tail_load(o): return edge_load[(path[o][-1][2], path[o][-1][3])]
+edge_busy: dict[(dim, dir), set[int]] = defaultdict(set)
+
+# lpt_tail_asc: longest path first; ties broken by tail-edge load ascending.
+for orbit_id in sorted(orbits, key=lambda o: (-len(path[o]), tail_load(o), o)):
+    prev_t = -1
+    for i, (_, _, dim, dir) in enumerate(path[orbit_id]):
+        t = prev_t + 1
+        while t in edge_busy[(dim, dir)]:
+            t += 1
+        assignment[(orbit_id, i, t)] = 1.0
+        edge_busy[(dim, dir)].add(t)
+        prev_t = t
+```
+
+**Why the tail-load tiebreak matters.** Plain LPT scheduled two length-2
+orbits on 2×4×4 DOR — both ending on the low-load (0,−1) edge — back-to-back
+on the bottleneck at t=14. Their tail hops then both wanted slot t=15 on
+(0,−), forcing one to t=16 and pushing makespan to 17 vs LB=16. With the
+tail-load tiebreak, the orbits with low-load tails get scheduled FIRST
+(while bottleneck slots are still abundant), claiming early bottleneck slots
+that leave their corresponding tail-edge slots open. Orbits with flexible
+high-load tails fill in around them. Empirically `lpt_tail_asc` hits
+`makespan = LB` on every (topology, router) cell tested; plain `lpt` hits
+LB on 9 of 10. Other orderings (`spt`, pure `tail_asc`) underperform.
+
+The output `(orbit_id, hop_i, t)` is fed through `symmetric_assignment_to_injections`
+— the same adapter the symmetric ILP uses — so all 31 orbit × 32 translations
+become per-unit `Injection`s with `hop_schedule` populated.
+
+**Algorithm: PipelinedOrbit.** Stronger constraint: each orbit fires hops at
+`t = start, start+1, ..., start+L-1` (gap = 1). Pick the smallest `start` such
+that no `(dim, dir, t)` slot in the pipelined window is already claimed.
+
+**Why ordering matters.** Long-path orbits make the most edge demands and
+dominate the critical path. The tail-load tiebreak prevents low-load tail
+edges from becoming the makespan bottleneck. Empirically (see
+[results.md](results.md)):
+
+| Topology + Router | LB | default (lpt_tail_asc) | lpt | spt |
+|---|---:|---:|---:|---:|
+| 2×4 ilp   | 3  | **3 (1.00)** | 3 (1.00) | 4 (1.33) |
+| 2×4×4 dor | 16 | **16 (1.00)** | 17 (1.06) | — |
+| 4×8 ilp   | 21 | **21 (1.00)** | 21 (1.00) | 25 (1.19) |
+| 4×4×8 ilp | 74 | **74 (1.00)** | 74 (1.00) | 86 (1.16) |
+
+**OrbitGreedy with the default `lpt_tail_asc` ordering achieves
+`makespan = LB` on every (topology, router) cell we have tested** — 10/10.
+Plain `lpt` (no tiebreak) hits LB on 9/10, missing only the 2×4×4 DOR cell.
+Runtime is dominated by orbit/router setup (~21s on 4×4×8 for `ILPRouter`'s
+LP); the scheduling step itself takes microseconds.
+
+**Theoretical context.** This is packet routing with given paths
+(Leighton-Maggs-Rao 1988/1994): for any congestion-`c`, dilation-`d` instance,
+`O(c+d)` makespan is constructive. In our case `d ≤ diameter ≈ ⌈sum(slice)/2⌉`
+is small relative to `c = LB`:
+
+| Topology | c=LB | d=diameter | LMR bound c+d | empirical |
+|---|---:|---:|---:|---:|
+| 2×4 ilp   | 3  | 2 | 5  | 3  |
+| 4×8 ilp   | 21 | 4 | 25 | 21 |
+| 4×4×8 ilp | 74 | 6 | 80 | 74 |
+
+We hit `c` not `c+d` because the bipartite-style edge-orbit structure admits
+a König + Smith's-deadline-feasibility proof on every tested cell — see
+[orbit_greedy_optimality.md](orbit_greedy_optimality.md) §4.3. The proof is
+machine-verified per cell by `scripts/verify_smith_proof.py`. A closed-form
+extension to all `{S, 2S}^n` shapes reduces to standard canonical-path
+enumeration.
+
+**Caveat — workload symmetry.** Both algorithms rely on `compute_orbits`,
+which assumes translation symmetry of the workload (uniform AllToAll). They
+do not handle skewed traffic patterns. The ILP-optimal schedules (C, D) make
+no such assumption.
+
+See [orbit_greedy_optimality.md](orbit_greedy_optimality.md) for the
+full proof: König-style bipartite-multi-graph setup, Smith's deadline
+reduction, worked 2×4 ILP proof (§4.3.14), and the 2×4×4 DOR failure-mode
+analysis.
+
 ## Schedule C: ILP-Optimal (Symmetric)
 
 **Module:** `twisted_analysis/schedules/lp_symmetric.py`
@@ -155,7 +255,14 @@ ILPRouter is used for routing. Falls back to the full `ILPOptimal` schedule othe
 asserted to equal `M_opt` for every instance.
 
 **Performance.** On 4×8 with ILP routing, `makespan = 21 = LB` — the lower bound
-is exactly achieved. Solve time ~14 s (CBC).
+is exactly achieved. Solve time ~14 s (CBC). On 4×4×8 with ILP routing,
+`makespan = 74 = LB` is achievable with the symmetric ILP, but only when
+`T_upper` is pinned to `LB` (set `ilp_T_upper_multiplier: 1` in the YAML).
+Default `T_upper = 4·LB` causes a model with ~113k binary variables that PuLP
+struggles to build; the tight `T_upper = LB` formulation has ~32k variables
+and CBC solves it in ~6 minutes — a single feasibility check, no binary
+search. In practice, use OrbitGreedy LPT (Schedule B') first to get the
+witness, then optionally verify with the symmetric ILP.
 
 ## Schedule D: LP-Optimal
 

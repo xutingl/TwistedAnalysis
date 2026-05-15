@@ -162,11 +162,11 @@ closures — the destination table must be a `pallas_call` input.
    kernel name:
 
    ```python
-   from ._ragged_a2a_kernel_orbit_greedy_4_4_8 import (
-       _ragged_a2a_kernel_orbit_greedy_4_4_8,
+   from ._ragged_a2a_kernel_orbit_greedy_8_4_4 import (
+       _ragged_a2a_kernel_orbit_greedy_8_4_4,
        build_pallas_call_kwargs,
    )
-   kernel = _ragged_a2a_kernel_orbit_greedy_4_4_8
+   kernel = _ragged_a2a_kernel_orbit_greedy_8_4_4
    ```
 
 3. **Inject the destination table as an extra `pallas_call` input.** The

@@ -44,6 +44,10 @@ def save_routing_table(
             node_ids = [src_flat] + [
                 flatten(v, topology.slice) for (_u, v, _, _) in path
             ]
+            assert node_ids[-1] == dst_flat, (
+                f"router.path({src}, {dst}) endpoint = flat {node_ids[-1]}, "
+                f"expected {dst_flat}"
+            )
             matrix[src_flat][dst_flat] = {
                 "path": [{"node_id": nid} for nid in node_ids]
             }
@@ -55,26 +59,61 @@ def load_routing_table(path: Path | str) -> list[list[list[int]]]:
 
     Tolerates a `vc` field on path nodes if present (it is dropped).
     """
-    raw = json.loads(Path(path).read_text())
+    path = Path(path)
+    raw = json.loads(path.read_text())
+    if not isinstance(raw, list):
+        raise ValueError(
+            f"{path}: top-level must be a list, got {type(raw).__name__}"
+        )
     n = len(raw)
     table: list[list[list[int]]] = []
     for src in range(n):
         row = raw[src]
+        if not isinstance(row, list):
+            raise ValueError(
+                f"{path}: row {src} must be a list, got {type(row).__name__}"
+            )
         if len(row) != n:
             raise ValueError(
-                f"row {src} has length {len(row)}; expected {n}"
+                f"{path}: row {src} has length {len(row)}; expected {n}"
             )
         out_row = []
         for dst in range(n):
             cell = row[dst]
+            if not isinstance(cell, dict):
+                raise ValueError(
+                    f"{path}: cell [{src}][{dst}] must be a dict, "
+                    f"got {type(cell).__name__}"
+                )
             if "path" not in cell:
-                raise ValueError(f"cell [{src}][{dst}] missing 'path'")
-            out_row.append([node["node_id"] for node in cell["path"]])
+                raise ValueError(
+                    f"{path}: cell [{src}][{dst}] missing 'path'"
+                )
+            path_nodes = cell["path"]
+            if not isinstance(path_nodes, list):
+                raise ValueError(
+                    f"{path}: cell [{src}][{dst}] 'path' must be a list, "
+                    f"got {type(path_nodes).__name__}"
+                )
+            node_ids: list[int] = []
+            for i, node in enumerate(path_nodes):
+                if not isinstance(node, dict):
+                    raise ValueError(
+                        f"{path}: cell [{src}][{dst}] path entry {i} must be "
+                        f"a dict, got {type(node).__name__}"
+                    )
+                if "node_id" not in node:
+                    raise ValueError(
+                        f"{path}: cell [{src}][{dst}] path entry {i} missing "
+                        f"'node_id'"
+                    )
+                node_ids.append(node["node_id"])
+            out_row.append(node_ids)
         table.append(out_row)
     return table
 
 
-@dataclass(frozen=True)
+@dataclass
 class RoutingTableRouter:
     """Router-protocol adapter that serves paths from a loaded routing table.
 

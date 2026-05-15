@@ -133,3 +133,49 @@ def test_routing_table_router_raises_on_non_neighbor_step(tmp_path: Path):
     import pytest
     with pytest.raises(ValueError, match="not a neighbor"):
         rt_router.path((0, 0), (1, 3))  # flat 7
+
+
+def test_load_routing_table_rejects_non_list_top_level(tmp_path: Path):
+    p = tmp_path / "bad.json"
+    p.write_text(json.dumps({"not": "a list"}))
+    with pytest.raises(ValueError, match="top-level"):
+        load_routing_table(p)
+
+
+def test_load_routing_table_rejects_non_dict_cell(tmp_path: Path):
+    p = tmp_path / "bad.json"
+    p.write_text(json.dumps([[None]]))
+    with pytest.raises(ValueError):
+        load_routing_table(p)
+
+
+def test_load_routing_table_rejects_path_node_missing_node_id(tmp_path: Path):
+    p = tmp_path / "bad.json"
+    # Valid 1x1 shape, but node entry has no node_id field.
+    p.write_text(json.dumps([[{"path": [{"vc": 0}]}]]))
+    with pytest.raises(ValueError, match="node_id"):
+        load_routing_table(p)
+
+
+def test_save_routing_table_asserts_router_endpoint(tmp_path: Path):
+    """Writer post-condition: detects router returning a wrong-endpoint path."""
+    from twisted_analysis.topology import Topology, DORRouter
+    from twisted_analysis.topology.lattice import DirectedLink
+    t = Topology(slice=(2, 4))
+    real = DORRouter(t)
+
+    class BogusRouter:
+        topology = t
+        def path(self, src, dst):
+            # Always return src->src->src (endpoint != dst when src != dst).
+            if src == dst:
+                return ()
+            # Walk one neighbor and stop early.
+            for dim in range(t.ndim):
+                v = t.neighbor(src, dim, +1)
+                return ((src, v, dim, +1),)  # endpoint = a neighbor, not dst
+            return ()
+
+    out = tmp_path / "rt.json"
+    with pytest.raises(AssertionError, match="endpoint"):
+        save_routing_table(t, BogusRouter(), out)

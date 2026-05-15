@@ -200,12 +200,30 @@ def schedule_from_cpsat_literal(
     )
 
 
+def schedule_from_lp_rounding(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    t_upper: int,
+    n_trials: int = 100,
+    seed: int = 0,
+) -> list[dict]:
+    """Adapter: lp_rounding -> schedule entries."""
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.lp_rounding import lp_rounding
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return lp_rounding(topology, table, t_upper=t_upper,
+                       n_trials=n_trials, seed=seed)
+
+
 _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
     "literal_greedy": schedule_from_literal_greedy,
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
+    "lp_rounding": schedule_from_lp_rounding,
 }
 
 
@@ -227,6 +245,9 @@ def schedule_from_algorithm(
       - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
         than ilp_literal on this structure due to native at-most-one constraints
         and parallel search workers. Requires `t_upper` kwarg.
+      - "lp_rounding":       LP relaxation of the literal ILP + randomized rounding.
+        Polynomial-time alternative to CP-SAT for large cells where CP-SAT may time
+        out. Requires `t_upper` kwarg; optional `n_trials` (default 100) and `seed`.
 
     Per-algorithm kwargs (e.g., `order`, `time_limit_s`, `t_upper`) are passed through.
     """

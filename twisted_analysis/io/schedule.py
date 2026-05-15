@@ -217,6 +217,21 @@ def schedule_from_lp_rounding(
                        n_trials=n_trials, seed=seed)
 
 
+def schedule_from_local_search(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    seed_schedule: list[dict],
+    max_iters: int = 1000,
+) -> list[dict]:
+    """Adapter: local_search_repair on a seed schedule."""
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.local_search import local_search_repair
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return local_search_repair(topology, table, seed_schedule, max_iters=max_iters)
+
+
 _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
@@ -224,6 +239,7 @@ _SCHEDULER_DISPATCH = {
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
+    "local_search": schedule_from_local_search,
 }
 
 
@@ -248,6 +264,10 @@ def schedule_from_algorithm(
       - "lp_rounding":       LP relaxation of the literal ILP + randomized rounding.
         Polynomial-time alternative to CP-SAT for large cells where CP-SAT may time
         out. Requires `t_upper` kwarg; optional `n_trials` (default 100) and `seed`.
+      - "local_search":      Hill-climbing post-processor on a feasible seed schedule.
+        Shifts makespan-defining flows earlier when feasible. Polynomial per iteration.
+        No LB guarantee but cheap to chain after any greedy or LP-rounding output.
+        Requires `seed_schedule` kwarg; optional `max_iters` (default 1000).
 
     Per-algorithm kwargs (e.g., `order`, `time_limit_s`, `t_upper`) are passed through.
     """

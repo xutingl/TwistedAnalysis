@@ -21,3 +21,29 @@ Deterministic orderings on orbit_greedy_full and literal_greedy (Task 2).
 | orbit_greedy_full | spt | 102 | 0 | 14.1s | |
 | literal_greedy | spt | 105 | 0 | 0.4s | |
 | literal_greedy | natural | 109 | 0 | 0.4s | Worst |
+
+## Phase 1b: Random Orbit Shuffle
+
+Random permutations of orbit firing order on `orbit_greedy_full` (Task 3).
+
+**Summary:** 1000 random seeds, best makespan **86 at seed 125** (beats baseline 84 → new baseline).
+
+| Metric | Value |
+|---|---|
+| Best makespan | 86 |
+| Best seed | 125 |
+| Total seeds | 1000 |
+| Runtime | 180.2 seconds |
+| Best schedule | `02_best_random_shuffle_schedule.json` |
+
+**Distribution (top 5 most common makespans):**
+
+| Makespan | Count | Notes |
+|---:|---:|---|
+| 92 | 168 | Peak |
+| 93 | 171 | Peak |
+| 91 | 162 | Peak |
+| 90 | 104 | |
+| 89 | 53 | |
+
+**Outcome:** Random shuffle improved over deterministic lpt (84 → 86 achieved), **but still below target of 83**. Some orderings do better (90, 88, 87 all achieved multiple times), confirming ordering sensitivity. Recommend: proceed to Phase 2 (orbit-level tweaks / edge conflict resolution).

@@ -143,3 +143,58 @@ def test_schedule_from_orbit_greedy_invalid_order():
         table = load_routing_table(p)
         with pytest.raises(ValueError):
             schedule_from_orbit_greedy(t, table, order="bogus")
+
+
+def test_schedule_from_orbit_greedy_round_structure_2x4_dor():
+    """Round values must reflect _emit_orbit_greedy's hop-0 firing times,
+    not be a constant. Locks in the regression where round always = 0."""
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy
+    from twisted_analysis.io.coords import flatten
+    from twisted_analysis.topology import Topology, DORRouter
+
+    t = Topology(slice=(2, 4))
+    r = DORRouter(t)
+    table = []
+    for src in t.nodes():
+        row = []
+        for dst in t.nodes():
+            if src == dst:
+                row.append([flatten(src, t.slice)])
+                continue
+            path = r.path(src, dst)
+            nodes = [src] + [v for (_u, v, _, _) in path]
+            row.append([flatten(n, t.slice) for n in nodes])
+        table.append(row)
+
+    entries = schedule_from_orbit_greedy(t, table, order="lpt_tail_asc")
+    rounds = sorted({e["round"] for e in entries})
+    assert rounds[0] == 0, "at least one orbit must fire at round 0"
+    assert max(rounds) >= 1, "schedule must span multiple rounds"
+    # 2x4 DOR has multiple orbits at round 0 — confirm by checking that at
+    # least two distinct (src, dst) flow pairs share round 0.
+    round0 = [(e["src"], e["dst"]) for e in entries if e["round"] == 0]
+    distinct_orbits = len({(e[1] - e[0]) % t.n_nodes for e in round0})
+    assert distinct_orbits >= 2, (
+        f"expected >=2 distinct orbits at round 0, got {distinct_orbits}"
+    )
+
+
+def test_schedule_from_orbit_greedy_rejects_none_cell():
+    """Malformed routing table (None cell) must surface as a debuggable ValueError."""
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy
+    from twisted_analysis.topology import Topology
+    t = Topology(slice=(2, 4))
+    n = t.n_nodes
+    table = [[[i] if i == j else [i, j] for j in range(n)] for i in range(n)]
+    table[0][1] = None  # poison one cell
+    with pytest.raises(ValueError, match=r"\[0\]\[1\]"):
+        schedule_from_orbit_greedy(t, table)
+
+
+def test_schedule_from_orbit_greedy_rejects_wrong_shape():
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy
+    from twisted_analysis.topology import Topology
+    t = Topology(slice=(2, 4))  # n=8
+    table = [[[0]] * 7 for _ in range(8)]  # rows have 7 cols, expected 8
+    with pytest.raises(ValueError, match="cols"):
+        schedule_from_orbit_greedy(t, table)

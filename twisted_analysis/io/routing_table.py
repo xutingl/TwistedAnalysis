@@ -113,6 +113,32 @@ def load_routing_table(path: Path | str) -> list[list[list[int]]]:
     return table
 
 
+def validate_routing_table_shape(table, n: int) -> None:
+    """Raise ValueError if `table` is not an N×N matrix of non-empty int paths.
+
+    Cheap structural check that callers can run before consuming the table.
+    Complements RoutingTableRouter.path()'s per-call adapter validation.
+    """
+    if len(table) != n:
+        raise ValueError(f"routing table has {len(table)} rows; expected {n}")
+    for src in range(n):
+        row = table[src]
+        if len(row) != n:
+            raise ValueError(
+                f"routing table row {src} has {len(row)} cols; expected {n}"
+            )
+        for dst in range(n):
+            cell = row[dst]
+            if cell is None:
+                raise ValueError(
+                    f"routing table cell [{src}][{dst}] is None"
+                )
+            if not isinstance(cell, list) or not cell:
+                raise ValueError(
+                    f"routing table cell [{src}][{dst}] is not a non-empty list: {cell!r}"
+                )
+
+
 @dataclass
 class RoutingTableRouter:
     """Router-protocol adapter that serves paths from a loaded routing table.

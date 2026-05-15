@@ -11,6 +11,8 @@ import json
 from pathlib import Path
 from typing import Iterable, Mapping
 
+from twisted_analysis.topology import Topology
+
 ScheduleEntry = Mapping[str, object]
 _REQUIRED = ("round", "src", "dst", "path")
 
@@ -63,7 +65,10 @@ def load_schedule(path: Path | str) -> list[dict]:
 
 
 def schedule_from_orbit_greedy(
-    topology, table, *, order: str = "lpt_tail_asc",
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    order: str = "lpt_tail_asc",
 ) -> list[dict]:
     """Run the OrbitGreedy scheduler against a routing table; return entries.
 
@@ -74,39 +79,34 @@ def schedule_from_orbit_greedy(
 
     Total entries: `N * (N - 1)` for a full AllToAll. Entries are sorted by
     (round, src) for determinism.
+
+    Raises ValueError if `table` is not an N×N matrix of non-empty int paths.
     """
     from twisted_analysis.io.coords import flatten
-    from twisted_analysis.io.routing_table import RoutingTableRouter
+    from twisted_analysis.io.routing_table import (
+        RoutingTableRouter, validate_routing_table_shape,
+    )
     from twisted_analysis.lp.orbit import compute_orbits
     from twisted_analysis.schedules.orbit_greedy import (
-        _emit_orbit_greedy, _ordered_orbits, _canonical_paths, _edge_orbit_load,
+        compute_hop0_firing_times,
     )
 
+    validate_routing_table_shape(table, topology.n_nodes)
+
     rt_router = RoutingTableRouter(topology=topology, table=table)
-
-    canon = _canonical_paths(topology, rt_router)
-    edge_load = _edge_orbit_load(canon)
-    ordered = _ordered_orbits(canon, edge_load, order)
-
-    assignment = _emit_orbit_greedy(topology, rt_router, order)
-    # hop-0 firing time per orbit
-    t0: dict = {}
-    for (orbit_id, hop_i, t), _v in assignment.items():
-        if hop_i == 0:
-            t0[orbit_id] = t
+    t0 = compute_hop0_firing_times(topology, rt_router, order)
 
     orbits = compute_orbits(topology)
     slice_ = topology.slice
 
     entries: list[dict] = []
-    for orbit_id in ordered:
-        round_t = t0[orbit_id]
-        # `members` contains (src, dst) pairs for every source in this orbit.
-        for (src, dst) in orbits[orbit_id]:
+    for orbit_id, members in orbits.items():
+        round_t = int(t0[orbit_id])
+        for (src, dst) in members:
             src_flat = flatten(src, slice_)
             dst_flat = flatten(dst, slice_)
             entries.append({
-                "round": int(round_t),
+                "round": round_t,
                 "src": src_flat,
                 "dst": dst_flat,
                 "path": list(table[src_flat][dst_flat]),

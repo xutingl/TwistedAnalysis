@@ -132,6 +132,21 @@ def _emit_pipelined_orbit(
     return assignment
 
 
+def compute_hop0_firing_times(
+    topology: Topology,
+    router: Router,
+    order: str = "lpt_tail_asc",
+) -> dict:
+    """Return per-orbit hop-0 firing time `t_0^O` under OrbitGreedy.
+
+    For each orbit O, returns the OrbitGreedy step at which O fires its
+    first hop. Used to derive the `round` field in `schedule.json` (see
+    twisted_analysis.io.schedule.schedule_from_orbit_greedy).
+    """
+    assignment = _emit_orbit_greedy(topology, router, order)
+    return {oid: t for (oid, hop_i, t) in assignment if hop_i == 0}
+
+
 @dataclass
 class OrbitGreedySchedule:
     """Greedy chain-respecting orbit packing. Polynomial time, no ILP.

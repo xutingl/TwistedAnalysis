@@ -117,7 +117,10 @@ Allowed `schedule` values:
 | `round_robin` | `RoundRobinSchedule` (Latin-square, full coverage) |
 | `xla` | `XLASchedule` (XLA destination-core randomization, full coverage) |
 | `dim_phased` | `DimPhasedSchedule` (partial coverage: one-dim-diff pairs only) |
-| `orbit_greedy` | `OrbitGreedySchedule(order="lpt_tail_asc")` — **headline scheduler**, constructive, no ILP, achieves LB on 10/10 cells. Path-internal gaps allowed. |
+| `orbit_greedy` | `OrbitGreedySchedule(order="lpt_tail_asc")` — **headline scheduler**, constructive, no ILP. Since 2026-05-15 delegates to `orbit_greedy_full` (full-physical-edge accounting); LB-tight in the orbit-class model on 10/10 cells, LB-tight in the physical-edge model on 8/10 ILP cells, LB+1 on (2,4,4)-ilp and (4,8)-ilp. See [orbit_greedy_optimality.md §6 "Update (2026-05-15, evening)"](orbit_greedy_optimality.md#6-open-questions). |
+| `orbit_greedy_full` | Same algorithm with explicit name. Use when the routing is not translation-equivariant under `(dim, dir)` (e.g. loaded TPU routings). |
+| `literal_greedy` | `literal_greedy` — LMR-style per-flow earliest-feasible greedy. No orbit reduction; works on any routing. Trails `orbit_greedy_full` by 5–14% on tested cells. |
+| `ilp_literal` | Exact ILP on the literal `N(N-1)` flow set. Provably optimal under physical-edge capacity; tractable up to N=32. |
 | `orbit_greedy_lpt` | `OrbitGreedySchedule(order="lpt")` (no tail-load tiebreak; misses 2×4×4 DOR) |
 | `orbit_greedy_spt` | `OrbitGreedySchedule(order="spt")` (SPT ordering, for comparison) |
 | `pipelined_orbit` | `PipelinedOrbitSchedule(order="lpt_tail_asc")` — **constrained variant of OrbitGreedy**: adds the rule `t_{i+1} = t_i + 1` (gap = 1). Strict subset of OrbitGreedy's solution space; **not optimal** (achieves LB on 7/10 cells). Diagnostic only. |

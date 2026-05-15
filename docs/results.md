@@ -1,5 +1,22 @@
 # Results
 
+> **⚠ Important update (2026-05-15)** — The original eval below reports
+> makespan in the **orbit-class capacity model** (one orbit firing per
+> `(dim, dir)` class per step). The Pallas kernel actually executes
+> against the **physical-edge capacity model** (one flow per directed
+> edge per step), and the two diverge on cells where the routing is not
+> translation-equivariant under `(dim, dir)`. The 1.00-ratio entries
+> below for `orbit_greedy` on `(2,4,4)`-ilp, `(4,8)`-ilp, and `4×4×8`-ilp
+> are not physically feasible at the makespans shown. The corrected
+> scheduler (`orbit_greedy_full`, alias `orbit_greedy` since 2026-05-15)
+> produces capacity-feasible schedules at LB+1 on `(2,4,4)`-ilp and
+> `(4,8)`-ilp; literal ILP confirms LB is achievable on those cells, so
+> the +1 is a heuristic gap, not a fundamental bound. See
+> [orbit_greedy_optimality.md §6](orbit_greedy_optimality.md#6-open-questions)
+> "Update (2026-05-15, evening)" for the full reconciliation, and the
+> [pallas_kernel scheduler-choice matrix](../pallas_kernel/README.md#routing--scheduler-performance-matrix-physical-edge-model)
+> for the current numbers.
+
 ## Headline Numbers (Eval Run, 2026-05-13)
 
 Source: `results/2026-05-13/`
@@ -11,7 +28,7 @@ Column definitions:
 - `sched-LB` — max link load over flows the schedule actually injects.
 - `full-LB` — max link load over all `N·(N-1)` flows (headline lower bound).
 - `flows` — coverage (flows injected / total AllToAll flows).
-- `makespan` — realized steps to completion.
+- `makespan` — realized steps to completion (**orbit-class capacity model — see warning above**).
 - `ratio` — `makespan / sched-LB`.
 
 ## DOR vs ILP Routing (Impact on LB)

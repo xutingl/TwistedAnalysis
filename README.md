@@ -1,41 +1,61 @@
 # TwistedAnalysis
 
 Quantifies the AllToAll performance gap on twisted-torus topologies under
-load-balanced minimal routing (ILPRouter) and dimension-order routing (DOR).
+multiple routing strategies (DOR, ILPRouter, and externally-supplied "loaded"
+routings such as TPU OCS routes) and multiple scheduling algorithms.
 
 ## What
 
 For twisted-torus topologies in the `{S, 2S}` shape family (2×4, 2×2×4, 2×4×4,
 4×8, 4×4×8 — i.e. 2D and 3D shapes with one or more twisted dimensions), we
-compute:
+compute and compare:
 
-1. The bandwidth lower bound `LB` from max directed-link load. The default router is
-   **ILPRouter** (load-balanced minimal routing, LP-based); `router: dor` selects
-   dimension-order routing. ILP routing reduces LB by 14–31% vs. DOR.
-2. The makespan `M_S` for several schedules and report `gap(S) = M_S / LB`:
-   - **OrbitGreedy** (constructive, no ILP, default order=`lpt_tail_asc`) —
-     **headline scheduler**. `makespan = LB` on every (topology, router) cell
-     tested (10/10). Plain `lpt` (no tail-load tiebreak) misses 2×4×4 DOR by
-     1 step; the tail-load-ascending tiebreak prevents low-load tail edges
-     from rolling the makespan past LB.
-   - **PipelinedOrbit** (constructive, **not optimal**) — same orbit ordering
-     as OrbitGreedy plus the extra constraint *gap=1 between consecutive hops
-     of the same orbit* (i.e., `t_{i+1} = t_i + 1`). Strict subset of
-     OrbitGreedy's solution space. Achieves LB on 7/10 cells; gaps of 1–5
-     steps on 4×8 ilp, 4×4×8 dor, 4×4×8 ilp, 2×4×4 ilp. Use as a
-     pipelined-injection diagnostic, not as the production scheduler.
-   - Latin-square round-robin (full AllToAll, 4–9× gap due to phase-boundary idle).
-   - XLA (destination-core randomization; bijection on phases, equal to RoundRobin in
-     our model).
-   - Dimension-ordered phased (partial coverage only).
-3. Optimal-makespan references:
-   - **Full ILP** (`ilp_optimal`): small instances only.
-   - **Symmetric ILP** (`ilp_optimal_symmetric`): made 4×8 tractable (~14 s) before
-     OrbitGreedy reproduced it in microseconds. LP relaxation `M_LP` is reported but
-     is a weak bound (minimizes weighted-completion-time, not makespan).
+### Routing strategies
 
-A gap of 1 means the routing+schedule saturate every bottleneck link; >1 quantifies
-the inefficiency.
+The routing chooses, for every `(src, dst)` pair, a sequence of physical-edge
+hops through the torus. Different routers produce different bandwidth lower
+bounds `LB` (max physical-edge load) and different *path-symmetry* properties
+that downstream schedulers depend on:
+
+| Router | LB on 4×4×8 | Translation-equivariant under `(dim, dir)`? |
+|---|---:|---|
+| **DOR** (dimension-order) | 86 | Yes, by construction |
+| **ILPRouter** (load-balanced minimal, LP-based) — default | 74 | On small cells only; *fails* on (2,4,4), (4,8), (4,4,8) |
+| **Loaded** (e.g. `fixtures/routing_table_8x4x4_twist.json`) | 75 | Fails (uses 10 edge-orbit classes incl. twist-wraps + escape-VC routing) |
+
+ILP routing reduces LB by 14–31% vs. DOR, but its translation-equivariance
+properties matter to the scheduler. Translation-equivariance means
+`path(σ·u, σ·v) = σ · path(u, v)` — i.e., per-source paths are translates of
+the canonical path. When this holds, orbit-class capacity equals physical-edge
+capacity. When it fails, the two diverge and any orbit-based scheduler is
+working with a weaker (smaller) feasible set than it claims.
+
+### Scheduling algorithms
+
+| Scheduler | What it optimizes | Optimality |
+|---|---|---|
+| `orbit_greedy` (default) | Orbit-greedy with full-physical-edge accounting (delegates to `orbit_greedy_full` since 2026-05-15) | LB-tight on (2,4) and (2,2,4) ILP; +1 over LB on (2,4,4) and (4,8) ILP (confirmed via literal ILP); +10 over LB on the loaded 8×4×4 routing |
+| `orbit_greedy_full` | Same algorithm; explicit name | Same as above |
+| `literal_greedy` | LMR-style per-flow earliest-feasible | Bounded by `O(c + d)` per LMR; +5–14% over `orbit_greedy_full` empirically |
+| `ilp_literal` | Exact ILP on the literal `N(N-1)` flow set | Provably optimal under physical-edge capacity. Tractable up to N=32 (~minutes); intractable at N=128 (LP relaxation alone hangs on 1.37M binary vars) |
+| `pipelined_orbit` | Orbit greedy with `t_{i+1} = t_i + 1` constraint | Diagnostic only; not optimal in general |
+| `round_robin` / `xla` | Latin-square rotation (baseline) | 4–9× over LB on full AllToAll |
+
+A gap of 1 means the routing+schedule saturate every bottleneck link; >1
+quantifies inefficiency. **Performance varies materially by routing**: see
+`docs/results.md` for the matrix.
+
+### Two capacity models — the source of historical confusion
+
+Earlier versions of this project claimed `orbit_greedy` was "LB-tight on
+10/10 cells". That claim was correct in the **orbit-class capacity model**
+(one orbit firing per `(dim, dir)` class per step), but the actual Pallas
+kernel executes against the **physical-edge model** (one flow per directed
+edge per step). The two are equivalent iff the routing is translation-
+equivariant under the `(dim, dir)` action; for several non-trivial cells
+they diverge, and the orbit-class LB is unattainable in the physical model.
+See [docs/orbit_greedy_optimality.md §6](docs/orbit_greedy_optimality.md)
+for the full reconciliation.
 
 ## Quickstart
 

@@ -32,19 +32,33 @@ traverse `e` exactly once). Therefore at least `L` steps must elapse before all
 units crossing `e` are delivered, so `makespan ≥ L`. Since this holds for every
 edge `e`, taking the maximum gives `makespan ≥ max_e load(e) = LB`. QED.
 
-**Note on tightness.** `LB` is achieved by a polynomial-time constructive
-heuristic (Schedule B' / OrbitGreedy with default `lpt_tail_asc` ordering in
-[schedules.md](schedules.md)) on **all 10 `{S, 2S}` cells tested**: 2×4,
-2×2×4, 2×4×4, 4×8, 4×4×8 × {DOR, ILP routing}. The symmetric ILP
-independently confirms `makespan = LB` on every ILP-routed cell. The 2×4×4
-DOR cell was the trickiest: plain `lpt` ordering missed by 1 step until we
-discovered that orbits ending on low-load edges need to claim bottleneck
-slots first; the `lpt_tail_asc` tiebreak (tail-load ascending) closes that
-gap. The achievability of `LB` on each tested cell is mechanically proven
-via a König + Smith's-deadline-feasibility argument (see
-[orbit_greedy_optimality.md](orbit_greedy_optimality.md) §4.3); extending
-the proof in closed form to all `{S, 2S}^n` shapes reduces to standard
-canonical-path enumeration.
+**Note on tightness — corrected 2026-05-15.** The original claim was that
+`LB` is achieved by a polynomial-time constructive heuristic (OrbitGreedy
+with default `lpt_tail_asc` ordering) on all 10 `{S, 2S}` cells tested. That
+claim is correct in the **orbit-class capacity model** (one orbit firing
+per `(dim, dir)` class per step) and the symmetric ILP independently
+confirms it there. In the **physical-edge capacity model** (which the
+Pallas kernel actually executes against), the two models diverge whenever
+the routing is not translation-equivariant under `(dim, dir)`. Empirical
+status under the physical-edge model:
+
+- **DOR routing** (translation-equivariant by construction): `orbit_greedy`
+  achieves `LB` on all cells.
+- **ILP routing**: `orbit_greedy` achieves `LB` on (2,4) and (2,2,4); +1
+  over LB on (2,4,4) and (4,8); not re-measured on 4×4×8 (literal ILP
+  intractable). Literal ILP at `t_upper = LB` is feasible on (2,4,4)-ilp
+  and (4,8)-ilp, so the +1 gap is a heuristic-level sub-optimality, not a
+  fundamental bound.
+- **Loaded routings** (e.g. `fixtures/routing_table_8x4x4_twist.json`):
+  `orbit_greedy` is the best-known feasible schedule but its makespan/LB
+  gap is 10/75 ≈ 13% — and the literal ILP can't determine whether `LB`
+  is reachable.
+
+The König + Smith's-deadline-feasibility argument in
+[orbit_greedy_optimality.md](orbit_greedy_optimality.md) §4.3 is correct
+under its stated hypotheses (translation-equivariance under `(dim, dir)`
+and condition (‡)); see §6 "Update (2026-05-15, evening)" for the full
+reconciliation.
 
 ## Worked Example: (2,4) with m=1
 

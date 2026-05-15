@@ -1005,9 +1005,53 @@ exactly, with length-3 orbits filling them densely.
 **Note (2026-05-15):** The `(dim, dir)` keying empirically failed on
 2×2×4, 2×4×4, and 4×8 ILP-routed cells (see
 `tests/test_orbit_greedy_dimdir_correctness.py`). `OrbitGreedySchedule`
-now delegates to the orbit_greedy_full implementation. Sections
-4.3.1–4.3.17 still hold *under the full-physical-edge formulation*; the
-(dim, dir) shorthand was incorrect for non-equivariant routings.
+now delegates to the orbit_greedy_full implementation.
+
+**Update (2026-05-15, evening):** Re-running the empirical verification
+under the **physical-edge capacity model** (the model the Pallas kernel
+actually executes against) reveals that this document's "LB-tight on
+10/10 cells" claim is correct in the *orbit-class* capacity model only.
+The two models diverge whenever the routing is not translation-equivariant
+under the `(dim, dir)` action — which holds for DOR by construction and
+fails for the codebase's ILPRouter on several cells. Specifically:
+
+| Cell | Orbit-class LB | Physical-edge LB | `orbit_greedy_full` | `ilp_literal` (oracle) |
+|---|---:|---:|---:|---:|
+| (2,4) ILP | 3 | 3 | 3 | 3 |
+| (2,2,4) ILP | 5 | 5 | 5 | 5 |
+| (2,4,4) ILP | 11 | 11 | **12 (+1)** | **11** (verified, ~3 min) |
+| (4,8) ILP | 21 | 21 | **22 (+1)** | **21** (verified, ~85 min) |
+| 4×4×8 ILP | 74 | 74 (assumed) | not re-measured | intractable |
+| 8×4×4 loaded | n/a | 75 | 85 (+10) | intractable (~1.37M binary vars) |
+
+What changed:
+- The original `(dim, dir)`-keyed orbit greedy reported makespan = 11 / 21
+  on (2,4,4)-ilp / (4,8)-ilp, but those schedules had 160 / 288 physical-
+  edge capacity violations under the actual edge-orbit class structure
+  produced by ILPRouter (which assigns 32 distinct physical edges per
+  `(dim, dir)` class in a way that's not a translation-orbit of one
+  canonical path).
+- The corrected `orbit_greedy_full` (which keys on the actual set of
+  physical edges each orbit traverses) produces 0-violation schedules at
+  makespan 12 / 22 — *one step over LB*.
+- A literal-flow ILP at `t_upper = LB` returns a feasible 0-violation
+  schedule, **proving the LB is physically achievable on these cells**.
+  So the +1 gap is a heuristic-level sub-optimality of `orbit_greedy_full`,
+  not a fundamental lower bound.
+
+Bottom line: the König+Smith proof in §4.3 is correct *under its stated
+hypotheses* — translation-equivariance under `(dim, dir)` and condition
+(‡). For routings where translation-equivariance under `(dim, dir)`
+fails (which now includes ILPRouter on 3 of 5 cells in our suite, plus
+all loaded routings), the proof's conclusion about `orbit_greedy_full`
+achieving makespan = LB does not apply. The algorithm is still
+useful and capacity-feasible, but it is no longer claimed to be optimal
+in those cases.
+
+The fixtures `fixtures/schedule_2x4x4_ilp_ilp_literal.json` and
+`fixtures/schedule_4x8_ilp_ilp_literal.json` archive the literal-ILP
+LB-tight schedules for these cells, so the +1 gap can be reproduced
+without re-running the (expensive) ILP.
 
 ## 7. References
 

@@ -36,32 +36,78 @@ Only the iteration order changes.
 
 ## Scheduler choice
 
-The generator supports four scheduling algorithms via `--scheduler`:
+The generator supports four scheduling algorithms via `--scheduler`. Scheduler
+performance **depends on the routing** — picking a scheduler in isolation is
+not enough; the routing × scheduler pair determines the realized makespan.
 
-| Scheduler | Approach | When to use |
+### Algorithms
+
+| Scheduler | Approach | Always physically feasible? |
 |---|---|---|
-| `orbit_greedy` (default) | Orbit greedy keyed on `(dim, dir)` edge classes (now delegates internally to `orbit_greedy_full`) | DOR/ILP routings (translation-equivariant). Provably LB-tight on most of the (S, 2S) cells in `docs/orbit_greedy_optimality.md`; LB+1 on `(2,4,4)`-ilp and `(4,8)`-ilp under the corrected physical-edge formulation. |
-| `orbit_greedy_full` | Orbit greedy keyed on full physical-edge sets | Loaded TPU routings or any case where (dim, dir) does not partition physical edges cleanly. Capacity-feasible by construction. |
-| `literal_greedy` | LMR-style per-flow earliest-feasible greedy | Sanity baseline; works on any routing. Makespan is bounded by O(c + d) (LMR), constants are uncomputed but practical. |
-| `ilp_literal` | Exact ILP on the literal N(N-1) flow set | Small cells only (≤ 32 nodes); intractable at N = 128. Use as a ground-truth oracle. |
+| `orbit_greedy` (default) | Orbit greedy with full-physical-edge accounting (alias for `orbit_greedy_full` since 2026-05-15; the original `(dim, dir)`-keyed implementation was unsound on non-equivariant routings and was replaced) | Yes |
+| `orbit_greedy_full` | Same algorithm; explicit name kept for clarity | Yes |
+| `literal_greedy` | LMR-style per-flow earliest-feasible greedy on the literal `N(N-1)` flow set | Yes |
+| `ilp_literal` | Exact ILP on the literal flow set (PuLP/CBC) | Yes (when CBC returns); intractable at N=128 |
 
 The post-schedule capacity verifier refuses to emit a kernel whose schedule
-has any physical-edge collisions, so a `--scheduler` choice that doesn't
-fit the routing fails fast at generation time.
+has any physical-edge collisions, so any wrong combination fails fast at
+generation time.
 
-Example invocations:
+### Routing × scheduler performance matrix (physical-edge model)
+
+Numbers are `makespan` (lower is better; LB = max physical-edge load).
+
+| Routing | N | LB | `orbit_greedy_full` | `literal_greedy` | `ilp_literal` |
+|---|---:|---:|---:|---:|---|
+| (2,4) ILP | 8 | 3 | **3** | 3 | 3 |
+| (2,2,4) ILP | 16 | 5 | **5** | 6 | 5 (~1 s) |
+| (2,4,4) ILP | 32 | 11 | 12 (+1) | 14 | **11** (~3 min) |
+| (4,8) ILP | 32 | 21 | 22 (+1) | 25 | **21** (~85 min) |
+| (8,4,4) loaded | 128 | 75 | 85 (+10) | 87 | intractable |
+
+**What this matrix shows:**
+
+- On (2,4) and (2,2,4) ILP, `orbit_greedy_full` is LB-optimal.
+- On (2,4,4) and (4,8) ILP, the literal ILP **proves** LB is achievable in
+  the physical-edge model — so `orbit_greedy_full`'s LB+1 is a heuristic-
+  level sub-optimality, not a fundamental bound. The gap is 1 step in both
+  cases.
+- On the loaded 8×4×4 TPU routing, the literal ILP is intractable (~1.37 M
+  binary vars; CBC's LP relaxation alone runs indefinitely). Whether LB=75
+  is achievable on this routing is **open**. The best known feasible
+  schedule is `orbit_greedy_full` at makespan 85.
+- `literal_greedy` consistently trails `orbit_greedy_full` by 5–14%. It's a
+  fallback for routings where orbit symmetry breaks entirely; on routings
+  with orbit structure it loses to the orbit-based variants.
+
+### When to use which
+
+| Routing class | Recommended scheduler | Why |
+|---|---|---|
+| DOR (any cell) | `orbit_greedy` | Translation-equivariant; orbit greedy is LB-tight or LB+1 |
+| ILPRouter (small cells N ≤ 16) | `orbit_greedy` or `ilp_literal` | Both reach LB; ILP is the exact ground truth |
+| ILPRouter (N=32) | `ilp_literal` if you have minutes; `orbit_greedy` otherwise | ILP closes the +1 gap that orbit greedy has on (2,4,4)/(4,8) |
+| ILPRouter (N=128, i.e. 4×4×8) | `orbit_greedy` | ILP intractable; orbit greedy is the best practical choice |
+| **Loaded TPU routing** | `orbit_greedy` (makespan 85) — **or** `literal_greedy` (makespan 87) as a sanity baseline | The routing's translation-equivariance properties typically fail (twist-wrap edge classes, escape-VC routing); orbit greedy still beats per-flow greedy by a step or two |
+
+### Example invocations
 
 ```bash
-# Loaded TPU routing on 8x4x4 — use orbit_greedy_full or literal_greedy:
+# Loaded TPU routing on 8x4x4 — orbit_greedy is fine (the default).
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json
+
+# Same routing, sanity-check with literal_greedy:
 python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 8,4,4 \
     --routing-table fixtures/routing_table_8x4x4_twist.json \
-    --scheduler orbit_greedy_full
+    --scheduler literal_greedy
 
-# Small-cell oracle:
+# Small-cell ground-truth oracle (proves LB-achievability):
 python pallas_kernel/gen_orbit_greedy_kernel.py \
-    --slice 2,4 --router ilp \
-    --scheduler ilp_literal --ilp-time-limit-s 60
+    --slice 2,4,4 --router ilp \
+    --scheduler ilp_literal --ilp-time-limit-s 600
 ```
 
 ## The twist (why per-source destinations)

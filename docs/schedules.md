@@ -195,6 +195,19 @@ high-load tails fill in around them.
 Runtime is dominated by orbit/router setup (~21s on 4×4×8 for `ILPRouter`'s
 LP); the scheduling step itself takes microseconds.
 
+> **⚠ Update (2026-05-15):** The "10/10 LB-tight" claim above is in the
+> **orbit-class capacity model**. In the **physical-edge capacity model**
+> (what the Pallas kernel executes against), `orbit_greedy` is LB-tight
+> on (2,4), (2,2,4), all DOR cells, and (2,4) ILP; but it is LB+1 on
+> (2,4,4)-ilp and (4,8)-ilp (verified against `ilp_literal` at LB).
+> The two models diverge on routings where `(dim, dir)` translation-
+> equivariance fails — including ILPRouter on multiple cells and all
+> "loaded" routings (e.g. TPU OCS routes). See
+> [orbit_greedy_optimality.md §6](orbit_greedy_optimality.md#6-open-questions)
+> "Update (2026-05-15, evening)" and the
+> [pallas_kernel scheduler-choice matrix](../pallas_kernel/README.md#routing--scheduler-performance-matrix-physical-edge-model)
+> for the corrected numbers.
+
 **Theoretical context.** This is packet routing with given paths
 (Leighton-Maggs-Rao 1988/1994): for any congestion-`c`, dilation-`d` instance,
 `O(c+d)` makespan is constructive. In our case `d ≤ diameter ≈ ⌈sum(slice)/2⌉`

@@ -179,3 +179,23 @@ def test_save_routing_table_asserts_router_endpoint(tmp_path: Path):
     out = tmp_path / "rt.json"
     with pytest.raises(AssertionError, match="endpoint"):
         save_routing_table(t, BogusRouter(), out)
+
+
+def test_cli_generate_routing_table_writes_file(tmp_path: Path):
+    import subprocess
+    import sys
+    out = tmp_path / "rt_2x4_dor.json"
+    res = subprocess.run(
+        [
+            sys.executable,
+            "scripts/generate_routing_table.py",
+            "--slice", "2,4",
+            "--router", "dor",
+            "--out", str(out),
+        ],
+        capture_output=True, text=True,
+    )
+    assert res.returncode == 0, res.stderr
+    assert out.exists()
+    table = load_routing_table(out)
+    assert len(table) == 8 and len(table[0]) == 8

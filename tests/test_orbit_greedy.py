@@ -58,21 +58,29 @@ def test_orbit_greedy_lb_match_small():
     assert makespan == w.lower_bound  # ratio = 1.00
 
 
-@pytest.mark.parametrize("slice_,router_kind,expected_lb", [
-    ((2, 4), "dor", 4),
-    ((2, 4), "ilp", 3),
-    ((2, 2, 4), "dor", 7),
-    ((2, 2, 4), "ilp", 5),
-    ((2, 4, 4), "dor", 16),
-    ((2, 4, 4), "ilp", 11),
-    ((4, 8), "dor", 26),
-    ((4, 8), "ilp", 21),
+# (2,4,4)-ilp and (4,8)-ilp are LB+1 under orbit_greedy_full: the (dim, dir)-keyed
+# predecessor faked LB-tightness via physical-edge capacity violations
+# (see plan 2026-05-15-multi-algorithm-scheduling.md Task 3). The other 6 cells
+# still hit LB exactly.
+@pytest.mark.parametrize("slice_,router_kind,expected_lb,expected_makespan", [
+    ((2, 4), "dor", 4, 4),
+    ((2, 4), "ilp", 3, 3),
+    ((2, 2, 4), "dor", 7, 7),
+    ((2, 2, 4), "ilp", 5, 5),
+    ((2, 4, 4), "dor", 16, 16),
+    ((2, 4, 4), "ilp", 11, 12),   # LB+1: see comment above
+    ((4, 8), "dor", 26, 26),
+    ((4, 8), "ilp", 21, 22),      # LB+1: see comment above
 ])
-def test_orbit_greedy_default_achieves_lb(slice_, router_kind, expected_lb):
-    """Default `lpt_tail_asc` ordering hits makespan == LB on every cell.
+def test_orbit_greedy_default_achieves_lb(slice_, router_kind, expected_lb, expected_makespan):
+    """Default `lpt_tail_asc` ordering hits makespan == LB on most cells.
 
     Locks the regression: plain LPT missed 2x4x4 DOR by 1 step (gave 17, LB=16)
     until we added the tail-load-ascending tiebreak.
+
+    Two ILP-routed cells now report LB+1 because orbit_greedy_full enforces
+    physical-edge capacity correctly (the prior (dim, dir) keying produced
+    capacity-violating schedules that nominally matched LB).
     """
     t = Topology(slice=slice_)
     r = DORRouter(t) if router_kind == "dor" else ILPRouter(t)
@@ -81,7 +89,7 @@ def test_orbit_greedy_default_achieves_lb(slice_, router_kind, expected_lb):
     sim = Simulator(t, r, list(w.flows))
     for inj in OrbitGreedySchedule().emit(w):
         sim.inject(inj)
-    assert sim.run() == expected_lb
+    assert sim.run() == expected_makespan
 
 
 def test_orbit_greedy_lpt_misses_lb_on_2x4x4_dor():

@@ -1002,6 +1002,13 @@ exactly, with length-3 orbits filling them densely.
    pipelined variant that achieves LB everywhere, or is gap-allowed
    greediness genuinely required?
 
+**Note (2026-05-15):** The `(dim, dir)` keying empirically failed on
+2×2×4, 2×4×4, and 4×8 ILP-routed cells (see
+`tests/test_orbit_greedy_dimdir_correctness.py`). `OrbitGreedySchedule`
+now delegates to the orbit_greedy_full implementation. Sections
+4.3.1–4.3.17 still hold *under the full-physical-edge formulation*; the
+(dim, dir) shorthand was incorrect for non-equivariant routings.
+
 ## 7. References
 
 - F. T. Leighton, B. Maggs, S. B. Rao. *Packet routing and job-shop

@@ -53,10 +53,21 @@ def _dest_table_and_orbit_steps_from_schedule(
     """Build _DEST_TABLE_NP[n, K] and _ORBIT_STEPS from schedule entries.
 
     Strategy:
-      * Sort schedule by (round, src). For each src, the per-round destination
+      * Sort schedule by (round, dst). For each src, the per-round destination
         sequence becomes the columns of _DEST_TABLE_NP[src].
-      * The k-th column corresponds to one orbit; all sources agree on the
-        round-of-column-k, so derive _ORBIT_STEPS once from src=0.
+      * `_ORBIT_STEPS[t]` = list of column indices `k` whose hop-0 round equals
+        the t-th distinct round value. Derived from src=0's row.
+
+    Invariants the kernel actually depends on:
+      1. Rounds-by-column agree across sources: for every column k, the round
+         value at row src=0 equals the round at row src=s for all s. (This
+         holds because all sources in the same orbit fire hop-0 at the same
+         OrbitGreedy step.)
+      2. Each row of `_DEST_TABLE_NP` is a permutation of `{0..n-1} \\ {src}`.
+
+    What is *not* guaranteed (and the kernel does not need): column k may
+    correspond to different orbits across sources whenever a round contains
+    multiple orbits and per-source `dst` values break ties differently.
     """
     by_src: dict[int, list[tuple[int, int]]] = defaultdict(list)
     for e in schedule:
@@ -136,6 +147,24 @@ def generate_kernel_source(
     L.append(f'Hop-0 steps:     {makespan_hop0}')
     L.append('')
     L.append('Generated from:  routing-table JSON + schedule JSON')
+    L.append('')
+    L.append('Integration. The kernel has the same signature as')
+    L.append('`_ragged_a2a_kernel_point_to_point` PLUS one extra positional Ref')
+    L.append('input `dest_table_ref` (slot 6, between `num_packets_per_group_ref`')
+    L.append('and `x_ref`). To use:')
+    L.append(f'  1. Copy this file next to reference_kernel.py.')
+    L.append(f'  2. Set `kernel = {function_name}` in ragged_all_to_all.')
+    L.append('  3. Insert an extra SMEM in_spec at slot 6 (before x):')
+    L.append('         pl.BlockSpec(memory_space=pltpu.SMEM)')
+    L.append('     and pass `jnp.asarray(_DEST_TABLE_NP)` as the corresponding')
+    L.append('     extra positional input to the pallas_call.')
+    L.append('  4. Shift `input_output_aliases` keys by +1: e.g. {7: 0} → {8: 0}.')
+    L.append('  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.')
+    L.append('         axis_name="x"')
+    L.append('     The orbit-greedy kernel does NOT decode per-axis coords; it')
+    L.append('     reads `my_flat = jax.lax.axis_index(axis_name)` once.')
+    L.append('')
+    L.append('Use `build_pallas_call_kwargs()` below for a copy-pasteable example.')
     L.append('"""')
     L.append('from __future__ import annotations')
     L.append('')
@@ -184,7 +213,17 @@ def generate_kernel_source(
     L.append('    packet_size,')
     L.append('    enable_checks: bool = False,')
     L.append('):')
-    L.append(f'    """Orbit-greedy P2P AllToAll kernel for slice={slice_}."""')
+    L.append(f'    """Orbit-greedy P2P AllToAll kernel for slice={slice_}.')
+    L.append('')
+    L.append('    Signature: same as `_ragged_a2a_kernel_point_to_point` PLUS one extra')
+    L.append('    Ref input `dest_table_ref` (int32[N, K] in SMEM, slot 6). Other')
+    L.append('    differences vs reference:')
+    L.append('      * Iteration order = OrbitGreedy firing order (vs rotation).')
+    L.append('      * Destinations are looked up in `dest_table_ref` (twist-aware).')
+    L.append('      * `transpose=True` is NOT supported (would need regen).')
+    L.append('      * Assumes 1 group per device (uniform AllToAll).')
+    L.append('      * `axis_name` is a flat string (e.g. "x"), as in the reference.')
+    L.append('    """')
     L.append('    assert scratch_ref is None')
     L.append('    del scratch_ref')
     L.append('    assert scratch_sems is None')
@@ -220,6 +259,20 @@ def generate_kernel_source(
     L.append('        )')
     L.append('        input_offset = input_offsets_ref[group_idx] + packet_idx * packet_size')
     L.append('        output_offset = output_offsets_ref[group_idx] + packet_idx * packet_size')
+    L.append('')
+    L.append('        if enable_checks:')
+    L.append('            pl.debug_check(sizes_ref[group_idx] >= 0, "size<0")')
+    L.append('            pl.debug_check(size >= 0, "transfer size<0")')
+    L.append('            pl.debug_check(input_offset >= 0, "input_offset<0")')
+    L.append('            pl.debug_check(output_offset >= 0, "output_offset<0")')
+    L.append('            pl.debug_check(')
+    L.append('                input_offset + size <= x_ref.shape[0],')
+    L.append('                "input_offset+size > x_ref.shape[0]",')
+    L.append('            )')
+    L.append('            pl.debug_check(')
+    L.append('                output_offset + size <= o_ref.shape[0],')
+    L.append('                "output_offset+size > o_ref.shape[0]",')
+    L.append('            )')
     L.append('')
     L.append('        @pl.when(size > 0)')
     L.append('        def _():')
@@ -259,6 +312,9 @@ def generate_kernel_source(
         L.append('')
         L.append('    send_amount = total_send_amount_ref[0]')
         L.append('    recv_amount = total_recv_amount_ref[0]')
+        L.append('    if enable_checks:')
+        L.append('        pl.debug_check(send_amount >= 0, "send_amount<0")')
+        L.append('        pl.debug_check(recv_amount >= 0, "recv_amount<0")')
         L.append('    pltpu.make_async_copy(')
         L.append('        o_ref.at[pl.ds(0, send_amount)],')
         L.append('        o_ref.at[pl.ds(0, send_amount)],')

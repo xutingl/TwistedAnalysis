@@ -79,3 +79,67 @@ def test_save_schedule_rejects_bool_round(tmp_path: Path):
     bad = [{"round": True, "src": 0, "dst": 1, "path": [0, 1]}]
     with pytest.raises(ValueError, match="round"):
         save_schedule(bad, tmp_path / "x.json")
+
+
+import pytest
+
+
+def test_schedule_from_orbit_greedy_2x4_dor():
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy
+    from twisted_analysis.io.coords import flatten
+    from twisted_analysis.io.routing_table import (
+        save_routing_table, load_routing_table,
+    )
+    from twisted_analysis.topology import Topology, DORRouter
+
+    t = Topology(slice=(2, 4))
+    r = DORRouter(t)
+
+    # Build the routing table in-memory in the loaded shape.
+    table = []
+    for src in t.nodes():
+        row = []
+        for dst in t.nodes():
+            if src == dst:
+                row.append([flatten(src, t.slice)])
+                continue
+            path = r.path(src, dst)
+            nodes = [src] + [v for (_u, v, _, _) in path]
+            row.append([flatten(n, t.slice) for n in nodes])
+        table.append(row)
+
+    entries = schedule_from_orbit_greedy(t, table, order="lpt_tail_asc")
+
+    # Full coverage: N * (N - 1) entries.
+    n = t.n_nodes
+    assert len(entries) == n * (n - 1)
+
+    # Each entry's path is consistent with src/dst and uses int flat-IDs.
+    for e in entries:
+        assert e["path"][0] == e["src"]
+        assert e["path"][-1] == e["dst"]
+        assert isinstance(e["round"], int)
+
+    # For each src, the destinations span every other device exactly once.
+    by_src: dict[int, set[int]] = {}
+    for e in entries:
+        by_src.setdefault(e["src"], set()).add(e["dst"])
+    for src_flat in range(n):
+        assert by_src[src_flat] == set(range(n)) - {src_flat}
+
+
+def test_schedule_from_orbit_greedy_invalid_order():
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy
+    from twisted_analysis.topology import Topology, DORRouter
+    from twisted_analysis.io.routing_table import save_routing_table, load_routing_table
+
+    t = Topology(slice=(2, 4))
+    r = DORRouter(t)
+    import tempfile
+    from pathlib import Path
+    with tempfile.TemporaryDirectory() as td:
+        p = Path(td) / "rt.json"
+        save_routing_table(t, r, p)
+        table = load_routing_table(p)
+        with pytest.raises(ValueError):
+            schedule_from_orbit_greedy(t, table, order="bogus")

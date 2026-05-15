@@ -60,3 +60,56 @@ def load_schedule(path: Path | str) -> list[dict]:
     if not isinstance(raw, list):
         raise ValueError(f"{path}: top-level must be a list")
     return _validate(raw)
+
+
+def schedule_from_orbit_greedy(
+    topology, table, *, order: str = "lpt_tail_asc",
+) -> list[dict]:
+    """Run the OrbitGreedy scheduler against a routing table; return entries.
+
+    For each orbit O firing hop-0 at OrbitGreedy step `t_0^O`, emit one entry
+    per source `s`:
+        {"round": t_0^O, "src": flat(s), "dst": flat(s + δ_O),
+         "path": [flat-IDs along the canonical path translated to s]}
+
+    Total entries: `N * (N - 1)` for a full AllToAll. Entries are sorted by
+    (round, src) for determinism.
+    """
+    from twisted_analysis.io.coords import flatten
+    from twisted_analysis.io.routing_table import RoutingTableRouter
+    from twisted_analysis.lp.orbit import compute_orbits
+    from twisted_analysis.schedules.orbit_greedy import (
+        _emit_orbit_greedy, _ordered_orbits, _canonical_paths, _edge_orbit_load,
+    )
+
+    rt_router = RoutingTableRouter(topology=topology, table=table)
+
+    canon = _canonical_paths(topology, rt_router)
+    edge_load = _edge_orbit_load(canon)
+    ordered = _ordered_orbits(canon, edge_load, order)
+
+    assignment = _emit_orbit_greedy(topology, rt_router, order)
+    # hop-0 firing time per orbit
+    t0: dict = {}
+    for (orbit_id, hop_i, t), _v in assignment.items():
+        if hop_i == 0:
+            t0[orbit_id] = t
+
+    orbits = compute_orbits(topology)
+    slice_ = topology.slice
+
+    entries: list[dict] = []
+    for orbit_id in ordered:
+        round_t = t0[orbit_id]
+        # `members` contains (src, dst) pairs for every source in this orbit.
+        for (src, dst) in orbits[orbit_id]:
+            src_flat = flatten(src, slice_)
+            dst_flat = flatten(dst, slice_)
+            entries.append({
+                "round": int(round_t),
+                "src": src_flat,
+                "dst": dst_flat,
+                "path": list(table[src_flat][dst_flat]),
+            })
+    entries.sort(key=lambda e: (e["round"], e["src"]))
+    return entries

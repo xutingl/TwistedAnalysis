@@ -84,24 +84,6 @@ def _dest_table_and_orbit_steps_from_schedule(
     for s in range(n):
         by_src[s].sort()
 
-    # Invariant 1 check: column-k rounds agree across all sources. This holds
-    # for orbit-based schedulers (orbit_greedy, orbit_greedy_full) but NOT for
-    # per-flow schedulers (literal_greedy, ilp_literal). Bail out early
-    # rather than silently emitting a kernel whose `--per-step-barrier`
-    # unrolled steps would be incorrect on every source but src=0.
-    rounds_src0 = [r for (r, _d) in by_src[0]]
-    for s in range(1, n):
-        rounds_s = [r for (r, _d) in by_src[s]]
-        if rounds_s != rounds_src0:
-            raise RuntimeError(
-                f"schedule's round-by-column structure is not symmetric across "
-                f"sources (src=0 vs src={s} differ). This is normal for "
-                f"per-flow schedulers (literal_greedy, ilp_literal). The "
-                f"current kernel emitter assumes orbit-level symmetry and "
-                f"cannot consume this schedule as-is. Use an orbit-based "
-                f"scheduler, or extend the emitter to thread per-source rounds."
-            )
-
     K = n - 1
     table = np.zeros((n, K), dtype=np.int32)
     for src in range(n):
@@ -546,6 +528,31 @@ def main(argv=None) -> int:
     dest_table, orbit_steps = _dest_table_and_orbit_steps_from_schedule(
         schedule, topology.n_nodes,
     )
+    if args.per_step_barrier:
+        # --per-step-barrier bakes per-step DMA-drain calls into the unrolled
+        # kernel using src=0's column-to-round map. For per-flow schedulers
+        # (literal_greedy, ilp_literal), each source has an independent round
+        # mapping, so the unrolled kernel would be wrong on every source != 0.
+        # Refuse to emit such a kernel.
+        from collections import defaultdict
+        _by_src: dict[int, list[tuple[int, int]]] = defaultdict(list)
+        for _e in schedule:
+            _by_src[_e["src"]].append((_e["round"], _e["dst"]))
+        for _s in _by_src:
+            _by_src[_s].sort()
+        _rounds_src0 = [r for (r, _d) in _by_src[0]]
+        for _s in _by_src:
+            if _s == 0:
+                continue
+            _rounds_s = [r for (r, _d) in _by_src[_s]]
+            if _rounds_s != _rounds_src0:
+                raise SystemExit(
+                    f"--per-step-barrier requires a translation-symmetric "
+                    f"schedule (orbit_greedy / orbit_greedy_full), but "
+                    f"scheduler={args.scheduler!r} produced an asymmetric "
+                    f"schedule (sources 0 and {_s} differ at column 0 onward). "
+                    f"Drop --per-step-barrier or use an orbit-based scheduler."
+                )
     src = generate_kernel_source(
         slice_=slice_,
         router_name_for_doc=router_doc,

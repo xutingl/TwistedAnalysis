@@ -57,7 +57,16 @@ def main(argv=None) -> int:
             f"routing table has {len(table)} sources; slice {slice_} expects {topology.n_nodes}"
         )
 
-    entries = _run(args.scheduler, topology, table, args.order)
+    try:
+        entries = _run(args.scheduler, topology, table, args.order)
+    except ValueError as e:
+        raise SystemExit(
+            f"scheduler failed: {e}\n"
+            f"hint: this CLI requires routing tables whose paths are sequences of "
+            f"single-hop topology neighbors. If your routing table contains multi-hop "
+            f"steps (e.g. paths from external tools), regenerate it via "
+            f"scripts/generate_routing_table.py."
+        )
 
     if args.out is None:
         slice_str = "x".join(str(s) for s in slice_)

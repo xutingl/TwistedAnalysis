@@ -232,3 +232,50 @@ def test_cli_generate_schedule_writes_file(tmp_path: Path):
     assert out.exists()
     entries = load_schedule(out)
     assert len(entries) == 8 * 7
+
+
+def test_cli_generate_schedule_multi_hop_table_friendly_error(tmp_path: Path):
+    """Multi-hop paths in input table should produce an actionable hint, not a traceback."""
+    import subprocess
+    import sys
+    import json
+
+    # Build a 2x4 routing table with one multi-hop entry — flat 0 to flat 7 in
+    # one direct jump (not a neighbor pair).
+    n = 8
+    table_raw = []
+    for src in range(n):
+        row = []
+        for dst in range(n):
+            if src == dst:
+                row.append({"path": [{"node_id": src}]})
+            else:
+                row.append({"path": [{"node_id": src}, {"node_id": dst}]})
+        table_raw.append(row)
+    rt = tmp_path / "rt_multi_hop.json"
+    rt.write_text(json.dumps(table_raw))
+
+    repo_root = Path(__file__).resolve().parent.parent
+    script = repo_root / "scripts" / "generate_schedule.py"
+    out = tmp_path / "sched.json"
+    res = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--routing-table", str(rt),
+            "--slice", "2,4",
+            "--scheduler", "orbit_greedy",
+            "--order", "lpt_tail_asc",
+            "--out", str(out),
+        ],
+        cwd=str(repo_root),
+        capture_output=True, text=True,
+    )
+    assert res.returncode != 0, "expected non-zero exit on multi-hop table"
+    # Hint should mention how to fix it; should NOT be a raw traceback.
+    assert "hint" in res.stderr.lower()
+    assert "single-hop" in res.stderr or "single hop" in res.stderr
+    assert "Traceback" not in res.stderr, (
+        f"raw traceback leaked to stderr:\n{res.stderr}"
+    )
+    assert not out.exists(), "no schedule should be written on failure"

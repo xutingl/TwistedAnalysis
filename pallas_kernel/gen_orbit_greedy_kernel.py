@@ -39,7 +39,11 @@ sys.path.insert(0, str(_HERE.parent))
 from twisted_analysis.io.routing_table import (
     save_routing_table, load_routing_table,
 )
-from twisted_analysis.io.schedule import save_schedule, schedule_from_orbit_greedy
+from twisted_analysis.io.schedule import (
+    save_schedule,
+    schedule_from_algorithm,
+)
+from twisted_analysis.schedules.verify import verify_capacity
 from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 
 
@@ -109,6 +113,7 @@ def generate_kernel_source(
     *,
     slice_: tuple[int, ...],
     router_name_for_doc: str,
+    scheduler_name: str,
     order: str,
     per_step_barrier: bool,
     function_name: str | None,
@@ -142,6 +147,7 @@ def generate_kernel_source(
     L.append('')
     L.append(f'Topology:        slice={slice_}  (N={N} devices, ndim={n_dim})')
     L.append(f'Router:          {router_name_for_doc}')
+    L.append(f'Scheduler:       {scheduler_name}')
     L.append(f'OrbitGreedy:     order={order!r}')
     L.append(f'Per-step barrier: {per_step_barrier}')
     L.append(f'Hop-0 steps:     {makespan_hop0}')
@@ -415,6 +421,24 @@ def main(argv=None) -> int:
                         "(ignored if --routing-table is given). Default: ilp.")
     p.add_argument("--order", default="lpt_tail_asc",
                    choices=["lpt_tail_asc", "lpt", "spt", "tail_asc"])
+    p.add_argument(
+        "--scheduler",
+        default="orbit_greedy",
+        choices=["orbit_greedy", "orbit_greedy_full", "literal_greedy", "ilp_literal"],
+        help="Which scheduling algorithm to run on the routing table. "
+             "orbit_greedy: original (dim, dir)-keyed greedy — only correct on "
+             "translation-equivariant routings (DOR, ILP). "
+             "orbit_greedy_full: same greedy but keyed on full physical-edge sets — "
+             "correct on any translation-symmetric workload. "
+             "literal_greedy: LMR-style per-flow earliest-feasible greedy. "
+             "ilp_literal: exact ILP on the literal N*(N-1) flow set (small cells only).",
+    )
+    p.add_argument(
+        "--ilp-time-limit-s",
+        type=int,
+        default=600,
+        help="Time limit (s) for the ilp_literal solver. Ignored otherwise.",
+    )
     p.add_argument("--per-step-barrier", action="store_true",
                    help="Emit per-OrbitGreedy-step barriers (best-effort).")
     p.add_argument("--function-name", default=None)
@@ -452,7 +476,7 @@ def main(argv=None) -> int:
             fixtures / f"routing_table_{slice_slug}_{router_slug}.json"
         )
         save_routing_table(topology, router, rt_path)
-        print(f"[1/3] wrote routing table {rt_path}", file=sys.stderr)
+        print(f"[1/4] wrote routing table {rt_path}", file=sys.stderr)
         router_doc = f"{router_disp}Router"
 
     table = load_routing_table(rt_path)
@@ -463,20 +487,48 @@ def main(argv=None) -> int:
         )
 
     # Stage 2: schedule.
-    schedule = schedule_from_orbit_greedy(topology, table, order=args.order)
+    sched_kwargs = {}
+    if args.scheduler in ("orbit_greedy", "orbit_greedy_full"):
+        sched_kwargs["order"] = args.order
+    elif args.scheduler == "literal_greedy":
+        # literal_greedy has its own valid orders; map lpt_tail_asc/lpt -> lpt.
+        sched_kwargs["order"] = "lpt" if args.order == "lpt_tail_asc" else args.order
+    elif args.scheduler == "ilp_literal":
+        sched_kwargs["time_limit_s"] = args.ilp_time_limit_s
+
+    schedule = schedule_from_algorithm(
+        args.scheduler, topology, table, **sched_kwargs,
+    )
     sched_path = args.schedule_out or (
-        fixtures / f"schedule_{slice_slug}_{router_slug}_{args.order}.json"
+        fixtures
+        / f"schedule_{slice_slug}_{router_slug}_{args.scheduler}_{args.order}.json"
     )
     save_schedule(schedule, sched_path)
-    print(f"[2/3] wrote schedule     {sched_path}", file=sys.stderr)
+    print(f"[2/4] wrote schedule     {sched_path}", file=sys.stderr)
 
-    # Stage 3: kernel.
+    # Stage 3 (new): verify physical-edge capacity.
+    violations = verify_capacity(schedule)
+    if violations:
+        print(
+            f"\nERROR: schedule has {len(violations)} physical-edge capacity violation(s). "
+            f"First 3: {violations[:3]}",
+            file=sys.stderr,
+        )
+        raise SystemExit(
+            f"refusing to emit kernel for violating schedule "
+            f"(scheduler={args.scheduler}, routing={rt_path}); "
+            f"capacity violation count = {len(violations)}"
+        )
+    print(f"[3/4] verified schedule  ({len(schedule)} flows, 0 violations)", file=sys.stderr)
+
+    # Stage 4: kernel.
     dest_table, orbit_steps = _dest_table_and_orbit_steps_from_schedule(
         schedule, topology.n_nodes,
     )
     src = generate_kernel_source(
         slice_=slice_,
         router_name_for_doc=router_doc,
+        scheduler_name=args.scheduler,
         order=args.order,
         per_step_barrier=args.per_step_barrier,
         function_name=args.function_name,
@@ -488,7 +540,7 @@ def main(argv=None) -> int:
     )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(src)
-    print(f"[3/3] wrote kernel       {out_path} ({len(src):,} bytes)", file=sys.stderr)
+    print(f"[4/4] wrote kernel       {out_path} ({len(src):,} bytes)", file=sys.stderr)
     return 0
 
 

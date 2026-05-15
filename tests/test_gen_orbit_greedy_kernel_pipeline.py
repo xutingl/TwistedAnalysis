@@ -131,3 +131,54 @@ def test_pipeline_from_routing_table_8x4x4_twist_fixture(tmp_path: Path):
     assert sched_out.exists()
     assert kernel_out.exists()
     ast.parse(kernel_out.read_text())
+
+
+def test_cli_supports_scheduler_flag(tmp_path):
+    """The --scheduler flag selects among the registered algorithms."""
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    rt_out = tmp_path / "rt.json"
+    sched_out = tmp_path / "sched.json"
+    kern_out = tmp_path / "kern.py"
+    # 2x4 ILP — fast.
+    rc = main([
+        "--slice", "2,4",
+        "--router", "ilp",
+        "--scheduler", "orbit_greedy_full",
+        "--routing-table-out", str(rt_out),
+        "--schedule-out", str(sched_out),
+        "--out", str(kern_out),
+    ])
+    assert rc == 0
+    assert rt_out.exists()
+    assert sched_out.exists()
+    assert kern_out.exists()
+    # Generated kernel should mention the scheduler in its docstring.
+    src = kern_out.read_text()
+    assert "orbit_greedy_full" in src
+
+
+def test_cli_verifier_fails_on_violating_schedule(tmp_path, monkeypatch):
+    """Verifier integration: pipeline raises if it produces a violating schedule."""
+    from pallas_kernel import gen_orbit_greedy_kernel as gen
+
+    # Monkeypatch the dispatcher to return a schedule with a known double-booking.
+    def bad_schedule(algorithm, topology, table, **kwargs):
+        return [
+            {"round": 0, "src": 0, "dst": 1, "path": [0, 1]},
+            {"round": 0, "src": 2, "dst": 1, "path": [2, 1]},  # different src->same edge? no, edge differs.
+            # Force a real collision: both use edge (0,1) at t=0.
+            {"round": 0, "src": 0, "dst": 1, "path": [0, 1]},
+        ]
+    monkeypatch.setattr(gen, "schedule_from_algorithm", bad_schedule)
+
+    import pytest
+    with pytest.raises(SystemExit, match="capacity violation"):
+        gen.main([
+            "--slice", "2,4",
+            "--router", "ilp",
+            "--scheduler", "orbit_greedy_full",
+            "--routing-table-out", str(tmp_path / "rt.json"),
+            "--schedule-out", str(tmp_path / "sched.json"),
+            "--out", str(tmp_path / "kern.py"),
+        ])

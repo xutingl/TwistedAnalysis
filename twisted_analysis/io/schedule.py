@@ -113,3 +113,103 @@ def schedule_from_orbit_greedy(
             })
     entries.sort(key=lambda e: (e["round"], e["src"]))
     return entries
+
+
+def schedule_from_orbit_greedy_full(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    order: str = "lpt_tail_asc",
+) -> list[dict]:
+    """Adapter: orbit_greedy_full -> schedule entries."""
+    from twisted_analysis.io.coords import flatten
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.lp.orbit import compute_orbits
+    from twisted_analysis.schedules.orbit_greedy_full import (
+        compute_hop0_firing_times_full,
+    )
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    t0 = compute_hop0_firing_times_full(topology, table, order=order)
+    orbits = compute_orbits(topology)
+    slice_ = topology.slice
+
+    entries: list[dict] = []
+    for orbit_id, members in orbits.items():
+        round_t = int(t0[orbit_id])
+        for (src, dst) in members:
+            src_flat = flatten(src, slice_)
+            dst_flat = flatten(dst, slice_)
+            entries.append({
+                "round": round_t,
+                "src": src_flat,
+                "dst": dst_flat,
+                "path": list(table[src_flat][dst_flat]),
+            })
+    entries.sort(key=lambda e: (e["round"], e["src"]))
+    return entries
+
+
+def schedule_from_literal_greedy(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    order: str = "lpt",
+) -> list[dict]:
+    """Adapter: literal_greedy -> schedule entries (already in correct format)."""
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.literal_greedy import literal_greedy
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return literal_greedy(topology, table, order=order)
+
+
+def schedule_from_ilp_literal(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    t_upper: int | None = None,
+    time_limit_s: int = 600,
+) -> list[dict]:
+    """Adapter: ilp_literal -> schedule entries."""
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.ilp_literal import ilp_literal
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return ilp_literal(
+        topology, table, t_upper=t_upper, time_limit_s=time_limit_s,
+    )
+
+
+_SCHEDULER_DISPATCH = {
+    "orbit_greedy": schedule_from_orbit_greedy,
+    "orbit_greedy_full": schedule_from_orbit_greedy_full,
+    "literal_greedy": schedule_from_literal_greedy,
+    "ilp_literal": schedule_from_ilp_literal,
+}
+
+
+def schedule_from_algorithm(
+    algorithm: str,
+    topology: Topology,
+    table: list[list[list[int]]],
+    **kwargs,
+) -> list[dict]:
+    """Dispatch to the named scheduler.
+
+    Available algorithms:
+      - "orbit_greedy":      original, (dim, dir)-keyed orbit greedy.
+        Provably correct on translation-equivariant routings only.
+      - "orbit_greedy_full": orbit greedy with full physical-edge accounting.
+        Correct under any translation-symmetric workload (including loaded TPU routings).
+      - "literal_greedy":    LMR-style per-flow earliest-feasible greedy.
+      - "ilp_literal":       exact ILP on literal flows. Small cells only.
+
+    Per-algorithm kwargs (e.g., `order`, `time_limit_s`) are passed through.
+    """
+    if algorithm not in _SCHEDULER_DISPATCH:
+        raise ValueError(
+            f"unknown algorithm: {algorithm!r}; "
+            f"choices: {sorted(_SCHEDULER_DISPATCH)}"
+        )
+    return _SCHEDULER_DISPATCH[algorithm](topology, table, **kwargs)

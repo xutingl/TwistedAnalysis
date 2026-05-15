@@ -1,0 +1,11 @@
+  generating orbit_greedy_full[lpt] seed (Phase 1 best at makespan 84)...
+  -> saved /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/_seed_orbit_greedy_full_lpt.json (makespan=84)
+  schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json: 85 -> 85 (Δ=0), viol=0, t=0.3s
+  schedule_8x4x4_loaded_literal_greedy_lpt.json: 87 -> 87 (Δ=0), viol=0, t=0.1s
+  02_best_random_shuffle_schedule.json: 86 -> 86 (Δ=0), viol=0, t=0.3s
+  SKIP missing: /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/03_best_cpsat_schedule.json
+  SKIP missing: /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/04_best_lp_rounding_schedule.json
+  _seed_orbit_greedy_full_lpt.json: 84 -> 84 (Δ=0), viol=0, t=0.5s
+
+best after local-search: makespan=84
+wrote /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/05_local_search_results.json

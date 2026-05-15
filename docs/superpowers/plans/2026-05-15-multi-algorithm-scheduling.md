@@ -21,6 +21,8 @@
 - If existing orbit-greedy produces 0 violations on every ILP-routed cell → keep it as algorithm `orbit_greedy` (the `(dim, dir)` keying is provably-correct under translation-equivariant routings). `orbit_greedy_full` is added as a new selectable option for non-equivariant routings (loaded TPU table).
 - If it produces violations on any ILP-routed cell → the `(dim, dir)` keying is generally unsound; replace `orbit_greedy` with `orbit_greedy_full` and drop the old code.
 
+**Decision (Task 3 result, 2026-05-15):** FAIL — replace orbit_greedy with orbit_greedy_full
+
 ---
 
 ## Task 1: Physical-edge capacity verifier

@@ -1,0 +1,58 @@
+[
+  {
+    "scheduler": "orbit_greedy_full",
+    "order": "lpt",
+    "makespan": 84,
+    "violations": 0,
+    "runtime_s": 14.047,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "orbit_greedy_full",
+    "order": "lpt_tail_asc",
+    "makespan": 85,
+    "violations": 0,
+    "runtime_s": 14.211,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "literal_greedy",
+    "order": "lpt",
+    "makespan": 87,
+    "violations": 0,
+    "runtime_s": 0.447,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "orbit_greedy_full",
+    "order": "tail_asc",
+    "makespan": 94,
+    "violations": 0,
+    "runtime_s": 14.112,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "orbit_greedy_full",
+    "order": "spt",
+    "makespan": 102,
+    "violations": 0,
+    "runtime_s": 14.082,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "literal_greedy",
+    "order": "spt",
+    "makespan": 105,
+    "violations": 0,
+    "runtime_s": 0.399,
+    "n_flows": 16256
+  },
+  {
+    "scheduler": "literal_greedy",
+    "order": "natural",
+    "makespan": 109,
+    "violations": 0,
+    "runtime_s": 0.44,
+    "n_flows": 16256
+  }
+]

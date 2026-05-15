@@ -185,7 +185,7 @@ def test_cli_verifier_fails_on_violating_schedule(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("scheduler", [
-    "orbit_greedy", "orbit_greedy_full", "literal_greedy",
+    "orbit_greedy", "orbit_greedy_full",
 ])
 def test_end_to_end_pipeline_2x4x4_ilp(tmp_path, scheduler):
     """Whole-pipeline smoke test: generate routing -> schedule -> verify -> kernel."""
@@ -209,3 +209,27 @@ def test_end_to_end_pipeline_2x4x4_ilp(tmp_path, scheduler):
     src = kern_out.read_text()
     assert scheduler in src
     assert "ILP" in src or "loaded" in src
+
+
+def test_end_to_end_pipeline_2x4x4_ilp_literal_greedy_rejected(tmp_path):
+    """Per-flow schedulers (literal_greedy) produce schedules whose column-k
+    rounds are not symmetric across sources. The kernel emitter assumes
+    orbit-level symmetry (it bakes src=0's column-to-round mapping into
+    `_ORBIT_STEPS`), so it must reject such schedules with a clear
+    RuntimeError rather than silently emitting a kernel that is wrong on
+    every source != 0.
+    """
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    rt_out = tmp_path / "rt.json"
+    sched_out = tmp_path / "sched.json"
+    kern_out = tmp_path / "kern.py"
+    with pytest.raises(RuntimeError, match="not symmetric across"):
+        main([
+            "--slice", "2,4,4",
+            "--router", "ilp",
+            "--scheduler", "literal_greedy",
+            "--routing-table-out", str(rt_out),
+            "--schedule-out", str(sched_out),
+            "--out", str(kern_out),
+        ])

@@ -84,6 +84,24 @@ def _dest_table_and_orbit_steps_from_schedule(
     for s in range(n):
         by_src[s].sort()
 
+    # Invariant 1 check: column-k rounds agree across all sources. This holds
+    # for orbit-based schedulers (orbit_greedy, orbit_greedy_full) but NOT for
+    # per-flow schedulers (literal_greedy, ilp_literal). Bail out early
+    # rather than silently emitting a kernel whose `--per-step-barrier`
+    # unrolled steps would be incorrect on every source but src=0.
+    rounds_src0 = [r for (r, _d) in by_src[0]]
+    for s in range(1, n):
+        rounds_s = [r for (r, _d) in by_src[s]]
+        if rounds_s != rounds_src0:
+            raise RuntimeError(
+                f"schedule's round-by-column structure is not symmetric across "
+                f"sources (src=0 vs src={s} differ). This is normal for "
+                f"per-flow schedulers (literal_greedy, ilp_literal). The "
+                f"current kernel emitter assumes orbit-level symmetry and "
+                f"cannot consume this schedule as-is. Use an orbit-based "
+                f"scheduler, or extend the emitter to thread per-source rounds."
+            )
+
     K = n - 1
     table = np.zeros((n, K), dtype=np.int32)
     for src in range(n):
@@ -509,6 +527,9 @@ def main(argv=None) -> int:
     # Stage 3 (new): verify physical-edge capacity.
     violations = verify_capacity(schedule)
     if violations:
+        # Remove the now-misleading schedule file so it doesn't linger as
+        # if it were valid.
+        sched_path.unlink(missing_ok=True)
         print(
             f"\nERROR: schedule has {len(violations)} physical-edge capacity violation(s). "
             f"First 3: {violations[:3]}",

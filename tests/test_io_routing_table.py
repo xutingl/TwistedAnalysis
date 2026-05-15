@@ -1,6 +1,6 @@
 """Routing-table save/load + RoutingTableRouter adapter.
 
-On-disk shape (matches fixtures/routing_table_4x4x8_twist.json minus vc):
+On-disk shape (matches fixtures/routing_table_8x4x4_twist.json minus vc):
   list[N] of list[N] of {"path": [{"node_id": int}, ...]}
 """
 from __future__ import annotations
@@ -75,7 +75,7 @@ def test_load_routing_table_returns_matrix_of_int_paths(tmp_path: Path):
 
 
 def test_load_routing_table_tolerates_vc_field(tmp_path: Path):
-    # Mimic the existing routing_table_4x4x8_twist.json shape (with vc).
+    # Mimic the existing routing_table_8x4x4_twist.json shape (with vc).
     raw = [
         [
             {"path": [{"node_id": 0, "vc": -1}]},

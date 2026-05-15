@@ -114,20 +114,15 @@ def test_dest_table_raises_on_incomplete_schedule():
         _dest_table_and_orbit_steps_from_schedule(sched, n=3)
 
 
-@pytest.mark.xfail(
-    reason="routing_table_4x4x8_twist.json contains multi-hop paths; "
-           "pipeline expects single-hop tables",
-    strict=True,
-)
-def test_pipeline_from_routing_table_4x4x8_twist_fixture(tmp_path: Path):
-    """Exercise the example from the spec: load the existing 4x4x8 fixture
+def test_pipeline_from_routing_table_8x4x4_twist_fixture(tmp_path: Path):
+    """Exercise the example from the spec: load the existing 8x4x4 fixture
     and produce a schedule + kernel."""
-    rt = REPO / "fixtures" / "routing_table_4x4x8_twist.json"
+    rt = REPO / "fixtures" / "routing_table_8x4x4_twist.json"
     assert rt.exists()
-    sched_out = tmp_path / "sched_4x4x8.json"
-    kernel_out = tmp_path / "kernel_4x4x8.py"
+    sched_out = tmp_path / "sched_8x4x4.json"
+    kernel_out = tmp_path / "kernel_8x4x4.py"
     res = _run([
-        "--slice", "4,4,8",
+        "--slice", "8,4,4",
         "--routing-table", str(rt),
         "--schedule-out", str(sched_out),
         "--out", str(kernel_out),

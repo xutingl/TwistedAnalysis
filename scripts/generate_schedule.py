@@ -5,8 +5,8 @@ in `_run` to add more schedulers.
 
 Usage:
     python scripts/generate_schedule.py \\
-        --routing-table fixtures/routing_table_4x4x8_twist.json \\
-        --slice 4,4,8 \\
+        --routing-table fixtures/routing_table_8x4x4_twist.json \\
+        --slice 8,4,4 \\
         --scheduler orbit_greedy \\
         --order lpt_tail_asc
 """

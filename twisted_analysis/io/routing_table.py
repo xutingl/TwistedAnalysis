@@ -1,6 +1,6 @@
 """Routing-table on-disk I/O and RoutingTableRouter adapter.
 
-On-disk format (matches fixtures/routing_table_4x4x8_twist.json shape, with
+On-disk format (matches fixtures/routing_table_8x4x4_twist.json shape, with
 the `vc` field intentionally omitted). Top-level: list of N rows; each row is
 a list of N cells; each cell is `{"path": [{"node_id": int}, ...]}`. The
 first node_id is the source, the last is the destination, and consecutive

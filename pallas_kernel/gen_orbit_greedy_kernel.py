@@ -16,8 +16,8 @@ Usage (CLI):
 
     # Reuse an existing routing-table:
     python pallas_kernel/gen_orbit_greedy_kernel.py \\
-        --slice 4,4,8 \\
-        --routing-table fixtures/routing_table_4x4x8_twist.json
+        --slice 8,4,4 \\
+        --routing-table fixtures/routing_table_8x4x4_twist.json
 
 Default outputs:
     routing table: ./fixtures/routing_table_<slice>_<router>.json

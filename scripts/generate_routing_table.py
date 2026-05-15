@@ -1,6 +1,6 @@
 """Generate a routing-table JSON file for a {S, 2S}^n twisted-torus topology.
 
-Output: matrix-of-paths JSON in the shape of fixtures/routing_table_4x4x8_twist.json
+Output: matrix-of-paths JSON in the shape of fixtures/routing_table_8x4x4_twist.json
 (with `vc` omitted). Default destination: fixtures/routing_table_<slice>_<router>.json.
 
 Usage:

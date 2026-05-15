@@ -4,7 +4,7 @@
 
 **Goal:** Restructure the TwistedAnalysis pipeline into three composable stages — Router emits a routing-table JSON; Scheduler consumes that JSON and emits a schedule JSON; the Pallas kernel generator orchestrates both stages, persists the intermediate artifacts, and emits the kernel source.
 
-**Architecture:** Three on-disk artifacts in well-known directories: `fixtures/routing_table_<slice>_<router>.json`, `fixtures/schedule_<slice>_<router>_<scheduler>.json`, and `pallas_kernel/outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py`. Routing-table format mirrors the existing `routing_table_4x4x8_twist.json` matrix-of-paths shape (with `vc` dropped). Schedule format is a flat list of `{round, src, dst, path}` dicts using flat-IDs. The kernel generator gains two modes: generate-routing-table-from-router, OR load-existing-routing-table — and always persists both intermediates.
+**Architecture:** Three on-disk artifacts in well-known directories: `fixtures/routing_table_<slice>_<router>.json`, `fixtures/schedule_<slice>_<router>_<scheduler>.json`, and `pallas_kernel/outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py`. Routing-table format mirrors the existing `routing_table_8x4x4_twist.json` matrix-of-paths shape (with `vc` dropped). Schedule format is a flat list of `{round, src, dst, path}` dicts using flat-IDs. The kernel generator gains two modes: generate-routing-table-from-router, OR load-existing-routing-table — and always persists both intermediates.
 
 **Tech Stack:** Python 3.11, numpy, pulp (already-used ILP), pytest. No new third-party dependencies.
 
@@ -213,7 +213,7 @@ git commit -m "feat(io): add coordinate flatten/unflatten utilities"
 # tests/test_io_routing_table.py
 """Routing-table save/load + RoutingTableRouter adapter.
 
-On-disk shape (matches fixtures/routing_table_4x4x8_twist.json minus vc):
+On-disk shape (matches fixtures/routing_table_8x4x4_twist.json minus vc):
   list[N] of list[N] of {"path": [{"node_id": int}, ...]}
 """
 from __future__ import annotations
@@ -288,7 +288,7 @@ def test_load_routing_table_returns_matrix_of_int_paths(tmp_path: Path):
 
 
 def test_load_routing_table_tolerates_vc_field(tmp_path: Path):
-    # Mimic the existing routing_table_4x4x8_twist.json shape (with vc).
+    # Mimic the existing routing_table_8x4x4_twist.json shape (with vc).
     raw = [
         [
             {"path": [{"node_id": 0, "vc": -1}]},
@@ -360,7 +360,7 @@ Create `twisted_analysis/io/routing_table.py`:
 ```python
 """Routing-table on-disk I/O and RoutingTableRouter adapter.
 
-On-disk format (matches fixtures/routing_table_4x4x8_twist.json shape, with
+On-disk format (matches fixtures/routing_table_8x4x4_twist.json shape, with
 the `vc` field intentionally omitted). Top-level: list of N rows; each row is
 a list of N cells; each cell is `{"path": [{"node_id": int}, ...]}`. The
 first node_id is the source, the last is the destination, and consecutive
@@ -563,7 +563,7 @@ Create `scripts/generate_routing_table.py`:
 ```python
 """Generate a routing-table JSON file for a {S, 2S}^n twisted-torus topology.
 
-Output: matrix-of-paths JSON in the shape of fixtures/routing_table_4x4x8_twist.json
+Output: matrix-of-paths JSON in the shape of fixtures/routing_table_8x4x4_twist.json
 (with `vc` omitted). Default destination: fixtures/routing_table_<slice>_<router>.json.
 
 Usage:
@@ -1035,7 +1035,7 @@ in `_run` to add more schedulers.
 
 Usage:
     python scripts/generate_schedule.py \\
-        --routing-table fixtures/routing_table_4x4x8_twist.json \\
+        --routing-table fixtures/routing_table_8x4x4_twist.json \\
         --slice 4,4,8 \\
         --scheduler orbit_greedy \\
         --order lpt_tail_asc
@@ -1220,10 +1220,10 @@ def test_pipeline_from_existing_routing_table_does_not_overwrite(tmp_path: Path)
     ast.parse(kernel_out.read_text())
 
 
-def test_pipeline_from_routing_table_4x4x8_twist_fixture(tmp_path: Path):
+def test_pipeline_from_routing_table_8x4x4_twist_fixture(tmp_path: Path):
     """Exercise the example from the spec: load the existing 4x4x8 fixture
     and produce a schedule + kernel."""
-    rt = REPO / "fixtures" / "routing_table_4x4x8_twist.json"
+    rt = REPO / "fixtures" / "routing_table_8x4x4_twist.json"
     assert rt.exists()
     sched_out = tmp_path / "sched_4x4x8.json"
     kernel_out = tmp_path / "kernel_4x4x8.py"
@@ -1272,7 +1272,7 @@ Usage (CLI):
     # Reuse an existing routing-table:
     python pallas_kernel/gen_orbit_greedy_kernel.py \\
         --slice 4,4,8 \\
-        --routing-table fixtures/routing_table_4x4x8_twist.json
+        --routing-table fixtures/routing_table_8x4x4_twist.json
 
 Default outputs:
     routing table: ./fixtures/routing_table_<slice>_<router>.json
@@ -1730,7 +1730,7 @@ git commit -m "refactor(kernel-gen): orchestrate router -> schedule -> kernel; p
 cd /home/xutingl/collective_comm/TwistedAnalysis
 uv run python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 4,4,8 \
-    --routing-table fixtures/routing_table_4x4x8_twist.json \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
     --order lpt_tail_asc
 ```
 
@@ -1772,7 +1772,7 @@ Expected: `OK`
 cd /home/xutingl/collective_comm/TwistedAnalysis
 git add fixtures/schedule_4x4x8_loaded_lpt_tail_asc.json \
         pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_4_4_8.py
-git commit -m "fixture: example schedule and kernel from routing_table_4x4x8_twist.json"
+git commit -m "fixture: example schedule and kernel from routing_table_8x4x4_twist.json"
 ```
 
 ---
@@ -1864,7 +1864,7 @@ python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --router ilp
 ```bash
 python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 4,4,8 \
-    --routing-table fixtures/routing_table_4x4x8_twist.json
+    --routing-table fixtures/routing_table_8x4x4_twist.json
 # [2/3] wrote schedule     fixtures/schedule_4x4x8_loaded_lpt_tail_asc.json
 # [3/3] wrote kernel       pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_4_4_8.py
 ```
@@ -1877,7 +1877,7 @@ python scripts/generate_routing_table.py --slice 4,4,8 --router ilp
 
 # Stage 2 only — emit a schedule from a routing table:
 python scripts/generate_schedule.py \
-    --routing-table fixtures/routing_table_4x4x8_twist.json \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
     --slice 4,4,8 \
     --scheduler orbit_greedy --order lpt_tail_asc
 ```
@@ -1945,7 +1945,7 @@ rm -f fixtures/schedule_4x4x8_loaded_lpt_tail_asc.json \
       pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_4_4_8.py
 uv run python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 4,4,8 \
-    --routing-table fixtures/routing_table_4x4x8_twist.json \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
     --order lpt_tail_asc
 ls -la fixtures/schedule_4x4x8_loaded_lpt_tail_asc.json \
        pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_4_4_8.py

@@ -181,11 +181,31 @@ def schedule_from_ilp_literal(
     )
 
 
+def schedule_from_cpsat_literal(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    t_upper: int,
+    time_limit_s: int = 600,
+    n_workers: int = 8,
+) -> list[dict]:
+    """Adapter: cpsat_literal -> schedule entries."""
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.cpsat_literal import cpsat_literal
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return cpsat_literal(
+        topology, table, t_upper=t_upper,
+        time_limit_s=time_limit_s, n_workers=n_workers,
+    )
+
+
 _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
     "literal_greedy": schedule_from_literal_greedy,
     "ilp_literal": schedule_from_ilp_literal,
+    "cpsat_literal": schedule_from_cpsat_literal,
 }
 
 
@@ -203,9 +223,12 @@ def schedule_from_algorithm(
       - "orbit_greedy_full": orbit greedy with full physical-edge accounting.
         Correct under any translation-symmetric workload (including loaded TPU routings).
       - "literal_greedy":    LMR-style per-flow earliest-feasible greedy.
-      - "ilp_literal":       exact ILP on literal flows. Small cells only.
+      - "ilp_literal":       exact ILP on literal flows (CBC). Small cells only.
+      - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
+        than ilp_literal on this structure due to native at-most-one constraints
+        and parallel search workers. Requires `t_upper` kwarg.
 
-    Per-algorithm kwargs (e.g., `order`, `time_limit_s`) are passed through.
+    Per-algorithm kwargs (e.g., `order`, `time_limit_s`, `t_upper`) are passed through.
     """
     if algorithm not in _SCHEDULER_DISPATCH:
         raise ValueError(

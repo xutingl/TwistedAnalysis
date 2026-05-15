@@ -87,21 +87,35 @@ def _ordered_orbits(canon: dict, edge_load: Counter, order: str) -> list:
 def _emit_orbit_greedy(
     topology: Topology, router: Router, order: str,
 ) -> dict[tuple, float]:
-    """Return assignment dict (orbit_id, hop_i, t) -> 1.0 for fired slots."""
-    canon = _canonical_paths(topology, router)
-    edge_load = _edge_orbit_load(canon)
-    edge_busy: dict[tuple[int, int], set[int]] = defaultdict(set)
+    """Delegate to orbit_greedy_full (the (dim, dir) keying was unsound;
+    see plan 2026-05-15-multi-algorithm-scheduling.md Task 3)."""
+    from twisted_analysis.io.coords import flatten
+    from twisted_analysis.lp.orbit import compute_orbits
+    from twisted_analysis.schedules.orbit_greedy_full import (
+        _orbit_hop_edge_sets,
+        compute_hop0_firing_times_full,
+    )
+
+    n = topology.n_nodes
+    table = [[[] for _ in range(n)] for _ in range(n)]
+    for src in topology.nodes():
+        src_flat = flatten(src, topology.slice)
+        for dst in topology.nodes():
+            dst_flat = flatten(dst, topology.slice)
+            if src == dst:
+                table[src_flat][dst_flat] = [src_flat]
+                continue
+            path = router.path(src, dst)
+            table[src_flat][dst_flat] = [src_flat] + [
+                flatten(v, topology.slice) for (_u, v, _, _) in path
+            ]
+    t0 = compute_hop0_firing_times_full(topology, table, order=order)
+    per_orbit = _orbit_hop_edge_sets(topology, table)
+    orbits = compute_orbits(topology)
     assignment: dict[tuple, float] = {}
-    for orbit_id in _ordered_orbits(canon, edge_load, order):
-        path = canon[orbit_id]
-        prev_t = -1
-        for i, (_, _, dim, dir) in enumerate(path):
-            t = prev_t + 1
-            while t in edge_busy[(dim, dir)]:
-                t += 1
-            assignment[(orbit_id, i, t)] = 1.0
-            edge_busy[(dim, dir)].add(t)
-            prev_t = t
+    for orbit_id in orbits:
+        for i, _edges in enumerate(per_orbit[orbit_id]):
+            assignment[(orbit_id, i, int(t0[orbit_id]) + i)] = 1.0
     return assignment
 
 

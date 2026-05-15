@@ -182,3 +182,30 @@ def test_cli_verifier_fails_on_violating_schedule(tmp_path, monkeypatch):
             "--schedule-out", str(tmp_path / "sched.json"),
             "--out", str(tmp_path / "kern.py"),
         ])
+
+
+@pytest.mark.parametrize("scheduler", [
+    "orbit_greedy", "orbit_greedy_full", "literal_greedy",
+])
+def test_end_to_end_pipeline_2x4x4_ilp(tmp_path, scheduler):
+    """Whole-pipeline smoke test: generate routing -> schedule -> verify -> kernel."""
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    rt_out = tmp_path / "rt.json"
+    sched_out = tmp_path / "sched.json"
+    kern_out = tmp_path / "kern.py"
+    rc = main([
+        "--slice", "2,4,4",
+        "--router", "ilp",
+        "--scheduler", scheduler,
+        "--routing-table-out", str(rt_out),
+        "--schedule-out", str(sched_out),
+        "--out", str(kern_out),
+    ])
+    assert rc == 0
+    assert rt_out.exists() and sched_out.exists() and kern_out.exists()
+
+    # The generated kernel mentions both router and scheduler in its docstring.
+    src = kern_out.read_text()
+    assert scheduler in src
+    assert "ILP" in src or "loaded" in src

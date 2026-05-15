@@ -184,15 +184,18 @@ def test_save_routing_table_asserts_router_endpoint(tmp_path: Path):
 def test_cli_generate_routing_table_writes_file(tmp_path: Path):
     import subprocess
     import sys
+    repo_root = Path(__file__).resolve().parent.parent
+    script = repo_root / "scripts" / "generate_routing_table.py"
     out = tmp_path / "rt_2x4_dor.json"
     res = subprocess.run(
         [
             sys.executable,
-            "scripts/generate_routing_table.py",
+            str(script),
             "--slice", "2,4",
             "--router", "dor",
             "--out", str(out),
         ],
+        cwd=str(repo_root),
         capture_output=True, text=True,
     )
     assert res.returncode == 0, res.stderr

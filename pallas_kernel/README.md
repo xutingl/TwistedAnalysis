@@ -11,8 +11,8 @@ that replaces the default `_ragged_a2a_kernel_point_to_point` inside
 | File | Purpose |
 |---|---|
 | [reference_kernel.py](reference_kernel.py) | Reference `ragged_all_to_all` and `_ragged_a2a_kernel_point_to_point` extracted from `google3/learning/brain/research/megablox/collectives/ragged_all_to_all.py`. The orbit-greedy kernel is a drop-in for the P2P branch only. |
-| [gen_orbit_greedy_kernel.py](gen_orbit_greedy_kernel.py) | Generator. Takes a topology and router, emits a topology-specific kernel `.py` file. |
-| `_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Generator output. One file per (topology, router, order) combination. Pre-generated default: `_ragged_a2a_kernel_orbit_greedy_4_4_8.py` (slice=(4,4,8), ILP router). |
+| [gen_orbit_greedy_kernel.py](gen_orbit_greedy_kernel.py) | Pipeline orchestrator. Either generates a routing table (via `--router`) or loads one (via `--routing-table`); generates a schedule from it; emits a kernel `.py` file. Persists the routing table and schedule as inspectable intermediates. |
+| `outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Generator output. One file per (topology, router, order) combination. |
 
 ## What problem this kernel solves
 
@@ -84,31 +84,67 @@ Cartesian device assignments, so this option is closed.
 
 ## Usage
 
-### Generate a kernel
+The kernel generator runs a 3-stage pipeline. Each stage's artifact is persisted under the project's standard directories so it can be inspected, reused, or regenerated independently.
 
-Default: slice = 4,4,8, ILP routing, `lpt_tail_asc` order, no per-step barriers.
+```
+[--router ilp|dor]                  [Stage 1]    fixtures/routing_table_<slice>_<router>.json
+                  -- OR --
+[--routing-table FILE]              (use existing)
+                                          ↓
+[--scheduler orbit_greedy --order …]  [Stage 2]    fixtures/schedule_<slice>_<...>_<order>.json
+                                          ↓
+                                    [Stage 3]    pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py
+```
+
+### Generate a kernel by also generating the routing table
+
+Default: slice = 8,4,4, ILP routing, `lpt_tail_asc` order, no per-step barriers.
 
 ```bash
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8
-# → writes pallas_kernel/_ragged_a2a_kernel_orbit_greedy_4_4_8.py
+python pallas_kernel/gen_orbit_greedy_kernel.py --slice 8,4,4 --router ilp
+# [1/3] wrote routing table fixtures/routing_table_8x4x4_ilp.json
+# [2/3] wrote schedule     fixtures/schedule_8x4x4_ilp_lpt_tail_asc.json
+# [3/3] wrote kernel       pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_8_4_4.py
+```
+
+### Generate a kernel from an existing routing table
+
+```bash
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json
+# [2/3] wrote schedule     fixtures/schedule_8x4x4_loaded_lpt_tail_asc.json
+# [3/3] wrote kernel       pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_8_4_4.py
+```
+
+The pre-shipped `fixtures/routing_table_8x4x4_twist.json` is a 4×4×8 TPU v5e twisted torus; it is stored with the largest dim first (slice `(8,4,4)`) to match the `{S, 2S}^n` flatten convention used elsewhere in the project.
+
+### Run a single stage
+
+```bash
+# Stage 1 only — emit a routing table:
+python scripts/generate_routing_table.py --slice 8,4,4 --router ilp
+
+# Stage 2 only — emit a schedule from a routing table:
+python scripts/generate_schedule.py \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --slice 8,4,4 \
+    --scheduler orbit_greedy --order lpt_tail_asc
 ```
 
 Common variants:
 
 ```bash
 # DOR routing instead of ILP:
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --router dor
+python pallas_kernel/gen_orbit_greedy_kernel.py --slice 8,4,4 --router dor
 
 # Different topology in the {S, 2S}^n family:
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 2,4,4
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,8
+python pallas_kernel/gen_orbit_greedy_kernel.py --slice 2,4,4 --router ilp
+python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,8 --router ilp
 
 # Per-step barriers (forces stricter ordering, less pipelining):
-python pallas_kernel/gen_orbit_greedy_kernel.py --slice 4,4,8 --per-step-barrier
+python pallas_kernel/gen_orbit_greedy_kernel.py --slice 8,4,4 --router ilp --per-step-barrier
 ```
-
-The mesh axis name is chosen at *call site* (`axis_name="x"` argument to
-`ragged_all_to_all`) — no longer baked into the generator.
 
 ### Wire into `ragged_all_to_all`
 
@@ -206,12 +242,15 @@ closures — the destination table must be a `pallas_call` input.
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--slice` | required | Comma-separated topology shape, e.g. `4,4,8`. Must be in `{S, 2S}^n`. |
-| `--router` | `ilp` | `ilp` (load-balanced minimal — gives lower LB) or `dor` (dimension-order). |
+| `--slice` | required | Comma-separated topology shape, e.g. `8,4,4`. Must be in `{S, 2S}^n`. |
+| `--router` | (when `--routing-table` is absent) `ilp` | `ilp` (load-balanced minimal) or `dor` (dimension-order). Mutually exclusive with `--routing-table`. |
+| `--routing-table` | none | Path to an existing routing-table JSON. Skips stage 1; loads paths verbatim. |
 | `--order` | `lpt_tail_asc` | OrbitGreedy ordering. `lpt_tail_asc` achieves makespan = LB on every doc cell. |
-| `--per-step-barrier` | off | Insert dummy-DMA barriers between OrbitGreedy steps. Stricter ordering, less pipelining. |
+| `--per-step-barrier` | off | Insert dummy-DMA barriers between OrbitGreedy steps. |
 | `--function-name` | `_ragged_a2a_kernel_orbit_greedy_<slice>` | Override the generated function name. |
-| `--out` | `./pallas_kernel/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Output path. |
+| `--routing-table-out` | `./fixtures/routing_table_<slice>_<router>.json` | Where to save a generated routing table. |
+| `--schedule-out` | `./fixtures/schedule_<slice>_<router_or_loaded>_<order>.json` | Where to save the schedule. |
+| `--out` | `./pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Output kernel path. |
 
 ## Caveats / TODO
 

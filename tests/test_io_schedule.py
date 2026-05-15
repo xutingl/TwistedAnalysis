@@ -198,3 +198,37 @@ def test_schedule_from_orbit_greedy_rejects_wrong_shape():
     table = [[[0]] * 7 for _ in range(8)]  # rows have 7 cols, expected 8
     with pytest.raises(ValueError, match="cols"):
         schedule_from_orbit_greedy(t, table)
+
+
+def test_cli_generate_schedule_writes_file(tmp_path: Path):
+    import subprocess
+    import sys
+    from twisted_analysis.io.routing_table import save_routing_table
+    from twisted_analysis.topology import Topology, DORRouter
+    from twisted_analysis.io.schedule import load_schedule
+
+    t = Topology(slice=(2, 4))
+    r = DORRouter(t)
+    rt_path = tmp_path / "rt.json"
+    save_routing_table(t, r, rt_path)
+
+    repo_root = Path(__file__).resolve().parent.parent
+    script = repo_root / "scripts" / "generate_schedule.py"
+    out = tmp_path / "sched.json"
+    res = subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--routing-table", str(rt_path),
+            "--slice", "2,4",
+            "--scheduler", "orbit_greedy",
+            "--order", "lpt_tail_asc",
+            "--out", str(out),
+        ],
+        cwd=str(repo_root),
+        capture_output=True, text=True,
+    )
+    assert res.returncode == 0, res.stderr
+    assert out.exists()
+    entries = load_schedule(out)
+    assert len(entries) == 8 * 7

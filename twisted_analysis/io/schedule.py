@@ -18,12 +18,24 @@ _REQUIRED = ("round", "src", "dst", "path")
 def _validate(entries: Iterable[ScheduleEntry]) -> list[dict]:
     out = []
     for i, e in enumerate(entries):
+        if not isinstance(e, Mapping):
+            raise ValueError(f"entry {i}: not a dict (got {type(e).__name__})")
         for k in _REQUIRED:
             if k not in e:
                 raise ValueError(f"entry {i} missing required key {k!r}: {dict(e)}")
+        for k in ("round", "src", "dst"):
+            if not isinstance(e[k], int) or isinstance(e[k], bool):
+                raise ValueError(
+                    f"entry {i}: {k}={e[k]!r} must be int, got {type(e[k]).__name__}"
+                )
         path = e["path"]
         if not isinstance(path, list) or not path:
             raise ValueError(f"entry {i}: path must be non-empty list")
+        for j, x in enumerate(path):
+            if not isinstance(x, int) or isinstance(x, bool):
+                raise ValueError(
+                    f"entry {i}: path[{j}]={x!r} must be int, got {type(x).__name__}"
+                )
         if path[0] != e["src"]:
             raise ValueError(
                 f"entry {i}: path[0]={path[0]} != src={e['src']}"

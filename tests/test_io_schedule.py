@@ -53,3 +53,29 @@ def test_save_schedule_creates_parent_dirs(tmp_path: Path):
         p,
     )
     assert p.exists()
+
+
+def test_load_schedule_rejects_non_dict_entry(tmp_path: Path):
+    p = tmp_path / "bad.json"
+    p.write_text(json.dumps([42]))
+    with pytest.raises(ValueError, match="not a dict"):
+        load_schedule(p)
+
+
+def test_save_schedule_rejects_non_int_round(tmp_path: Path):
+    bad = [{"round": "0", "src": 0, "dst": 1, "path": [0, 1]}]
+    with pytest.raises(ValueError, match="round"):
+        save_schedule(bad, tmp_path / "x.json")
+
+
+def test_save_schedule_rejects_non_int_path_element(tmp_path: Path):
+    bad = [{"round": 0, "src": 0, "dst": 1, "path": [0, "1"]}]
+    with pytest.raises(ValueError, match="path"):
+        save_schedule(bad, tmp_path / "x.json")
+
+
+def test_save_schedule_rejects_bool_round(tmp_path: Path):
+    """Python bool is a subtype of int; explicitly reject."""
+    bad = [{"round": True, "src": 0, "dst": 1, "path": [0, 1]}]
+    with pytest.raises(ValueError, match="round"):
+        save_schedule(bad, tmp_path / "x.json")

@@ -34,6 +34,36 @@ The kernel is *otherwise identical* to the reference: same DMA primitive
 `total_send_amount` / `total_recv_amount` drain pattern, same barrier setup.
 Only the iteration order changes.
 
+## Scheduler choice
+
+The generator supports four scheduling algorithms via `--scheduler`:
+
+| Scheduler | Approach | When to use |
+|---|---|---|
+| `orbit_greedy` (default) | Orbit greedy keyed on `(dim, dir)` edge classes (now delegates internally to `orbit_greedy_full`) | DOR/ILP routings (translation-equivariant). Provably LB-tight on most of the (S, 2S) cells in `docs/orbit_greedy_optimality.md`; LB+1 on `(2,4,4)`-ilp and `(4,8)`-ilp under the corrected physical-edge formulation. |
+| `orbit_greedy_full` | Orbit greedy keyed on full physical-edge sets | Loaded TPU routings or any case where (dim, dir) does not partition physical edges cleanly. Capacity-feasible by construction. |
+| `literal_greedy` | LMR-style per-flow earliest-feasible greedy | Sanity baseline; works on any routing. Makespan is bounded by O(c + d) (LMR), constants are uncomputed but practical. |
+| `ilp_literal` | Exact ILP on the literal N(N-1) flow set | Small cells only (≤ 32 nodes); intractable at N = 128. Use as a ground-truth oracle. |
+
+The post-schedule capacity verifier refuses to emit a kernel whose schedule
+has any physical-edge collisions, so a `--scheduler` choice that doesn't
+fit the routing fails fast at generation time.
+
+Example invocations:
+
+```bash
+# Loaded TPU routing on 8x4x4 — use orbit_greedy_full or literal_greedy:
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --scheduler orbit_greedy_full
+
+# Small-cell oracle:
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 2,4 --router ilp \
+    --scheduler ilp_literal --ilp-time-limit-s 60
+```
+
 ## The twist (why per-source destinations)
 
 On a `{S, 2S}^n` twisted torus, the group operation is **not** elementwise

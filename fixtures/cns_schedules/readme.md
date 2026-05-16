@@ -7,11 +7,14 @@ dimension-label permutation).
 
 | CNS filename | Source fixture | Scheduler | Makespan | Physical-edge violations |
 |---|---|---:|---:|---:|
-| `schedule_orbit_4x4x8_twisted.json` | `schedule_8x4x4_loaded_lpt_tail_asc.json` | original `orbit_greedy` (pre-fix) | 73 | **8160 — DO NOT BENCHMARK AS-IS** |
+| `schedule_cpsatliteral_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal.json` | `cpsat_literal` (OR-Tools, t_upper=80, 30 min budget) | **80** | 0 |
 | `schedule_orbitfull_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json` | `orbit_greedy_full` | 85 | 0 |
 | `schedule_literalgreedy_4x4x8_twisted.json` | `schedule_8x4x4_loaded_literal_greedy_lpt.json` | `literal_greedy` | 87 | 0 |
+| `schedule_orbit_4x4x8_twisted.json` | `schedule_8x4x4_loaded_lpt_tail_asc.json` | original `orbit_greedy` (pre-fix) | 73 | **8160 — DO NOT BENCHMARK AS-IS** |
 
 LB for this routing = 75 (max physical-edge load).
+
+**Recommended for production measurement runs: `cpsatliteral`** — strictly best of the capacity-feasible schedules (80 vs 85 vs 87). Projects to ~141 Kgbps vs P2P's measured 134.5 Kgbps (+4.8%) under linear-throughput scaling. Provenance: `eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/` (CP-SAT binary-searched `t_upper ∈ {84, 83, 82, 81, 80, 78, 76}` with 30 min/probe; 80 was the deepest feasible incumbent).
 
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 
@@ -36,15 +39,27 @@ Recommended uses:
 
 If CNS doesn't need the broken file, delete it.
 
-## ILP-optimal schedule (not provided)
+## ILP-optimal schedule (CP-SAT got close; CBC still intractable)
 
 An exact ILP schedule on the literal `N(N-1) = 16,256` flow set would close
-the remaining gap to LB = 75, but is intractable at this size: CBC failed
-to find any feasible incumbent within 80 minutes of wall-clock on the root
-LP relaxation alone (1.37 M binary vars × ~50 k constraints, 500 MB MPS).
-The codebase's symmetric ILP scheduler in
+the remaining gap to LB = 75. CBC (via the `ilp_literal` scheduler) cannot
+do this: it failed to find any feasible incumbent within 80 minutes on the
+root LP relaxation alone (1.37 M binary vars × ~50 k constraints, 500 MB
+MPS). The codebase's symmetric ILP scheduler in
 `twisted_analysis/schedules/lp_symmetric.py` is ~130× smaller and finishes
 in ~6 min on the same topology — but it assumes routing translation-
 equivariance under `(dim, dir)`, which this loaded routing violates (same
-reason `orbit_greedy` failed). So neither ILP variant is available for
-this routing at this size.
+reason `orbit_greedy` failed). So neither CBC-based variant is available
+for this routing at this size.
+
+**However**, the `cpsat_literal` scheduler (Google OR-Tools CP-SAT, native
+at-most-one + parallel search + 8 workers) can find feasible incumbents at
+this scale. With a 30-min wall-clock budget per `t_upper` probe and binary
+search over `t_upper ∈ {84, 83, 82, 81, 80, 78, 76}`, CP-SAT reached
+makespan **80** (saved as `schedule_cpsatliteral_4x4x8_twisted.json`).
+The remaining 80 → 75 gap is open: CP-SAT timed out at `t_upper ∈ {76, 78}`
+without an incumbent — that's evidence the search is hard at those bounds,
+not proof of infeasibility. A longer compute budget (4-8 h per probe) or a
+warm-start from the current makespan-80 incumbent could plausibly close
+more of the gap. See `eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/`
+for the full search log.

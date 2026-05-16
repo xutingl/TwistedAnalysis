@@ -1,6 +1,7 @@
 """LNS CP-SAT repair: tests on a small cell."""
 from __future__ import annotations
-import tempfile, os
+import os
+import tempfile
 from collections import Counter
 
 import pytest

@@ -24,13 +24,6 @@ from twisted_analysis.schedules.cpsat_literal import cpsat_literal
 from twisted_analysis.schedules.verify import schedule_makespan
 
 
-def _flows_by_round(schedule: list[dict]) -> dict[int, list[tuple[int, int]]]:
-    out: dict[int, list[tuple[int, int]]] = defaultdict(list)
-    for e in schedule:
-        out[int(e["round"])].append((int(e["src"]), int(e["dst"])))
-    return out
-
-
 def _physical_edge_lb(table, n):
     c: Counter = Counter()
     for s in range(n):
@@ -44,13 +37,8 @@ def _physical_edge_lb(table, n):
 
 
 def _makespan_defining_flows(schedule):
-    """Return the flow keys whose (round + L) equals the current makespan.
-
-    These flows MUST be in the destroy set: otherwise the LNS subproblem
-    (which sets t_upper = M-1 and pins all non-destroyed flows) is
-    immediately infeasible because the makespan-defining flow's pinned
-    round + L exceeds the new t_upper.
-    """
+    """Must be unioned into every destroy set: pinning these flows with
+    round + L >= M would immediately violate t_upper = M - 1."""
     M = max(int(e["round"]) + (len(e["path"]) - 1) for e in schedule)
     return {(int(e["src"]), int(e["dst"])) for e in schedule
             if int(e["round"]) + (len(e["path"]) - 1) >= M}
@@ -113,7 +101,6 @@ def lns_cpsat_repair(
     incumbent: dict[tuple[int, int], int] = {
         (int(e["src"]), int(e["dst"])): int(e["round"]) for e in seed_schedule
     }
-    # Verifier-style: makespan = max(round + L) per flow.
     incumbent_makespan = max(
         r + (len(table[s][d]) - 1) for (s, d), r in incumbent.items()
     )

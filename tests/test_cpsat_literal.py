@@ -110,3 +110,35 @@ def test_cpsat_literal_fixed_assignments_infeasible_combination_raises():
     with pytest.raises(RuntimeError, match="infeasible|no solution"):
         cpsat_literal(t, table, t_upper=lb, time_limit_s=30,
                       fixed_assignments=fixed)
+
+
+def test_cpsat_literal_extracts_incumbent_on_unknown_status():
+    """Regression: UNKNOWN status with an incumbent must NOT be treated
+    as 'no incumbent'. The fix probes the solver for a valid assignment
+    before raising. Reproduces by mocking CpSolver.Solve to lie about the
+    status while leaving variable values readable.
+
+    Originally surfaced when a 4h CP-SAT probe at t_upper=76 returned
+    status=UNKNOWN with objective=76, but the prior code discarded the
+    incumbent and raised TIMEOUT.
+    """
+    from unittest.mock import patch
+    from ortools.sat.python import cp_model as cm
+
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+
+    real_solve = cm.CpSolver.Solve
+
+    def fake_solve(self, model):
+        real_status = real_solve(self, model)
+        # Force UNKNOWN even though a real incumbent exists.
+        if real_status in (cm.OPTIMAL, cm.FEASIBLE):
+            return cm.UNKNOWN
+        return real_status
+
+    with patch.object(cm.CpSolver, "Solve", fake_solve):
+        sch = cpsat_literal(t, table, t_upper=lb, time_limit_s=60)
+
+    assert verify_capacity(sch) == []
+    assert schedule_makespan(sch) <= lb

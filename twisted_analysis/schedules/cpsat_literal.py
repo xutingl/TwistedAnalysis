@@ -155,13 +155,25 @@ def cpsat_literal(
 
     status = solver.Solve(model)
 
-    if status in (cp_model.INFEASIBLE,):
+    if status == cp_model.INFEASIBLE:
         raise RuntimeError(f"cpsat_literal: infeasible at t_upper={t_upper}")
-    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE, cp_model.UNKNOWN):
         raise RuntimeError(
-            f"cpsat_literal: solver returned status={status} (no incumbent found "
-            f"within time_limit_s={time_limit_s})"
+            f"cpsat_literal: solver returned status={status} "
+            f"(time_limit_s={time_limit_s})"
         )
+    if status == cp_model.UNKNOWN:
+        # UNKNOWN means "timeout / no proof", which is silent about whether
+        # an incumbent exists. Probe by reading a variable; success means
+        # incumbent exists, IndexError / RuntimeError means it does not.
+        try:
+            sample_var = next(iter(y.values()))
+            solver.Value(sample_var)
+        except (RuntimeError, IndexError) as exc:
+            raise RuntimeError(
+                f"cpsat_literal: status=UNKNOWN with no incumbent "
+                f"(time_limit_s={time_limit_s})"
+            ) from exc
 
     rounds: dict[tuple[int, int], int] = {}
     for f_idx, (src, dst, path) in enumerate(flows):

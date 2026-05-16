@@ -1,0 +1,9 @@
+  schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json: 85 -> 85 (Δ=0), viol=0, t=0.2s
+  schedule_8x4x4_loaded_literal_greedy_lpt.json: 87 -> 87 (Δ=0), viol=0, t=0.1s
+  02_best_random_shuffle_schedule.json: 86 -> 86 (Δ=0), viol=0, t=0.2s
+  03_best_cpsat_schedule.json: 80 -> 80 (Δ=0), viol=0, t=21.6s
+  SKIP missing: /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/04_best_lp_rounding_schedule.json
+  _seed_orbit_greedy_full_lpt.json: 84 -> 84 (Δ=0), viol=0, t=0.4s
+
+best after local-search: makespan=80
+wrote /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/05_local_search_results.json

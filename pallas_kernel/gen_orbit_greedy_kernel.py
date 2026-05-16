@@ -431,7 +431,18 @@ def main(argv=None) -> int:
              "orbit_greedy_full: same greedy but keyed on full physical-edge sets — "
              "correct on any translation-symmetric workload. "
              "literal_greedy: LMR-style per-flow earliest-feasible greedy. "
-             "ilp_literal: exact ILP on the literal N*(N-1) flow set (small cells only).",
+             "ilp_literal: exact ILP on the literal N*(N-1) flow set (small cells only). "
+             "Ignored when --schedule-in is given.",
+    )
+    p.add_argument(
+        "--schedule-in",
+        default=None,
+        type=Path,
+        help="Load an existing schedule JSON instead of running --scheduler. "
+             "Useful when the schedule was produced by an expensive offline "
+             "search (e.g. CP-SAT, LP-rounding, manual edit) and should not "
+             "be regenerated. The routing table is still re-read to verify the "
+             "schedule's paths match its declared routing.",
     )
     p.add_argument(
         "--ilp-time-limit-s",
@@ -486,25 +497,44 @@ def main(argv=None) -> int:
             f"slice {slice_} expects {topology.n_nodes}"
         )
 
-    # Stage 2: schedule.
-    sched_kwargs = {}
-    if args.scheduler in ("orbit_greedy", "orbit_greedy_full"):
-        sched_kwargs["order"] = args.order
-    elif args.scheduler == "literal_greedy":
-        # literal_greedy has its own valid orders; map lpt_tail_asc/lpt -> lpt.
-        sched_kwargs["order"] = "lpt" if args.order == "lpt_tail_asc" else args.order
-    elif args.scheduler == "ilp_literal":
-        sched_kwargs["time_limit_s"] = args.ilp_time_limit_s
+    # Stage 2: schedule (load from disk or run scheduler).
+    if args.schedule_in is not None:
+        from twisted_analysis.io.schedule import load_schedule
+        schedule = load_schedule(args.schedule_in)
+        # Verify the schedule's paths agree with the routing table.
+        mismatched = 0
+        for entry in schedule:
+            s, d = entry["src"], entry["dst"]
+            expected = list(table[s][d])
+            if list(entry["path"]) != expected:
+                mismatched += 1
+        if mismatched > 0:
+            raise SystemExit(
+                f"--schedule-in {args.schedule_in}: {mismatched} entries have "
+                f"paths that disagree with --routing-table {rt_path}. "
+                f"The schedule and routing must match."
+            )
+        sched_path = args.schedule_in
+        print(f"[2/4] loaded schedule    {sched_path} ({len(schedule)} entries)", file=sys.stderr)
+    else:
+        sched_kwargs = {}
+        if args.scheduler in ("orbit_greedy", "orbit_greedy_full"):
+            sched_kwargs["order"] = args.order
+        elif args.scheduler == "literal_greedy":
+            # literal_greedy has its own valid orders; map lpt_tail_asc/lpt -> lpt.
+            sched_kwargs["order"] = "lpt" if args.order == "lpt_tail_asc" else args.order
+        elif args.scheduler == "ilp_literal":
+            sched_kwargs["time_limit_s"] = args.ilp_time_limit_s
 
-    schedule = schedule_from_algorithm(
-        args.scheduler, topology, table, **sched_kwargs,
-    )
-    sched_path = args.schedule_out or (
-        fixtures
-        / f"schedule_{slice_slug}_{router_slug}_{args.scheduler}_{args.order}.json"
-    )
-    save_schedule(schedule, sched_path)
-    print(f"[2/4] wrote schedule     {sched_path}", file=sys.stderr)
+        schedule = schedule_from_algorithm(
+            args.scheduler, topology, table, **sched_kwargs,
+        )
+        sched_path = args.schedule_out or (
+            fixtures
+            / f"schedule_{slice_slug}_{router_slug}_{args.scheduler}_{args.order}.json"
+        )
+        save_schedule(schedule, sched_path)
+        print(f"[2/4] wrote schedule     {sched_path}", file=sys.stderr)
 
     # Stage 3 (new): verify physical-edge capacity.
     violations = verify_capacity(schedule)
@@ -553,10 +583,14 @@ def main(argv=None) -> int:
                     f"schedule (sources 0 and {_s} differ at column 0 onward). "
                     f"Drop --per-step-barrier or use an orbit-based scheduler."
                 )
+    scheduler_for_doc = (
+        f"loaded-from {args.schedule_in.name}" if args.schedule_in is not None
+        else args.scheduler
+    )
     src = generate_kernel_source(
         slice_=slice_,
         router_name_for_doc=router_doc,
-        scheduler_name=args.scheduler,
+        scheduler_name=scheduler_for_doc,
         order=args.order,
         per_step_barrier=args.per_step_barrier,
         function_name=args.function_name,

@@ -1,0 +1,50 @@
+{
+  "rows": [
+    {
+      "seed": "fixtures/schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json",
+      "makespan_in": 85,
+      "makespan_out": 85,
+      "delta": 0,
+      "violations": 0,
+      "runtime_s": 0.2
+    },
+    {
+      "seed": "fixtures/schedule_8x4x4_loaded_literal_greedy_lpt.json",
+      "makespan_in": 87,
+      "makespan_out": 87,
+      "delta": 0,
+      "violations": 0,
+      "runtime_s": 0.1
+    },
+    {
+      "seed": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/02_best_random_shuffle_schedule.json",
+      "makespan_in": 86,
+      "makespan_out": 86,
+      "delta": 0,
+      "violations": 0,
+      "runtime_s": 0.2
+    },
+    {
+      "seed": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/03_best_cpsat_schedule.json",
+      "makespan_in": 80,
+      "makespan_out": 80,
+      "delta": 0,
+      "violations": 0,
+      "runtime_s": 21.6
+    },
+    {
+      "seed": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/04_best_lp_rounding_schedule.json",
+      "status": "MISSING"
+    },
+    {
+      "seed": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/_seed_orbit_greedy_full_lpt.json",
+      "makespan_in": 84,
+      "makespan_out": 84,
+      "delta": 0,
+      "violations": 0,
+      "runtime_s": 0.4
+    }
+  ],
+  "best_makespan": 80,
+  "best_schedule_file": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/05_localsearch_from_03_best_cpsat_schedule.json"
+}

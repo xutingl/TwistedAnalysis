@@ -1,0 +1,69 @@
+{
+  "best_makespan": 86,
+  "best_seed": 125,
+  "n_seeds": 1000,
+  "runtime_s": 180.2,
+  "histogram": [
+    {
+      "makespan": 86,
+      "count": 2
+    },
+    {
+      "makespan": 87,
+      "count": 10
+    },
+    {
+      "makespan": 88,
+      "count": 24
+    },
+    {
+      "makespan": 89,
+      "count": 53
+    },
+    {
+      "makespan": 90,
+      "count": 104
+    },
+    {
+      "makespan": 91,
+      "count": 162
+    },
+    {
+      "makespan": 92,
+      "count": 168
+    },
+    {
+      "makespan": 93,
+      "count": 171
+    },
+    {
+      "makespan": 94,
+      "count": 139
+    },
+    {
+      "makespan": 95,
+      "count": 88
+    },
+    {
+      "makespan": 96,
+      "count": 50
+    },
+    {
+      "makespan": 97,
+      "count": 20
+    },
+    {
+      "makespan": 98,
+      "count": 7
+    },
+    {
+      "makespan": 99,
+      "count": 1
+    },
+    {
+      "makespan": 100,
+      "count": 1
+    }
+  ],
+  "best_schedule_file": "eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/02_best_random_shuffle_schedule.json"
+}

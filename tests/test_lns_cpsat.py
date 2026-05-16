@@ -81,3 +81,17 @@ def test_lns_at_lb_stops_immediately():
                            per_subproblem_budget_s=10)
     assert verify_capacity(sch) == []
     assert schedule_makespan(sch) <= lb
+
+
+def test_lns_cpsat_via_dispatch():
+    """`schedule_from_algorithm('lns_cpsat', ...)` must dispatch correctly."""
+    from twisted_analysis.io.schedule import schedule_from_algorithm
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+    seed = cpsat_literal(t, table, t_upper=lb + 2, time_limit_s=30)
+    sch = schedule_from_algorithm(
+        "lns_cpsat", t, table,
+        seed_schedule=seed, n_iters=2, per_subproblem_budget_s=15,
+    )
+    assert verify_capacity(sch) == []
+    assert schedule_makespan(sch) <= schedule_makespan(seed)

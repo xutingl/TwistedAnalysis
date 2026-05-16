@@ -238,6 +238,36 @@ def schedule_from_local_search(
     return local_search_repair(topology, table, seed_schedule, max_iters=max_iters)
 
 
+def schedule_from_lns_cpsat(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    seed_schedule: list[dict],
+    n_iters: int = 100,
+    per_subproblem_budget_s: int = 300,
+    destroy_size_frac: float = 0.05,
+    rng_seed: int = 0,
+    n_workers: int = 8,
+) -> list[dict]:
+    """Adapter: lns_cpsat_repair on a seed schedule.
+
+    Iteratively destroys part of `seed_schedule` and re-solves the
+    subproblem with CP-SAT, accepting strictly-better incumbents.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.lns_cpsat import lns_cpsat_repair
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return lns_cpsat_repair(
+        topology, table, seed_schedule,
+        n_iters=n_iters,
+        per_subproblem_budget_s=per_subproblem_budget_s,
+        destroy_size_frac=destroy_size_frac,
+        rng_seed=rng_seed,
+        n_workers=n_workers,
+    )
+
+
 _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
@@ -246,6 +276,7 @@ _SCHEDULER_DISPATCH = {
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
     "local_search": schedule_from_local_search,
+    "lns_cpsat": schedule_from_lns_cpsat,
 }
 
 
@@ -274,6 +305,13 @@ def schedule_from_algorithm(
         Shifts makespan-defining flows earlier when feasible. Polynomial per iteration.
         No LB guarantee but cheap to chain after any greedy or LP-rounding output.
         Requires `seed_schedule` kwarg; optional `max_iters` (default 1000).
+      - "lns_cpsat":         Large-Neighborhood-Search repair using CP-SAT as the
+        subproblem solver. Each iteration destroys a subset of the seed schedule
+        (time-window, random subset, or makespan-bottleneck flows), fixes the
+        rest in place, and asks CP-SAT to re-optimize. Accepts strictly-better
+        incumbents. Requires `seed_schedule` kwarg; tunables `n_iters` (default
+        100), `per_subproblem_budget_s` (default 300), `destroy_size_frac`
+        (default 0.05), `rng_seed` (default 0), `n_workers` (default 8).
 
     Per-algorithm kwargs (e.g., `order`, `time_limit_s`, `t_upper`) are passed through.
     """

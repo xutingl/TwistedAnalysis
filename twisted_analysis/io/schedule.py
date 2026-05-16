@@ -188,8 +188,13 @@ def schedule_from_cpsat_literal(
     t_upper: int,
     time_limit_s: int = 600,
     n_workers: int = 8,
+    warm_start_schedule: list[dict] | None = None,
 ) -> list[dict]:
-    """Adapter: cpsat_literal -> schedule entries."""
+    """Adapter: cpsat_literal -> schedule entries.
+
+    `warm_start_schedule`: when provided, prior schedule entries are fed
+    to CP-SAT as variable hints (see cpsat_literal docstring).
+    """
     from twisted_analysis.io.routing_table import validate_routing_table_shape
     from twisted_analysis.schedules.cpsat_literal import cpsat_literal
 
@@ -197,6 +202,7 @@ def schedule_from_cpsat_literal(
     return cpsat_literal(
         topology, table, t_upper=t_upper,
         time_limit_s=time_limit_s, n_workers=n_workers,
+        warm_start_schedule=warm_start_schedule,
     )
 
 

@@ -69,7 +69,6 @@ def cpsat_literal(
     n = topology.n_nodes
     flows = _flow_set(table, n)
 
-    # Build a quick lookup (src, dst) -> f_idx for fixed_assignments and warm_start.
     flow_key_to_idx = {(s, d): i for i, (s, d, _) in enumerate(flows)}
 
     fixed_idx: dict[int, int] = {}
@@ -130,9 +129,8 @@ def cpsat_literal(
         for f_idx, (_s, _d, path) in enumerate(flows):
             L = len(path) - 1
             if f_idx in fixed_idx:
-                # Single var case: makespan must accommodate this single assignment.
                 required = fixed_idx[f_idx]
-                model.Add(M >= required + L).OnlyEnforceIf(y[(f_idx, required)])
+                model.Add(M >= required + L)
             else:
                 for s in range(0, t_upper - L + 1):
                     model.Add(M >= s + L).OnlyEnforceIf(y[(f_idx, s)])

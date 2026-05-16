@@ -56,9 +56,8 @@ def test_cpsat_literal_infeasible_raises():
 
 
 def test_cpsat_literal_warm_start_accepts_seed():
-    """When warm-started with an optimal seed at the same t_upper, CP-SAT
-    must return a feasible schedule (the hint should be respected when
-    feasible, and the search at most matches the hint)."""
+    """warm_start_schedule is accepted and the result is still a valid
+schedule at the same t_upper (guards the hint-injection code path)."""
     t, table = _table_from_ilp_router((2, 4))
     lb = _physical_edge_lb(table, t.n_nodes)
     seed = cpsat_literal(t, table, t_upper=lb, time_limit_s=60)
@@ -102,14 +101,12 @@ def test_cpsat_literal_fixed_assignments_infeasible_combination_raises():
     shared = next(((e, demands) for e, demands in edge_hops.items()
                    if len(demands) >= 2), None)
     if shared is None:
-        import pytest as _p
-        _p.skip("no shared edge on this topology — skip conflict test")
+        pytest.skip("no shared edge on this topology — skip conflict test")
     _edge, demands = shared
     (s1, d1, h1), (s2, d2, h2), *_ = demands
     # Pin both at the same edge-time: round_i = tau - h_i for tau = 0.
     tau = max(h1, h2)
     fixed = {(s1, d1): tau - h1, (s2, d2): tau - h2}
-    import pytest as _p
-    with _p.raises(RuntimeError, match="infeasible|no solution"):
+    with pytest.raises(RuntimeError, match="infeasible|no solution"):
         cpsat_literal(t, table, t_upper=lb, time_limit_s=30,
                       fixed_assignments=fixed)

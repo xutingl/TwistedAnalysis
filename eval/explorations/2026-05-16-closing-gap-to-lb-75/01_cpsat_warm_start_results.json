@@ -1,0 +1,44 @@
+{
+  "schedule": [
+    79,
+    78,
+    77,
+    76
+  ],
+  "seed_schedule_file": "fixtures/schedule_8x4x4_loaded_cpsat_literal.json",
+  "seed_makespan": 80,
+  "best_makespan": 78,
+  "best_schedule_file": "/home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-16-closing-gap-to-lb-75/01_best_warm_start_schedule.json",
+  "rows": [
+    {
+      "t_upper": 79,
+      "status": "FEASIBLE",
+      "makespan": 78,
+      "violations": 0,
+      "runtime_s": 14445.0
+    },
+    {
+      "t_upper": 78,
+      "status": "FEASIBLE",
+      "makespan": 78,
+      "violations": 0,
+      "runtime_s": 14432.3
+    },
+    {
+      "t_upper": 77,
+      "status": "TIMEOUT",
+      "makespan": null,
+      "violations": null,
+      "runtime_s": 14431.5,
+      "error": "cpsat_literal: solver returned status=CpSolverStatus.UNKNOWN (no incumbent found within time_limit_s=14400)"
+    },
+    {
+      "t_upper": 76,
+      "status": "TIMEOUT",
+      "makespan": null,
+      "violations": null,
+      "runtime_s": 14428.9,
+      "error": "cpsat_literal: solver returned status=CpSolverStatus.UNKNOWN (no incumbent found within time_limit_s=14400)"
+    }
+  ]
+}

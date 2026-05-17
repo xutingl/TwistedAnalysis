@@ -120,10 +120,8 @@ def _dest_branches_literal(table: np.ndarray) -> str:
     N, K = table.shape
     lines: list[str] = []
     lines.append("# ---- per-step destination branches (inline_destinations=True) ----")
-    lines.append("# _branches(consts) -> tuple of N constant-returning lambdas, suitable")
-    lines.append("# as the second argument to jax.lax.switch. The `c=c` default-arg")
-    lines.append("# binding is required to capture per-lambda; without it every lambda")
-    lines.append("# would close over the same loop variable and return the last value.")
+    lines.append("# The `c=c` default-arg binding captures per-lambda; without it every")
+    lines.append("# lambda closes over the same loop variable and returns the last value.")
     lines.append("def _branches(consts):")
     lines.append("    import jax.numpy as jnp")
     lines.append("    return tuple(lambda c=c: jnp.int32(c) for c in consts)")
@@ -265,11 +263,17 @@ def generate_kernel_source(
     L.append('):')
     L.append(f'    """Orbit-greedy P2P AllToAll kernel for slice={slice_}.')
     L.append('')
-    L.append('    Signature: same as `_ragged_a2a_kernel_point_to_point` PLUS one extra')
-    L.append('    Ref input `dest_table_ref` (int32[N, K] in SMEM, slot 6). Other')
-    L.append('    differences vs reference:')
-    L.append('      * Iteration order = OrbitGreedy firing order (vs rotation).')
-    L.append('      * Destinations are looked up in `dest_table_ref` (twist-aware).')
+    if inline_destinations:
+        L.append('    Signature: same as `_ragged_a2a_kernel_point_to_point` — no extra inputs.')
+        L.append('    Destinations are baked as compile-time constants via `jax.lax.switch`.')
+        L.append('    Other differences vs reference:')
+        L.append('      * Iteration order = OrbitGreedy firing order (vs rotation).')
+    else:
+        L.append('    Signature: same as `_ragged_a2a_kernel_point_to_point` PLUS one extra')
+        L.append('    Ref input `dest_table_ref` (int32[N, K] in SMEM, slot 6). Other')
+        L.append('    differences vs reference:')
+        L.append('      * Iteration order = OrbitGreedy firing order (vs rotation).')
+        L.append('      * Destinations are looked up in `dest_table_ref` (twist-aware).')
     L.append('      * `transpose=True` is NOT supported (would need regen).')
     L.append('      * Assumes 1 group per device (uniform AllToAll).')
     L.append('      * `axis_name` is a flat string (e.g. "x"), as in the reference.')
@@ -350,7 +354,6 @@ def generate_kernel_source(
 
     if not per_step_barrier:
         L.append('    # ---- main orbit loop: packet outer, OrbitGreedy order inner ----')
-        L.append(f'    _NUM_ORBITS = {K}')
         if inline_destinations:
             L.append('    def _body(packet_idx, _state):')
             for k in range(K):
@@ -360,6 +363,7 @@ def generate_kernel_source(
             L.append('')
             L.append('    jax.lax.fori_loop(0, num_packets, _body, None)')
         else:
+            L.append(f'    _NUM_ORBITS = {K}')
             L.append('    def _body(i, _state):')
             L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
             L.append('        k = lax.rem(i, _NUM_ORBITS)')

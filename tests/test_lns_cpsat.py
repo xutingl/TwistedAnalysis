@@ -95,3 +95,41 @@ def test_lns_cpsat_via_dispatch():
     )
     assert verify_capacity(sch) == []
     assert schedule_makespan(sch) <= schedule_makespan(seed)
+
+
+def test_lns_logs_iteration_result_field():
+    """Every log_fn call must include a 'result' field that classifies the
+    subproblem outcome: 'feasible' (returned), 'infeasible' (provably so),
+    'timeout_no_incumbent' (status=UNKNOWN with no callback incumbent),
+    'pinning_conflict' (fixed_assignments out-of-range), or 'other_error'.
+    """
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+    # Build a deliberately suboptimal seed (one flow per round) so the seed
+    # makespan is well above lb and the LNS loop actually runs iterations.
+    n = t.n_nodes
+    seed = []
+    idx = 0
+    for s in range(n):
+        for d in range(n):
+            if s == d:
+                continue
+            seed.append({"src": s, "dst": d, "round": idx,
+                          "path": list(table[s][d])})
+            idx += 1
+    assert schedule_makespan(seed) > lb, "seed must be above lb for loop to run"
+    seen_results: list[str] = []
+
+    def log(it, info):
+        assert "result" in info, f"iter {it}: info missing 'result' field"
+        seen_results.append(info["result"])
+
+    lns_cpsat_repair(t, table, seed, n_iters=3,
+                     per_subproblem_budget_s=10,
+                     destroy_strategies=("time_window",),
+                     log_fn=log)
+    assert seen_results, "log_fn never called"
+    valid = {"feasible", "infeasible", "timeout_no_incumbent",
+             "pinning_conflict", "other_error"}
+    for r in seen_results:
+        assert r in valid, f"unexpected result label: {r!r}"

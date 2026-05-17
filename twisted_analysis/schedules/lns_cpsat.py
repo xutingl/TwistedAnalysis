@@ -135,13 +135,14 @@ def lns_cpsat_repair(
         if not D:
             continue
         fixed = {k: r for k, r in incumbent.items() if k not in D}
-        if log_fn is not None:
-            log_fn(it, {
-                "strategy": strat, "destroy_size": len(D),
-                "fixed_size": len(fixed),
-                "current_makespan": incumbent_makespan,
-                "target_t_upper": incumbent_makespan - 1,
-            })
+
+        info: dict = {
+            "strategy": strat, "destroy_size": len(D),
+            "fixed_size": len(fixed),
+            "current_makespan": incumbent_makespan,
+            "target_t_upper": incumbent_makespan - 1,
+        }
+
         try:
             new = cpsat_literal(
                 topology, table,
@@ -151,11 +152,30 @@ def lns_cpsat_repair(
                 fixed_assignments=fixed,
                 warm_start_schedule=cur_sched,
             )
-        except RuntimeError:
-            continue
-        new_makespan = schedule_makespan(new)
-        if new_makespan < incumbent_makespan:
-            incumbent = {(int(e["src"]), int(e["dst"])): int(e["round"]) for e in new}
-            incumbent_makespan = new_makespan
+            new_makespan = schedule_makespan(new)
+            info["result"] = "feasible"
+            info["new_makespan"] = new_makespan
+            info["accepted"] = new_makespan < incumbent_makespan
+        except RuntimeError as exc:
+            msg = str(exc).lower()
+            if "infeasible" in msg:
+                info["result"] = "infeasible"
+            elif "no incumbent" in msg:
+                info["result"] = "timeout_no_incumbent"
+            elif "fixed_assignments" in msg:
+                info["result"] = "pinning_conflict"
+            else:
+                info["result"] = "other_error"
+            info["error_msg"] = str(exc)
+            new = None
+
+        if log_fn is not None:
+            log_fn(it, info)
+
+        if new is not None and info.get("accepted"):
+            incumbent = {
+                (int(e["src"]), int(e["dst"])): int(e["round"]) for e in new
+            }
+            incumbent_makespan = info["new_makespan"]
 
     return _schedule_from_incumbent()

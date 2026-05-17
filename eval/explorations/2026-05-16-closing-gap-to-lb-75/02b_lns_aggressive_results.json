@@ -1,0 +1,289 @@
+{
+  "seed_schedule_file": "eval/explorations/2026-05-16-closing-gap-to-lb-75/01_best_warm_start_schedule.json",
+  "seed_makespan": 78,
+  "final_makespan": 78,
+  "violations": 0,
+  "total_runtime_s": 140.6,
+  "best_schedule_file": null,
+  "params": {
+    "n_iters": 24,
+    "per_subproblem_budget_s": 600,
+    "destroy_size_frac": 0.3,
+    "rng_seed": 20260516,
+    "strategies": [
+      "time_window",
+      "random_subset",
+      "makespan_flows"
+    ],
+    "n_workers": 8
+  },
+  "outcome_counts": {
+    "infeasible": 24
+  },
+  "iter_log": [
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 0,
+      "elapsed_s": 4.6
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5279,
+      "fixed_size": 10977,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 1,
+      "elapsed_s": 15.6
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 2,
+      "elapsed_s": 18.6
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 3,
+      "elapsed_s": 22.4
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5281,
+      "fixed_size": 10975,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 4,
+      "elapsed_s": 33.0
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 5,
+      "elapsed_s": 36.0
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 6,
+      "elapsed_s": 39.8
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5283,
+      "fixed_size": 10973,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 7,
+      "elapsed_s": 50.5
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 8,
+      "elapsed_s": 53.4
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 9,
+      "elapsed_s": 57.2
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5287,
+      "fixed_size": 10969,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 10,
+      "elapsed_s": 67.7
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 11,
+      "elapsed_s": 70.6
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 12,
+      "elapsed_s": 74.5
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5296,
+      "fixed_size": 10960,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 13,
+      "elapsed_s": 85.1
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 14,
+      "elapsed_s": 88.0
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 15,
+      "elapsed_s": 91.9
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5292,
+      "fixed_size": 10964,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 16,
+      "elapsed_s": 102.6
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 17,
+      "elapsed_s": 105.5
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 18,
+      "elapsed_s": 109.4
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5285,
+      "fixed_size": 10971,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 19,
+      "elapsed_s": 120.2
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 20,
+      "elapsed_s": 123.2
+    },
+    {
+      "strategy": "time_window",
+      "destroy_size": 1248,
+      "fixed_size": 15008,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 21,
+      "elapsed_s": 127.0
+    },
+    {
+      "strategy": "random_subset",
+      "destroy_size": 5301,
+      "fixed_size": 10955,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 22,
+      "elapsed_s": 137.6
+    },
+    {
+      "strategy": "makespan_flows",
+      "destroy_size": 599,
+      "fixed_size": 15657,
+      "current_makespan": 78,
+      "target_t_upper": 77,
+      "result": "infeasible",
+      "error_msg": "cpsat_literal: infeasible at t_upper=77",
+      "iter": 23,
+      "elapsed_s": 140.5
+    }
+  ]
+}

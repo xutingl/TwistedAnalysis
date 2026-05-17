@@ -37,9 +37,10 @@ working with a weaker (smaller) feasible set than it claims.
 | `orbit_greedy` (default) | Orbit-greedy with full-physical-edge accounting (delegates to `orbit_greedy_full` since 2026-05-15) | LB-tight on (2,4) and (2,2,4) ILP; +1 over LB on (2,4,4) and (4,8) ILP (confirmed via literal ILP); +9 over LB on the loaded 8×4×4 routing with `lpt_tail_asc` (but only +9 with `lpt`) |
 | `orbit_greedy_full` | Same algorithm; explicit name | Same as above. On loaded 8×4×4, `order='lpt'` gives makespan 84 vs `lpt_tail_asc`'s 85 — recommended default on non-translation-equivariant routings |
 | `literal_greedy` | LMR-style per-flow earliest-feasible | Bounded by `O(c + d)` per LMR; +5–14% over `orbit_greedy_full` empirically |
-| `cpsat_literal` | CP-SAT (OR-Tools) on literal flow set | Stronger than CBC-based `ilp_literal` on large cells. Found **makespan 80** on loaded 8×4×4 (vs orbit_greedy's 84-85) using a 30-min/probe binary search over `t_upper` — see [exploration](eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/) |
+| `cpsat_literal` | CP-SAT (OR-Tools) on literal flow set; supports `warm_start_schedule` and `fixed_assignments` kwargs | Stronger than CBC-based `ilp_literal` on large cells. Cold @30 min/probe found **makespan 80** on loaded 8×4×4 (vs orbit_greedy's 84-85). Warm-started @4 h/probe found **makespan 78** at `t_upper=79` — see [2026-05-16 exploration](eval/explorations/2026-05-16-closing-gap-to-lb-75/) |
 | `lp_rounding` | LP relaxation of `ilp_literal` + Raghavan-Thompson randomized rounding | Polynomial-time but CBC's LP solve is intractable at N=128 (>6.5h, no completion). Could be revisited with HiGHS/Gurobi |
 | `local_search` | Hill-climbing shift-earlier moves on a seed schedule | Refinement only; zero improvement on all tested seeds. Use as a post-pass to certify local tightness, not as primary search |
+| `lns_cpsat` | Large-Neighborhood Search: destroy a subset of a seed schedule, re-solve with CP-SAT, accept strictly-better incumbents. Three destroy strategies (`time_window`, `random_subset`, `makespan_flows`) | Requires `seed_schedule` kwarg. On loaded 8×4×4 with the makespan-78 seed at `destroy_size_frac ∈ {0.05, 0.30}`, every subproblem proved INFEASIBLE in 3–11s — the schedule is structurally tight. Useful when greedy/single-shot CP-SAT lands at a local optimum that's NOT structurally tight |
 | `ilp_literal` | Exact ILP on the literal `N(N-1)` flow set (CBC) | Provably optimal under physical-edge capacity. Tractable up to N=32 (~minutes); intractable at N=128 (CBC hangs on 1.37M binary vars) |
 | `pipelined_orbit` | Orbit greedy with `t_{i+1} = t_i + 1` constraint | Diagnostic only; not optimal in general |
 | `round_robin` / `xla` | Latin-square rotation (baseline) | 4–9× over LB on full AllToAll |
@@ -48,11 +49,11 @@ A gap of 1 means the routing+schedule saturate every bottleneck link; >1
 quantifies inefficiency. **Performance varies materially by routing**: see
 `docs/results.md` for the matrix.
 
-For an empirical search over scheduling algorithms specifically targeting
-the loaded 8×4×4 routing (which the deployed Pallas kernel actually uses),
-see [eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/](eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/).
-TL;DR: `cpsat_literal` beats orbit-greedy by 5 steps (makespan 80 vs 85) on
-that cell, projected to 4.8% above the P2P reference's measured throughput.
+For empirical searches over scheduling algorithms specifically targeting
+the loaded 8×4×4 routing (which the deployed Pallas kernel actually uses):
+
+- [eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/](eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/) — cold CP-SAT @30 min/probe reaches makespan 80, projected +4.8% above P2P.
+- [eval/explorations/2026-05-16-closing-gap-to-lb-75/](eval/explorations/2026-05-16-closing-gap-to-lb-75/) — warm-started CP-SAT @4 h/probe reaches **makespan 78** at `t_upper=79`, projected **+7.5% above P2P**. LNS at 5–30% destroy cannot escape the makespan-78 local optimum (every subproblem provably INFEASIBLE in seconds). LB=75 remains open.
 
 ### Two capacity models — the source of historical confusion
 

@@ -39,11 +39,25 @@ def cpsat_literal(
     solver_msg: bool = False,
     n_workers: int = 8,
     minimize: bool = True,
+    warm_start_schedule: list[dict] | None = None,
+    fixed_assignments: dict[tuple[int, int], int] | None = None,
 ) -> list[dict]:
     """Solve / feasibility-probe the literal scheduling problem with CP-SAT.
 
+    Optional kwargs:
+      warm_start_schedule: a previously-computed schedule (list of
+        {round, src, dst, path} dicts). Each entry becomes an `AddHint` on
+        the corresponding y-variable when that variable exists at this
+        `t_upper`. Entries whose round exceeds `t_upper - L_f` are silently
+        skipped.
+      fixed_assignments: dict (src, dst) -> required round. For each fixed
+        flow only the variable at the required round is created (and
+        pinned to True); other y-variables for that flow do not exist;
+        edge-capacity constraints still account for the fixed flow.
+
     Raises ImportError if ortools is not installed.
-    Raises RuntimeError if the problem is infeasible at the given `t_upper`.
+    Raises RuntimeError if infeasible at the given `t_upper` (including
+    when fixed_assignments make the model infeasible).
     """
     try:
         from ortools.sat.python import cp_model
@@ -55,11 +69,33 @@ def cpsat_literal(
     n = topology.n_nodes
     flows = _flow_set(table, n)
 
-    model = cp_model.CpModel()
+    flow_key_to_idx = {(s, d): i for i, (s, d, _) in enumerate(flows)}
 
+    fixed_idx: dict[int, int] = {}
+    if fixed_assignments:
+        for (src, dst), required in fixed_assignments.items():
+            if (src, dst) not in flow_key_to_idx:
+                raise ValueError(
+                    f"fixed_assignments: flow ({src},{dst}) not in flow set"
+                )
+            fixed_idx[flow_key_to_idx[(src, dst)]] = int(required)
+
+    model = cp_model.CpModel()
     y: dict[tuple[int, int], cp_model.IntVar] = {}
+
     for f_idx, (_s, _d, path) in enumerate(flows):
         L = len(path) - 1
+        if f_idx in fixed_idx:
+            required = fixed_idx[f_idx]
+            if not (0 <= required <= t_upper - L):
+                raise RuntimeError(
+                    f"fixed_assignments: flow {f_idx} required round {required} "
+                    f"out of feasible range [0, {t_upper - L}] at t_upper={t_upper}"
+                )
+            v = model.NewBoolVar(f"y_{f_idx}_{required}_fixed")
+            model.Add(v == 1)
+            y[(f_idx, required)] = v
+            continue
         starts = list(range(0, t_upper - L + 1))
         if not starts:
             raise RuntimeError(
@@ -92,9 +128,34 @@ def cpsat_literal(
         M = model.NewIntVar(0, t_upper, "M")
         for f_idx, (_s, _d, path) in enumerate(flows):
             L = len(path) - 1
-            for s in range(0, t_upper - L + 1):
-                model.Add(M >= s + L).OnlyEnforceIf(y[(f_idx, s)])
+            if f_idx in fixed_idx:
+                required = fixed_idx[f_idx]
+                model.Add(M >= required + L)
+            else:
+                for s in range(0, t_upper - L + 1):
+                    model.Add(M >= s + L).OnlyEnforceIf(y[(f_idx, s)])
         model.Minimize(M)
+
+    # Warm-start hints from a prior schedule (after all variables exist).
+    if warm_start_schedule is not None:
+        for e in warm_start_schedule:
+            key = (e["src"], e["dst"])
+            f_idx = flow_key_to_idx.get(key)
+            if f_idx is None:
+                continue  # foreign flow — ignore
+            s = int(e["round"])
+            if (f_idx, s) in y:
+                model.AddHint(y[(f_idx, s)], 1)
+
+    class _IncumbentCollector(cp_model.CpSolverSolutionCallback):
+        def __init__(self, y_vars):
+            super().__init__()
+            self._y_vars = y_vars
+            self.latest: dict[tuple[int, int], int] = {}
+
+        def on_solution_callback(self):
+            for key, var in self._y_vars.items():
+                self.latest[key] = self.Value(var)
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = float(time_limit_s)
@@ -102,26 +163,42 @@ def cpsat_literal(
     if solver_msg:
         solver.parameters.log_search_progress = True
 
-    status = solver.Solve(model)
+    collector = _IncumbentCollector(y)
+    status = solver.Solve(model, collector)
 
-    if status in (cp_model.INFEASIBLE,):
+    if status == cp_model.INFEASIBLE:
         raise RuntimeError(f"cpsat_literal: infeasible at t_upper={t_upper}")
-    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+
+    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        values: dict[tuple[int, int], int] = {
+            key: solver.Value(var) for key, var in y.items()
+        }
+    elif status == cp_model.UNKNOWN:
+        if not collector.latest:
+            raise RuntimeError(
+                f"cpsat_literal: status=UNKNOWN with no incumbent "
+                f"(time_limit_s={time_limit_s})"
+            )
+        values = collector.latest
+    else:
         raise RuntimeError(
-            f"cpsat_literal: solver returned status={status} (no incumbent found "
-            f"within time_limit_s={time_limit_s})"
+            f"cpsat_literal: solver returned status={status} "
+            f"(time_limit_s={time_limit_s})"
         )
 
     rounds: dict[tuple[int, int], int] = {}
     for f_idx, (src, dst, path) in enumerate(flows):
         L = len(path) - 1
-        chosen = None
-        for s in range(0, t_upper - L + 1):
-            if solver.Value(y[(f_idx, s)]) == 1:
-                chosen = s
-                break
-        if chosen is None:
-            raise RuntimeError(f"cpsat_literal: no start picked for flow {f_idx}")
+        if f_idx in fixed_idx:
+            chosen = fixed_idx[f_idx]
+        else:
+            chosen = None
+            for s in range(0, t_upper - L + 1):
+                if values.get((f_idx, s), 0) == 1:
+                    chosen = s
+                    break
+            if chosen is None:
+                raise RuntimeError(f"cpsat_literal: no start picked for flow {f_idx}")
         rounds[(src, dst)] = chosen
 
     entries = []

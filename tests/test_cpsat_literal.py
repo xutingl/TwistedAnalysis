@@ -53,3 +53,92 @@ def test_cpsat_literal_infeasible_raises():
     lb = _physical_edge_lb(table, t.n_nodes)
     with pytest.raises(RuntimeError, match="infeasible|no solution"):
         cpsat_literal(t, table, t_upper=lb - 1, time_limit_s=30)
+
+
+def test_cpsat_literal_warm_start_accepts_seed():
+    """warm_start_schedule is accepted and the result is still a valid
+schedule at the same t_upper (guards the hint-injection code path)."""
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+    seed = cpsat_literal(t, table, t_upper=lb, time_limit_s=60)
+    # Warm-start the next solve from the seed at the same t_upper.
+    sch = cpsat_literal(t, table, t_upper=lb, time_limit_s=60,
+                        warm_start_schedule=seed)
+    assert verify_capacity(sch) == []
+    assert schedule_makespan(sch) <= lb
+
+
+def test_cpsat_literal_fixed_assignments_pins_flows():
+    """fixed_assignments must force named flows to their required round
+    (and the rest of the schedule must remain feasible)."""
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+    seed = cpsat_literal(t, table, t_upper=lb, time_limit_s=60)
+    # Pin every flow to its seed round; the model should accept and return it.
+    fixed = {(e["src"], e["dst"]): e["round"] for e in seed}
+    sch = cpsat_literal(t, table, t_upper=lb, time_limit_s=60,
+                        fixed_assignments=fixed)
+    by_key = {(e["src"], e["dst"]): e["round"] for e in sch}
+    for k, r in fixed.items():
+        assert by_key[k] == r, f"flow {k}: expected round {r}, got {by_key[k]}"
+
+
+def test_cpsat_literal_fixed_assignments_infeasible_combination_raises():
+    """If pinned flows conflict (two flows on same edge at same time), raise."""
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+    # Find any two flows that share at least one physical edge at any hop.
+    from collections import defaultdict
+    edge_hops: dict[tuple[int, int], list[tuple[int, int, int]]] = defaultdict(list)
+    for s in range(t.n_nodes):
+        for d in range(t.n_nodes):
+            if s == d:
+                continue
+            path = table[s][d]
+            for h in range(len(path) - 1):
+                edge_hops[(path[h], path[h + 1])].append((s, d, h))
+    # Pick a shared edge with at least 2 demands.
+    shared = next(((e, demands) for e, demands in edge_hops.items()
+                   if len(demands) >= 2), None)
+    if shared is None:
+        pytest.skip("no shared edge on this topology — skip conflict test")
+    _edge, demands = shared
+    (s1, d1, h1), (s2, d2, h2), *_ = demands
+    # Pin both at the same edge-time: round_i = tau - h_i for tau = 0.
+    tau = max(h1, h2)
+    fixed = {(s1, d1): tau - h1, (s2, d2): tau - h2}
+    with pytest.raises(RuntimeError, match="infeasible|no solution"):
+        cpsat_literal(t, table, t_upper=lb, time_limit_s=30,
+                      fixed_assignments=fixed)
+
+
+def test_cpsat_literal_extracts_incumbent_on_unknown_status():
+    """Regression: UNKNOWN status with an incumbent must NOT be treated
+    as 'no incumbent'. The fix probes the solver for a valid assignment
+    before raising. Reproduces by mocking CpSolver.Solve to lie about the
+    status while leaving variable values readable.
+
+    Originally surfaced when a 4h CP-SAT probe at t_upper=76 returned
+    status=UNKNOWN with objective=76, but the prior code discarded the
+    incumbent and raised TIMEOUT.
+    """
+    from unittest.mock import patch
+    from ortools.sat.python import cp_model as cm
+
+    t, table = _table_from_ilp_router((2, 4))
+    lb = _physical_edge_lb(table, t.n_nodes)
+
+    real_solve = cm.CpSolver.Solve
+
+    def fake_solve(self, model, callback=None):
+        real_status = real_solve(self, model, callback)
+        # Force UNKNOWN even though a real incumbent exists.
+        if real_status in (cm.OPTIMAL, cm.FEASIBLE):
+            return cm.UNKNOWN
+        return real_status
+
+    with patch.object(cm.CpSolver, "Solve", fake_solve):
+        sch = cpsat_literal(t, table, t_upper=lb, time_limit_s=60)
+
+    assert verify_capacity(sch) == []
+    assert schedule_makespan(sch) <= lb

@@ -64,4 +64,16 @@ background runs.
 
 ## Outcome
 
-(Filled in after the probe completes.)
+**K-sweep results (all viol = 0):**
+- K=1: makespan 145 (much higher; pure P2P-style 1 DMA per device per round)
+- K=2: makespan 92 (headline)
+- K=3: makespan 88
+- K=4: makespan 86 (close to `literal_greedy`'s 87 — cap nearly non-binding)
+
+**Shipped artifacts:**
+- Schedules: [`fixtures/schedule_8x4x4_loaded_spread_greedy_k{1,2,3,4}.json`](../../../fixtures/) — all four K values.
+- CNS copy (K=2 only): [`fixtures/cns_schedules/schedule_spreadgreedyk2_4x4x8_twisted.json`](../../../fixtures/cns_schedules/schedule_spreadgreedyk2_4x4x8_twisted.json).
+- Pallas kernels (K=2 only): [`pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py`](../../../pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py) (regular, SMEM `dest_table_ref` input) and [`_ragged_a2a_kernel_spread_greedy_k2_inline_8_4_4.py`](../../../pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_inline_8_4_4.py) (destinations inlined as `jax.lax.switch` branches).
+
+**Next step:** empirical TPU measurement of the K=2 kernel vs the `cpsat_literal_warm`
+kernel and the P2P reference. The decision rule is documented in [RESULTS.md](RESULTS.md): if K=2 ≥ 132764 gbps, the DMA-oversubscription hypothesis is supported; if not, the K=2 path is rejected and the simulator-makespan ranking remains the best practical proxy on TPU.

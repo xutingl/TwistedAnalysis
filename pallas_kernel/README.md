@@ -12,7 +12,7 @@ that replaces the default `_ragged_a2a_kernel_point_to_point` inside
 |---|---|
 | [reference_kernel.py](reference_kernel.py) | Reference `ragged_all_to_all` and `_ragged_a2a_kernel_point_to_point` extracted from `google3/learning/brain/research/megablox/collectives/ragged_all_to_all.py`. The orbit-greedy kernel is a drop-in for the P2P branch only. |
 | [gen_orbit_greedy_kernel.py](gen_orbit_greedy_kernel.py) | Pipeline orchestrator. Either generates a routing table (via `--router`) or loads one (via `--routing-table`); generates a schedule from it; emits a kernel `.py` file. Persists the routing table and schedule as inspectable intermediates. |
-| `outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Generator output. One file per (topology, router, order) combination. |
+| `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py` | Generator output. One file per (topology, router, scheduler, order) combination. Current outputs: `orbit_greedy_8_4_4.py`, `orbit_greedy_full_8_4_4.py`, `literal_greedy_8_4_4.py`, and `cpsat_literal_warm_8_4_4.py` (makespan-78, current production recommendation for the loaded 8×4×4 routing). |
 
 ## What problem this kernel solves
 
@@ -36,7 +36,8 @@ Only the iteration order changes.
 
 ## Scheduler choice
 
-The generator supports four scheduling algorithms via `--scheduler`. Scheduler
+The generator supports several scheduling algorithms via `--scheduler` (or
+`--schedule-in <path>` to load a precomputed schedule from disk). Scheduler
 performance **depends on the routing** — picking a scheduler in isolation is
 not enough; the routing × scheduler pair determines the realized makespan.
 
@@ -47,6 +48,7 @@ not enough; the routing × scheduler pair determines the realized makespan.
 | `orbit_greedy` (default) | Orbit greedy with full-physical-edge accounting (alias for `orbit_greedy_full` since 2026-05-15; the original `(dim, dir)`-keyed implementation was unsound on non-equivariant routings and was replaced) | Yes |
 | `orbit_greedy_full` | Same algorithm; explicit name kept for clarity | Yes |
 | `literal_greedy` | LMR-style per-flow earliest-feasible greedy on the literal `N(N-1)` flow set | Yes |
+| `cpsat_literal` | CP-SAT (OR-Tools) on the literal flow set; supports `--schedule-in` warm-starting | Yes (when CP-SAT returns FEASIBLE/OPTIMAL); may TIMEOUT |
 | `ilp_literal` | Exact ILP on the literal flow set (PuLP/CBC) | Yes (when CBC returns); intractable at N=128 |
 
 The post-schedule capacity verifier refuses to emit a kernel whose schedule
@@ -57,13 +59,13 @@ generation time.
 
 Numbers are `makespan` (lower is better; LB = max physical-edge load).
 
-| Routing | N | LB | `orbit_greedy_full` | `literal_greedy` | `ilp_literal` |
-|---|---:|---:|---:|---:|---|
-| (2,4) ILP | 8 | 3 | **3** | 3 | 3 |
-| (2,2,4) ILP | 16 | 5 | **5** | 6 | 5 (~1 s) |
-| (2,4,4) ILP | 32 | 11 | 12 (+1) | 14 | **11** (~3 min) |
-| (4,8) ILP | 32 | 21 | 22 (+1) | 25 | **21** (~85 min) |
-| (8,4,4) loaded | 128 | 75 | 85 (+10) | 87 | intractable |
+| Routing | N | LB | `orbit_greedy_full` | `literal_greedy` | `ilp_literal` | `cpsat_literal` (warm) |
+|---|---:|---:|---:|---:|---|---:|
+| (2,4) ILP | 8 | 3 | **3** | 3 | 3 | 3 |
+| (2,2,4) ILP | 16 | 5 | **5** | 6 | 5 (~1 s) | 5 |
+| (2,4,4) ILP | 32 | 11 | 12 (+1) | 14 | **11** (~3 min) | 11 |
+| (4,8) ILP | 32 | 21 | 22 (+1) | 25 | **21** (~85 min) | 21 |
+| (8,4,4) loaded | 128 | 75 | 85 (+10) | 87 | intractable | **78** (+3, warm-started CP-SAT @4 h) |
 
 **What this matrix shows:**
 
@@ -73,9 +75,13 @@ Numbers are `makespan` (lower is better; LB = max physical-edge load).
   level sub-optimality, not a fundamental bound. The gap is 1 step in both
   cases.
 - On the loaded 8×4×4 TPU routing, the literal ILP is intractable (~1.37 M
-  binary vars; CBC's LP relaxation alone runs indefinitely). Whether LB=75
-  is achievable on this routing is **open**. The best known feasible
-  schedule is `orbit_greedy_full` at makespan 85.
+  binary vars; CBC's LP relaxation alone runs indefinitely), but **CP-SAT
+  scales**: cold CP-SAT @30 min/probe reaches makespan 80, and warm-starting
+  from that incumbent at `t_upper=79` (4 h budget) reaches **makespan 78**.
+  Whether LB=75 is achievable remains open: cold CP-SAT at `t_upper ∈ {77,
+  76}` and LNS at 5–30% destroy both fail to escape makespan 78 (the
+  makespan-78 schedule appears *structurally tight* — see
+  [2026-05-16 exploration](../eval/explorations/2026-05-16-closing-gap-to-lb-75/)).
 - `literal_greedy` consistently trails `orbit_greedy_full` by 5–14%. It's a
   fallback for routings where orbit symmetry breaks entirely; on routings
   with orbit structure it loses to the orbit-based variants.
@@ -88,12 +94,27 @@ Numbers are `makespan` (lower is better; LB = max physical-edge load).
 | ILPRouter (small cells N ≤ 16) | `orbit_greedy` or `ilp_literal` | Both reach LB; ILP is the exact ground truth |
 | ILPRouter (N=32) | `ilp_literal` if you have minutes; `orbit_greedy` otherwise | ILP closes the +1 gap that orbit greedy has on (2,4,4)/(4,8) |
 | ILPRouter (N=128, i.e. 4×4×8) | `orbit_greedy` | ILP intractable; orbit greedy is the best practical choice |
-| **Loaded TPU routing** | `orbit_greedy` (makespan 85) — **or** `literal_greedy` (makespan 87) as a sanity baseline | The routing's translation-equivariance properties typically fail (twist-wrap edge classes, escape-VC routing); orbit greedy still beats per-flow greedy by a step or two |
+| **Loaded TPU routing** | **`cpsat_literal` warm-started from `fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json` (makespan 78, projected +7.5% vs P2P)** — fall back to `orbit_greedy` (makespan 85) for the no-CP-SAT baseline | CP-SAT @4 h warm-started from the makespan-80 fixture finds makespan 78 at `t_upper=79`. The precomputed schedule is shipped; use it via `--schedule-in` rather than re-running the 4 h solve |
 
 ### Example invocations
 
 ```bash
-# Loaded TPU routing on 8x4x4 — orbit_greedy is fine (the default).
+# Loaded TPU routing on 8x4x4 — production recommendation:
+# load the precomputed makespan-78 schedule and emit the kernel directly.
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --schedule-in fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json
+
+# To regenerate the makespan-78 schedule from scratch (e.g., on a different
+# routing table), run the warm-started CP-SAT probe from the 2026-05-16
+# exploration. The kernel-generator CLI does NOT expose `--scheduler
+# cpsat_literal` — schedules from CP-SAT are produced by direct Python
+# scripts and consumed via `--schedule-in`. The probe takes ~4 h per
+# t_upper at 8 workers:
+#   python eval/explorations/2026-05-16-closing-gap-to-lb-75/01_cpsat_warm_start_probe.py
+
+# Baseline: orbit_greedy (makespan 85, no CP-SAT compute needed):
 python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 8,4,4 \
     --routing-table fixtures/routing_table_8x4x4_twist.json

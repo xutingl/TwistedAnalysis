@@ -87,7 +87,7 @@ cat results/$(date +%Y-%m-%d)/headlines.csv   # aggregated summary
 - `twisted_analysis/lp/` — time-indexed ILP + LP relaxation (PuLP/CBC).
 - `twisted_analysis/viz/` — matplotlib plot helpers.
 - `fixtures/` — persisted routing tables and schedules (`routing_table_<slice>_<router>.json`, `schedule_<slice>_<router>_<order>.json`); also legacy CSV from `scripts/dump_routing_tables.py`.
-- `pallas_kernel/` — Pallas TPU kernel generator (consumes a routing table + schedule, emits `outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py`).
+- `pallas_kernel/` — Pallas TPU kernel generator (consumes a routing table + schedule, emits `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py`). Current outputs include `orbit_greedy_8_4_4`, `orbit_greedy_full_8_4_4`, `literal_greedy_8_4_4`, and `cpsat_literal_warm_8_4_4` (the makespan-78 production recommendation for the loaded 8×4×4 routing).
 - `scripts/` — reproducible CLIs:
   - `generate_routing_table.py` — `(slice, router) → fixtures/routing_table_<slice>_<router>.json`
   - `generate_schedule.py` — `(routing-table, scheduler, order) → fixtures/schedule_<slice>_<router>_<order>.json`
@@ -101,7 +101,7 @@ The end-to-end TPU-kernel pipeline runs in three stages, each producing an inspe
 
 1. **Router** → `fixtures/routing_table_<slice>_<router>.json`. Matrix of paths (`[src][dst] → {"path": [{"node_id": int}, ...]}`). Run via `scripts/generate_routing_table.py` or call `twisted_analysis.io.save_routing_table` directly. Convention: paths are sequences of single-hop topology neighbors; flatten convention is dim-0 most significant (e.g. slice `(8,4,4)` → `flat = i*16 + j*4 + k`).
 2. **Scheduler** → `fixtures/schedule_<slice>_<router>_<order>.json`. Flat list of `{round, src, dst, path}` entries; `path` is a list of flat-IDs from src to dst. Run via `scripts/generate_schedule.py`.
-3. **Kernel generator** → `pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py`. Run via `pallas_kernel/gen_orbit_greedy_kernel.py`, which orchestrates stages 1 and 2 (or accepts an existing routing table via `--routing-table FILE`).
+3. **Kernel generator** → `pallas_kernel/outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py`. Run via `pallas_kernel/gen_orbit_greedy_kernel.py`, which orchestrates stages 1 and 2 (or accepts an existing routing table via `--routing-table FILE`, or a precomputed schedule via `--schedule-in FILE`).
 
 Pre-generated example: `fixtures/routing_table_8x4x4_twist.json` is a 4×4×8 TPU v5e twisted torus represented as slice=(8,4,4) under our flatten convention (largest dim first per `{S,2S}^n`). Use it via:
 ```
@@ -110,7 +110,16 @@ python pallas_kernel/gen_orbit_greedy_kernel.py \
     --routing-table fixtures/routing_table_8x4x4_twist.json \
     --order lpt_tail_asc
 ```
-This produces `fixtures/schedule_8x4x4_loaded_lpt_tail_asc.json` and `pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_8_4_4.py`.
+This produces `fixtures/schedule_8x4x4_loaded_lpt_tail_asc.json` and `pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_8_4_4.py` (makespan 85, the orbit-greedy baseline).
+
+**For the production-recommended makespan-78 kernel** (warm-started CP-SAT, projected +7.5% above the P2P reference), load the precomputed schedule directly:
+```
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --schedule-in fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json
+```
+The pre-generated kernel is at [`pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_8_4_4.py`](pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_8_4_4.py).
 
 ## Docs
 

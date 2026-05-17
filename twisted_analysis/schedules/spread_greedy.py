@@ -20,15 +20,11 @@ K = infinity):
            physical-edge LB.
   - K = N: equivalent to `literal_greedy` (cap non-binding).
 
-Motivation: on the loaded 8x4x4 routing, the makespan-78 schedule from
-`cpsat_literal` warm-started measured only 132764 gbps on TPU v5e -- nearly
-identical to the orbit_greedy-85 kernel's 132758 gbps and ~1.3% below the
-P2P reference's 134541 gbps. The simulator-projected +9 % gain did not
-translate to wall-clock. The leading hypothesis is that per-device DMA-
-engine concurrency and ICI link bandwidth dominate per-round wall-clock,
-making round-count a poor proxy. `spread_greedy` is a direct test: produce
-schedules with fewer simultaneous DMAs per device, accept a higher round
-count, and measure on TPU.
+Motivation: wall-clock on TPU v5e showed that per-device DMA-engine
+concurrency and ICI link bandwidth dominate per-round latency, so
+minimising simultaneous DMAs per device (at the cost of higher round
+count) may reduce wall-clock time. `spread_greedy` lets us test that
+hypothesis by varying K before committing to hardware experiments.
 """
 from __future__ import annotations
 from collections import defaultdict

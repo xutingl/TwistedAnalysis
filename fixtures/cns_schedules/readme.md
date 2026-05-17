@@ -7,14 +7,17 @@ dimension-label permutation).
 
 | CNS filename | Source fixture | Scheduler | Makespan | Physical-edge violations |
 |---|---|---:|---:|---:|
-| `schedule_cpsatliteral_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal.json` | `cpsat_literal` (OR-Tools, t_upper=80, 30 min budget) | **80** | 0 |
+| `schedule_cpsatliteralwarm_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal_warm.json` | `cpsat_literal` warm-started from makespan-80 (OR-Tools, t_upper=79, 4 h budget) | **78** | 0 |
+| `schedule_cpsatliteral_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal.json` | `cpsat_literal` (OR-Tools, t_upper=80, 30 min budget) | 80 | 0 |
 | `schedule_orbitfull_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json` | `orbit_greedy_full` | 85 | 0 |
 | `schedule_literalgreedy_4x4x8_twisted.json` | `schedule_8x4x4_loaded_literal_greedy_lpt.json` | `literal_greedy` | 87 | 0 |
 | `schedule_orbit_4x4x8_twisted.json` | `schedule_8x4x4_loaded_lpt_tail_asc.json` | original `orbit_greedy` (pre-fix) | 73 | **8160 — DO NOT BENCHMARK AS-IS** |
 
 LB for this routing = 75 (max physical-edge load).
 
-**Recommended for production measurement runs: `cpsatliteral`** — strictly best of the capacity-feasible schedules (80 vs 85 vs 87). Projects to ~141 Kgbps vs P2P's measured 134.5 Kgbps (+4.8%) under linear-throughput scaling. Provenance: `eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/` (CP-SAT binary-searched `t_upper ∈ {84, 83, 82, 81, 80, 78, 76}` with 30 min/probe; 80 was the deepest feasible incumbent).
+**Recommended for production measurement runs: `cpsatliteralwarm`** — strictly best of the capacity-feasible schedules (78 vs 80 vs 85 vs 87). Projects to ~144.6 Kgbps vs P2P's measured 134.5 Kgbps (+7.5%) under linear-throughput scaling. Provenance: `eval/explorations/2026-05-16-closing-gap-to-lb-75/` (CP-SAT warm-started from the makespan-80 fixture, 4 h budget per `t_upper`; both `t_upper=79` and `t_upper=78` were FEASIBLE at makespan 78; `t_upper ∈ {77, 76}` timed out with no incumbent — evidence that the makespan-78 region is at or near the practical limit of warm-started CP-SAT at this budget).
+
+The previously-recommended `cpsatliteral` (makespan 80) is retained as the no-warm-start baseline.
 
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 

@@ -1,0 +1,58 @@
+{
+  "routing": "fixtures/routing_table_8x4x4_twist.json",
+  "slice": [
+    8,
+    4,
+    4
+  ],
+  "n": 128,
+  "order": "lpt",
+  "k_values": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "rows": [
+    {
+      "k": 1,
+      "makespan": 145,
+      "violations": 0,
+      "runtime_s": 0.42,
+      "max_out_per_device_round": 1,
+      "max_in_per_device_round": 1,
+      "avg_out_per_device_round": 1.0,
+      "n_rounds_with_dma": 145
+    },
+    {
+      "k": 2,
+      "makespan": 92,
+      "violations": 0,
+      "runtime_s": 0.56,
+      "max_out_per_device_round": 2,
+      "max_in_per_device_round": 2,
+      "avg_out_per_device_round": 1.614,
+      "n_rounds_with_dma": 91
+    },
+    {
+      "k": 3,
+      "makespan": 88,
+      "violations": 0,
+      "runtime_s": 0.67,
+      "max_out_per_device_round": 3,
+      "max_in_per_device_round": 3,
+      "avg_out_per_device_round": 1.703,
+      "n_rounds_with_dma": 87
+    },
+    {
+      "k": 4,
+      "makespan": 86,
+      "violations": 0,
+      "runtime_s": 0.69,
+      "max_out_per_device_round": 4,
+      "max_in_per_device_round": 4,
+      "avg_out_per_device_round": 1.725,
+      "n_rounds_with_dma": 85
+    }
+  ]
+}

@@ -7,6 +7,7 @@ dimension-label permutation).
 
 | CNS filename | Source fixture | Scheduler | Makespan | Physical-edge violations |
 |---|---|---:|---:|---:|
+| `schedule_spreadgreedyk1_4x4x8_twisted.json` | `schedule_8x4x4_loaded_spread_greedy_k1.json` | `spread_greedy(k=1)` — P2P-style: 1 DMA per device per round, LB-aware ordering | 145 | 0 |
 | `schedule_spreadgreedyk2_4x4x8_twisted.json` | `schedule_8x4x4_loaded_spread_greedy_k2.json` | `spread_greedy(k=2)` — per-device DMA-cap variant of `literal_greedy` | 92 | 0 |
 | `schedule_cpsatliteralwarm_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal_warm.json` | `cpsat_literal` warm-started from makespan-80 (OR-Tools, t_upper=79, 4 h budget) | **78** | 0 |
 | `schedule_cpsatliteral_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal.json` | `cpsat_literal` (OR-Tools, t_upper=80, 30 min budget) | 80 | 0 |
@@ -16,7 +17,7 @@ dimension-label permutation).
 
 LB for this routing = 75 (max physical-edge load).
 
-**Recommended for production measurement runs: `spreadgreedyk2` (and run a side-by-side TPU benchmark vs `cpsatliteralwarm`).** The makespan-78 `cpsatliteralwarm` schedule measured 132764 gbps on TPU v5e — essentially unchanged from `orbitfull` (132758 gbps) and ~1.3% below the P2P reference (134541 gbps), despite a simulator projection of +7.5%. The leading hypothesis is that per-device DMA-engine oversubscription dominates per-round wall-clock; `spread_greedy(k=2)` caps each device at 2 simultaneous outgoing AND incoming DMAs per round, trading higher simulator makespan (92 vs 78) for lower per-round contention. The other K values (`spread_greedy_k1` — P2P-style, makespan 145; `spread_greedy_k3` — makespan 88; `spread_greedy_k4` — makespan 86) are shipped in `fixtures/` for TPU-side comparison but not promoted to `cns_schedules/`. Provenance: `eval/explorations/2026-05-17-spread-scheduling/`.
+**Recommended for production measurement runs: side-by-side TPU benchmark of `spreadgreedyk1`, `spreadgreedyk2`, and `cpsatliteralwarm` against the reference P2P kernel.** The makespan-78 `cpsatliteralwarm` schedule measured 132764 gbps on TPU v5e — essentially unchanged from `orbitfull` (132758 gbps) and ~1.3% below the P2P reference (134541 gbps), despite a simulator projection of +7.5%. The leading hypothesis is that per-device DMA-engine oversubscription dominates per-round wall-clock; `spread_greedy(k=K)` caps each device at K simultaneous outgoing AND incoming DMAs per round, trading higher simulator makespan for lower per-round contention. Two K values are promoted: `spreadgreedyk1` (makespan 145; same per-round structure as reference P2P but with LB-aware destination ordering instead of pure rotation) and `spreadgreedyk2` (makespan 92; smallest 2-way pipelining). The other K values (`spread_greedy_k3` — makespan 88; `spread_greedy_k4` — makespan 86) are shipped in `fixtures/` for follow-up comparison but not promoted to `cns_schedules/`. Provenance: `eval/explorations/2026-05-17-spread-scheduling/`.
 
 The previously-recommended `cpsatliteralwarm` (makespan 78, projected +7.5% vs P2P; measured ~0%) is retained as the makespan-optimal baseline.
 

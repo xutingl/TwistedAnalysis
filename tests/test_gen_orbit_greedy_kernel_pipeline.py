@@ -236,3 +236,138 @@ def test_end_to_end_pipeline_2x4x4_ilp_literal_greedy_rejected(tmp_path):
             "--schedule-out", str(sched_out),
             "--out", str(kern_out),
         ])
+
+
+def test_inline_destinations_emits_branches_and_drops_dest_table_ref():
+    """With inline_destinations=True the generated source:
+      - drops the `dest_table_ref` parameter from the kernel signature,
+      - contains `_DEST_BRANCHES_0` ... `_DEST_BRANCHES_{K-1}` module constants,
+      - contains `jax.lax.switch(my_flat, _DEST_BRANCHES_` lookups,
+      - does NOT contain `dest_table_ref[my_flat, k]` lookups,
+      - still parses as Python (ast.parse).
+    """
+    import ast
+    from pallas_kernel.gen_orbit_greedy_kernel import (
+        generate_kernel_source, _dest_table_and_orbit_steps_from_schedule,
+    )
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy_full
+    from twisted_analysis.topology import Topology, ILPRouter
+    from twisted_analysis.io.routing_table import (
+        save_routing_table, load_routing_table,
+    )
+    import tempfile, os
+    t = Topology(slice=(2, 4))
+    r = ILPRouter(topology=t)
+    with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+        tmp = f.name
+    try:
+        save_routing_table(t, r, tmp)
+        table = load_routing_table(tmp)
+    finally:
+        os.unlink(tmp)
+    sch = schedule_from_orbit_greedy_full(t, table)
+    dt, steps = _dest_table_and_orbit_steps_from_schedule(sch, t.n_nodes)
+
+    src = generate_kernel_source(
+        slice_=(2, 4), router_name_for_doc="ILP",
+        scheduler_name="orbit_greedy_full", order="lpt_tail_asc",
+        per_step_barrier=False, function_name=None,
+        dest_table=dt, orbit_steps=steps,
+        inline_destinations=True,
+    )
+    ast.parse(src)  # must parse cleanly
+    K = dt.shape[1]
+    for k in range(K):
+        assert f"_DEST_BRANCHES_{k} = _branches(" in src, \
+            f"missing _DEST_BRANCHES_{k} tuple"
+    assert "jax.lax.switch(my_flat, _DEST_BRANCHES_" in src, \
+        "no inline switch lookup emitted"
+    assert "dest_table_ref[my_flat, k]" not in src, \
+        "old lookup pattern still present"
+    # Signature must not include dest_table_ref:
+    sig_line = next(line for line in src.splitlines()
+                    if "def _ragged_a2a_kernel_" in line)
+    sig_start = src.index(sig_line)
+    sig_end = src.index("):", sig_start)
+    sig = src[sig_start:sig_end]
+    assert "dest_table_ref" not in sig, \
+        "dest_table_ref still in kernel signature"
+
+
+def test_inline_destinations_per_step_barrier_true_also_works():
+    """The inline variant must also work in per_step_barrier=True mode."""
+    import ast
+    from pallas_kernel.gen_orbit_greedy_kernel import (
+        generate_kernel_source, _dest_table_and_orbit_steps_from_schedule,
+    )
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy_full
+    from twisted_analysis.topology import Topology, ILPRouter
+    from twisted_analysis.io.routing_table import (
+        save_routing_table, load_routing_table,
+    )
+    import tempfile, os
+    t = Topology(slice=(2, 4))
+    r = ILPRouter(topology=t)
+    with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+        tmp = f.name
+    try:
+        save_routing_table(t, r, tmp)
+        table = load_routing_table(tmp)
+    finally:
+        os.unlink(tmp)
+    sch = schedule_from_orbit_greedy_full(t, table)
+    dt, steps = _dest_table_and_orbit_steps_from_schedule(sch, t.n_nodes)
+
+    src = generate_kernel_source(
+        slice_=(2, 4), router_name_for_doc="ILP",
+        scheduler_name="orbit_greedy_full", order="lpt_tail_asc",
+        per_step_barrier=True, function_name=None,
+        dest_table=dt, orbit_steps=steps,
+        inline_destinations=True,
+    )
+    ast.parse(src)
+    assert "dest_table_ref[my_flat, k]" not in src
+    assert "jax.lax.switch(my_flat, _DEST_BRANCHES_" in src
+
+
+def test_inline_destinations_default_false_preserves_old_behavior():
+    """Without the flag, the source must be byte-identical to the current
+    output (regression guard — the refactor must not change the default
+    code path)."""
+    from pallas_kernel.gen_orbit_greedy_kernel import (
+        generate_kernel_source, _dest_table_and_orbit_steps_from_schedule,
+    )
+    from twisted_analysis.io.schedule import schedule_from_orbit_greedy_full
+    from twisted_analysis.topology import Topology, ILPRouter
+    from twisted_analysis.io.routing_table import (
+        save_routing_table, load_routing_table,
+    )
+    import tempfile, os
+    t = Topology(slice=(2, 4))
+    r = ILPRouter(topology=t)
+    with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+        tmp = f.name
+    try:
+        save_routing_table(t, r, tmp)
+        table = load_routing_table(tmp)
+    finally:
+        os.unlink(tmp)
+    sch = schedule_from_orbit_greedy_full(t, table)
+    dt, steps = _dest_table_and_orbit_steps_from_schedule(sch, t.n_nodes)
+
+    src_default = generate_kernel_source(
+        slice_=(2, 4), router_name_for_doc="ILP",
+        scheduler_name="orbit_greedy_full", order="lpt_tail_asc",
+        per_step_barrier=False, function_name=None,
+        dest_table=dt, orbit_steps=steps,
+    )
+    src_explicit = generate_kernel_source(
+        slice_=(2, 4), router_name_for_doc="ILP",
+        scheduler_name="orbit_greedy_full", order="lpt_tail_asc",
+        per_step_barrier=False, function_name=None,
+        dest_table=dt, orbit_steps=steps,
+        inline_destinations=False,
+    )
+    assert src_default == src_explicit, "default arg must not change output"
+    assert "dest_table_ref[my_flat, k]" in src_default, \
+        "default code path lost the SMEM lookup"

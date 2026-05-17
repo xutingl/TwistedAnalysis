@@ -109,6 +109,31 @@ def _dest_table_literal(table: np.ndarray) -> str:
 # Source builder
 # ---------------------------------------------------------------------------
 
+def _dest_branches_literal(table: np.ndarray) -> str:
+    """Emit per-step branch-tuple constants: _DEST_BRANCHES_<k> = _branches((...)).
+
+    `table` is the [N, K] destination table; for each step k we emit a length-N
+    tuple of integer destinations indexed by device id (my_flat). The kernel
+    body calls `_branches(...)` to wrap them in constant-returning lambdas
+    suitable for `jax.lax.switch`.
+    """
+    N, K = table.shape
+    lines: list[str] = []
+    lines.append("# ---- per-step destination branches (inline_destinations=True) ----")
+    lines.append("# _branches(consts) -> tuple of N constant-returning lambdas, suitable")
+    lines.append("# as the second argument to jax.lax.switch. The `c=c` default-arg")
+    lines.append("# binding is required to capture per-lambda; without it every lambda")
+    lines.append("# would close over the same loop variable and return the last value.")
+    lines.append("def _branches(consts):")
+    lines.append("    import jax.numpy as jnp")
+    lines.append("    return tuple(lambda c=c: jnp.int32(c) for c in consts)")
+    lines.append("")
+    for k in range(K):
+        col_ints = ", ".join(f"{int(v):3d}" for v in table[:, k])
+        lines.append(f"_DEST_BRANCHES_{k} = _branches(({col_ints},))")
+    return "\n".join(lines)
+
+
 def generate_kernel_source(
     *,
     slice_: tuple[int, ...],
@@ -119,6 +144,7 @@ def generate_kernel_source(
     function_name: str | None,
     dest_table: np.ndarray,
     orbit_steps: list[list[int]],
+    inline_destinations: bool = False,
 ) -> str:
     """Emit kernel source from already-computed dest_table + orbit_steps.
 
@@ -154,21 +180,35 @@ def generate_kernel_source(
     L.append('')
     L.append('Generated from:  routing-table JSON + schedule JSON')
     L.append('')
-    L.append('Integration. The kernel has the same signature as')
-    L.append('`_ragged_a2a_kernel_point_to_point` PLUS one extra positional Ref')
-    L.append('input `dest_table_ref` (slot 6, between `num_packets_per_group_ref`')
-    L.append('and `x_ref`). To use:')
-    L.append(f'  1. Copy this file next to reference_kernel.py.')
-    L.append(f'  2. Set `kernel = {function_name}` in ragged_all_to_all.')
-    L.append('  3. Insert an extra SMEM in_spec at slot 6 (before x):')
-    L.append('         pl.BlockSpec(memory_space=pltpu.SMEM)')
-    L.append('     and pass `jnp.asarray(_DEST_TABLE_NP)` as the corresponding')
-    L.append('     extra positional input to the pallas_call.')
-    L.append('  4. Shift `input_output_aliases` keys by +1: e.g. {7: 0} → {8: 0}.')
-    L.append('  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.')
-    L.append('         axis_name="x"')
-    L.append('     The orbit-greedy kernel does NOT decode per-axis coords; it')
-    L.append('     reads `my_flat = jax.lax.axis_index(axis_name)` once.')
+    if inline_destinations:
+        L.append('Integration (inline-destinations variant). The kernel has the SAME')
+        L.append('signature as `_ragged_a2a_kernel_point_to_point` — no extra inputs.')
+        L.append('Per-step destinations are baked as compile-time constants via')
+        L.append('`jax.lax.switch(my_flat, _DEST_BRANCHES_k)`. To use:')
+        L.append(f'  1. Copy this file next to reference_kernel.py.')
+        L.append(f'  2. Set `kernel = {function_name}` in ragged_all_to_all.')
+        L.append('  3. Do NOT insert an extra SMEM in_spec (this kernel has no')
+        L.append('     `dest_table_ref` input).')
+        L.append('  4. Keep `input_output_aliases` keys at their reference positions.')
+        L.append('  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.')
+        L.append('         axis_name="x"')
+        L.append('     The kernel reads `my_flat = jax.lax.axis_index(axis_name)` once.')
+    else:
+        L.append('Integration. The kernel has the same signature as')
+        L.append('`_ragged_a2a_kernel_point_to_point` PLUS one extra positional Ref')
+        L.append('input `dest_table_ref` (slot 6, between `num_packets_per_group_ref`')
+        L.append('and `x_ref`). To use:')
+        L.append(f'  1. Copy this file next to reference_kernel.py.')
+        L.append(f'  2. Set `kernel = {function_name}` in ragged_all_to_all.')
+        L.append('  3. Insert an extra SMEM in_spec at slot 6 (before x):')
+        L.append('         pl.BlockSpec(memory_space=pltpu.SMEM)')
+        L.append('     and pass `jnp.asarray(_DEST_TABLE_NP)` as the corresponding')
+        L.append('     extra positional input to the pallas_call.')
+        L.append('  4. Shift `input_output_aliases` keys by +1: e.g. {7: 0} → {8: 0}.')
+        L.append('  5. Call ragged_all_to_all(...) with a single flat axis name, e.g.')
+        L.append('         axis_name="x"')
+        L.append('     The orbit-greedy kernel does NOT decode per-axis coords; it')
+        L.append('     reads `my_flat = jax.lax.axis_index(axis_name)` once.')
     L.append('')
     L.append('Use `build_pallas_call_kwargs()` below for a copy-pasteable example.')
     L.append('"""')
@@ -196,6 +236,9 @@ def generate_kernel_source(
         L.append(f'    {step!r},  # step {t} ({len(step)} concurrent orbit(s))')
     L.append(']')
     L.append('')
+    if inline_destinations:
+        L.append(_dest_branches_literal(dest_table))
+        L.append('')
     L.append('')
 
     L.append(f'def {function_name}(')
@@ -205,7 +248,8 @@ def generate_kernel_source(
     L.append('    total_send_amount_ref,')
     L.append('    total_recv_amount_ref,')
     L.append('    num_packets_per_group_ref,')
-    L.append('    dest_table_ref,  # int32[N, K] in SMEM — pass as extra pallas_call input')
+    if not inline_destinations:
+        L.append('    dest_table_ref,  # int32[N, K] in SMEM — pass as extra pallas_call input')
     L.append('    x_ref,')
     L.append('    _,')
     L.append('    o_ref,')
@@ -307,14 +351,23 @@ def generate_kernel_source(
     if not per_step_barrier:
         L.append('    # ---- main orbit loop: packet outer, OrbitGreedy order inner ----')
         L.append(f'    _NUM_ORBITS = {K}')
-        L.append('    def _body(i, _state):')
-        L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
-        L.append('        k = lax.rem(i, _NUM_ORBITS)')
-        L.append('        dst_flat = dest_table_ref[my_flat, k]')
-        L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
-        L.append('        return _state')
-        L.append('')
-        L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
+        if inline_destinations:
+            L.append('    def _body(packet_idx, _state):')
+            for k in range(K):
+                L.append(f'        dst_flat = jax.lax.switch(my_flat, _DEST_BRANCHES_{k})')
+                L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
+            L.append('        return _state')
+            L.append('')
+            L.append('    jax.lax.fori_loop(0, num_packets, _body, None)')
+        else:
+            L.append('    def _body(i, _state):')
+            L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
+            L.append('        k = lax.rem(i, _NUM_ORBITS)')
+            L.append('        dst_flat = dest_table_ref[my_flat, k]')
+            L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
+            L.append('        return _state')
+            L.append('')
+            L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
         L.append('')
         L.append('    send_amount = total_send_amount_ref[0]')
         L.append('    recv_amount = total_recv_amount_ref[0]')
@@ -346,46 +399,89 @@ def generate_kernel_source(
         L.append('            recv_sem,')
         L.append('        ).wait()')
         L.append('')
-        L.append('    def _issue_orbit(k):')
-        L.append('        dst_flat = dest_table_ref[my_flat, k]')
-        L.append('        dst_dev = {axis_name: dst_flat}')
-        L.append('        def _pb(packet_idx, _state):')
-        L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
-        L.append('            return _state')
-        L.append('        jax.lax.fori_loop(0, num_packets, _pb, None)')
-        L.append('')
-        L.append('    def _drain_step(step_indices):')
-        L.append('        cum = 0')
-        L.append('        for k in step_indices:')
-        L.append('            cum = cum + sizes_ref[dest_table_ref[my_flat, k]]')
-        L.append('        pltpu.make_async_copy(')
-        L.append('            o_ref.at[pl.ds(0, cum)],')
-        L.append('            o_ref.at[pl.ds(0, cum)],')
-        L.append('            send_sem,')
-        L.append('        ).wait()')
-        L.append('        if axis_size_local > 1:')
-        L.append('            pltpu.make_async_copy(')
-        L.append('                o_ref.at[pl.ds(0, cum)],')
-        L.append('                o_ref.at[pl.ds(0, cum)],')
-        L.append('                recv_sem,')
-        L.append('            ).wait()')
-        L.append('')
-        for t, step in enumerate(orbit_steps):
-            L.append(f'    # ---- OrbitGreedy step {t} ({len(step)} orbit(s)) ----')
-            for k in step:
-                L.append(f'    _issue_orbit({k})')
-            L.append(f'    _drain_step({step!r})')
+        if inline_destinations:
+            L.append('    def _issue_orbit_inlined(branches):')
+            L.append('        dst_flat = jax.lax.switch(my_flat, branches)')
+            L.append('        dst_dev = {axis_name: dst_flat}')
+            L.append('        def _pb(packet_idx, _state):')
+            L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
+            L.append('            return _state')
+            L.append('        jax.lax.fori_loop(0, num_packets, _pb, None)')
             L.append('')
+            L.append('    def _drain_step_inlined(branches_list):')
+            L.append('        cum = 0')
+            L.append('        for branches in branches_list:')
+            L.append('            dst_idx = jax.lax.switch(my_flat, branches)')
+            L.append('            cum = cum + sizes_ref[dst_idx]')
+            L.append('        pltpu.make_async_copy(')
+            L.append('            o_ref.at[pl.ds(0, cum)],')
+            L.append('            o_ref.at[pl.ds(0, cum)],')
+            L.append('            send_sem,')
+            L.append('        ).wait()')
+            L.append('        if axis_size_local > 1:')
+            L.append('            pltpu.make_async_copy(')
+            L.append('                o_ref.at[pl.ds(0, cum)],')
+            L.append('                o_ref.at[pl.ds(0, cum)],')
+            L.append('                recv_sem,')
+            L.append('            ).wait()')
+            L.append('')
+            for t, step in enumerate(orbit_steps):
+                L.append(f'    # ---- OrbitGreedy step {t} ({len(step)} orbit(s)) ----')
+                for k in step:
+                    L.append(f'    _issue_orbit_inlined(_DEST_BRANCHES_{k})')
+                branches_args = ", ".join(f"_DEST_BRANCHES_{k}" for k in step)
+                L.append(f'    _drain_step_inlined(({branches_args},))')
+                L.append('')
+        else:
+            L.append('    def _issue_orbit(k):')
+            L.append('        dst_flat = dest_table_ref[my_flat, k]')
+            L.append('        dst_dev = {axis_name: dst_flat}')
+            L.append('        def _pb(packet_idx, _state):')
+            L.append('            _issue_packet(packet_idx, dst_flat, dst_dev)')
+            L.append('            return _state')
+            L.append('        jax.lax.fori_loop(0, num_packets, _pb, None)')
+            L.append('')
+            L.append('    def _drain_step(step_indices):')
+            L.append('        cum = 0')
+            L.append('        for k in step_indices:')
+            L.append('            cum = cum + sizes_ref[dest_table_ref[my_flat, k]]')
+            L.append('        pltpu.make_async_copy(')
+            L.append('            o_ref.at[pl.ds(0, cum)],')
+            L.append('            o_ref.at[pl.ds(0, cum)],')
+            L.append('            send_sem,')
+            L.append('        ).wait()')
+            L.append('        if axis_size_local > 1:')
+            L.append('            pltpu.make_async_copy(')
+            L.append('                o_ref.at[pl.ds(0, cum)],')
+            L.append('                o_ref.at[pl.ds(0, cum)],')
+            L.append('                recv_sem,')
+            L.append('            ).wait()')
+            L.append('')
+            for t, step in enumerate(orbit_steps):
+                L.append(f'    # ---- OrbitGreedy step {t} ({len(step)} orbit(s)) ----')
+                for k in step:
+                    L.append(f'    _issue_orbit({k})')
+                L.append(f'    _drain_step({step!r})')
+                L.append('')
 
     L.append('')
-    L.append('def build_pallas_call_kwargs():')
-    L.append('    """Helper for inserting _DEST_TABLE_NP as an extra pallas_call input."""')
-    L.append('    import jax.numpy as jnp')
-    L.append('    return {')
-    L.append('        "dest_table": jnp.asarray(_DEST_TABLE_NP),')
-    L.append('        "extra_in_spec": pl.BlockSpec(memory_space=pltpu.SMEM),')
-    L.append('        "input_output_aliases_shift": 1,')
-    L.append('    }')
+    if inline_destinations:
+        L.append('def build_pallas_call_kwargs():')
+        L.append('    """Inline-destinations variant: no extra pallas_call input needed."""')
+        L.append('    return {')
+        L.append('        "dest_table": None,')
+        L.append('        "extra_in_spec": None,')
+        L.append('        "input_output_aliases_shift": 0,')
+        L.append('    }')
+    else:
+        L.append('def build_pallas_call_kwargs():')
+        L.append('    """Helper for inserting _DEST_TABLE_NP as an extra pallas_call input."""')
+        L.append('    import jax.numpy as jnp')
+        L.append('    return {')
+        L.append('        "dest_table": jnp.asarray(_DEST_TABLE_NP),')
+        L.append('        "extra_in_spec": pl.BlockSpec(memory_space=pltpu.SMEM),')
+        L.append('        "input_output_aliases_shift": 1,')
+        L.append('    }')
     return "\n".join(L)
 
 

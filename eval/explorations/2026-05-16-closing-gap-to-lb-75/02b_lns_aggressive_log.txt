@@ -1,0 +1,31 @@
+Seed: eval/explorations/2026-05-16-closing-gap-to-lb-75/01_best_warm_start_schedule.json, makespan=78
+--- LNS aggressive: n_iters=24, per_subproblem=600s, destroy_frac=0.3, strategies=('time_window', 'random_subset', 'makespan_flows') ---
+  iter   0: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=    4.6s (cpsat_literal: infeasible at t_upper=77)
+  iter   1: strat=random_subset    |D|= 5279 cur_M= 78 target= 77 result=infeasible             t=   15.6s (cpsat_literal: infeasible at t_upper=77)
+  iter   2: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=   18.6s (cpsat_literal: infeasible at t_upper=77)
+  iter   3: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=   22.4s (cpsat_literal: infeasible at t_upper=77)
+  iter   4: strat=random_subset    |D|= 5281 cur_M= 78 target= 77 result=infeasible             t=   33.0s (cpsat_literal: infeasible at t_upper=77)
+  iter   5: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=   36.0s (cpsat_literal: infeasible at t_upper=77)
+  iter   6: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=   39.8s (cpsat_literal: infeasible at t_upper=77)
+  iter   7: strat=random_subset    |D|= 5283 cur_M= 78 target= 77 result=infeasible             t=   50.5s (cpsat_literal: infeasible at t_upper=77)
+  iter   8: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=   53.4s (cpsat_literal: infeasible at t_upper=77)
+  iter   9: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=   57.2s (cpsat_literal: infeasible at t_upper=77)
+  iter  10: strat=random_subset    |D|= 5287 cur_M= 78 target= 77 result=infeasible             t=   67.7s (cpsat_literal: infeasible at t_upper=77)
+  iter  11: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=   70.6s (cpsat_literal: infeasible at t_upper=77)
+  iter  12: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=   74.5s (cpsat_literal: infeasible at t_upper=77)
+  iter  13: strat=random_subset    |D|= 5296 cur_M= 78 target= 77 result=infeasible             t=   85.1s (cpsat_literal: infeasible at t_upper=77)
+  iter  14: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=   88.0s (cpsat_literal: infeasible at t_upper=77)
+  iter  15: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=   91.9s (cpsat_literal: infeasible at t_upper=77)
+  iter  16: strat=random_subset    |D|= 5292 cur_M= 78 target= 77 result=infeasible             t=  102.6s (cpsat_literal: infeasible at t_upper=77)
+  iter  17: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=  105.5s (cpsat_literal: infeasible at t_upper=77)
+  iter  18: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=  109.4s (cpsat_literal: infeasible at t_upper=77)
+  iter  19: strat=random_subset    |D|= 5285 cur_M= 78 target= 77 result=infeasible             t=  120.2s (cpsat_literal: infeasible at t_upper=77)
+  iter  20: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=  123.2s (cpsat_literal: infeasible at t_upper=77)
+  iter  21: strat=time_window      |D|= 1248 cur_M= 78 target= 77 result=infeasible             t=  127.0s (cpsat_literal: infeasible at t_upper=77)
+  iter  22: strat=random_subset    |D|= 5301 cur_M= 78 target= 77 result=infeasible             t=  137.6s (cpsat_literal: infeasible at t_upper=77)
+  iter  23: strat=makespan_flows   |D|=  599 cur_M= 78 target= 77 result=infeasible             t=  140.5s (cpsat_literal: infeasible at t_upper=77)
+
+Final: makespan=78, viol=0, total=140.6s
+
+outcome breakdown: {'infeasible': 24}
+wrote /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-16-closing-gap-to-lb-75/02b_lns_aggressive_results.json

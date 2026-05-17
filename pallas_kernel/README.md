@@ -12,7 +12,7 @@ that replaces the default `_ragged_a2a_kernel_point_to_point` inside
 |---|---|
 | [reference_kernel.py](reference_kernel.py) | Reference `ragged_all_to_all` and `_ragged_a2a_kernel_point_to_point` extracted from `google3/learning/brain/research/megablox/collectives/ragged_all_to_all.py`. The orbit-greedy kernel is a drop-in for the P2P branch only. |
 | [gen_orbit_greedy_kernel.py](gen_orbit_greedy_kernel.py) | Pipeline orchestrator. Either generates a routing table (via `--router`) or loads one (via `--routing-table`); generates a schedule from it; emits a kernel `.py` file. Persists the routing table and schedule as inspectable intermediates. |
-| `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py` | Generator output. One file per (topology, router, scheduler, order) combination. Current outputs: `orbit_greedy_8_4_4.py`, `orbit_greedy_full_8_4_4.py`, `literal_greedy_8_4_4.py`, `cpsat_literal_warm_8_4_4.py` (makespan-78 production recommendation for the loaded 8×4×4 routing; SMEM `dest_table_ref` input), and `cpsat_literal_warm_inline_8_4_4.py` (same schedule with destinations baked as compile-time `jax.lax.switch` branches via `--inline-destinations`; no SMEM input). |
+| `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py` | Generator output. One file per (topology, router, scheduler, order) combination. Current outputs: `orbit_greedy_8_4_4.py`, `orbit_greedy_full_8_4_4.py`, `literal_greedy_8_4_4.py`, `cpsat_literal_warm_8_4_4.py` (makespan-78 production recommendation for the loaded 8×4×4 routing; SMEM `dest_table_ref` input), and `cpsat_literal_warm_inline_8_4_4.py` (same schedule with destinations baked as compile-time `jax.lax.switch` branches via `--inline-destinations`; no SMEM input), `spread_greedy_k2_8_4_4.py`, and `spread_greedy_k2_inline_8_4_4.py` (per-device DMA-cap K=2 schedule; SMEM and inline variants). |
 
 ## What problem this kernel solves
 
@@ -48,6 +48,7 @@ not enough; the routing × scheduler pair determines the realized makespan.
 | `orbit_greedy` (default) | Orbit greedy with full-physical-edge accounting (alias for `orbit_greedy_full` since 2026-05-15; the original `(dim, dir)`-keyed implementation was unsound on non-equivariant routings and was replaced) | Yes |
 | `orbit_greedy_full` | Same algorithm; explicit name kept for clarity | Yes |
 | `literal_greedy` | LMR-style per-flow earliest-feasible greedy on the literal `N(N-1)` flow set | Yes |
+| `spread_greedy(k)` | `literal_greedy` plus a per-device cap of K outgoing AND K incoming DMAs per round. K=1 is P2P-style (each device sends/receives at most 1 DMA per round); K=∞ is `literal_greedy` | Yes |
 | `cpsat_literal` | CP-SAT (OR-Tools) on the literal flow set; supports `--schedule-in` warm-starting | Yes (when CP-SAT returns FEASIBLE/OPTIMAL); may TIMEOUT |
 | `ilp_literal` | Exact ILP on the literal flow set (PuLP/CBC) | Yes (when CBC returns); intractable at N=128 |
 
@@ -59,13 +60,13 @@ generation time.
 
 Numbers are `makespan` (lower is better; LB = max physical-edge load).
 
-| Routing | N | LB | `orbit_greedy_full` | `literal_greedy` | `ilp_literal` | `cpsat_literal` (warm) |
-|---|---:|---:|---:|---:|---|---:|
-| (2,4) ILP | 8 | 3 | **3** | 3 | 3 | 3 |
-| (2,2,4) ILP | 16 | 5 | **5** | 6 | 5 (~1 s) | 5 |
-| (2,4,4) ILP | 32 | 11 | 12 (+1) | 14 | **11** (~3 min) | 11 |
-| (4,8) ILP | 32 | 21 | 22 (+1) | 25 | **21** (~85 min) | 21 |
-| (8,4,4) loaded | 128 | 75 | 85 (+10) | 87 | intractable | **78** (+3, warm-started CP-SAT @4 h) |
+| Routing | N | LB | `orbit_greedy_full` | `literal_greedy` | `ilp_literal` | `cpsat_literal` (warm) | `spread_greedy(k=2)` |
+|---|---:|---:|---:|---:|---|---:|---:|
+| (2,4) ILP | 8 | 3 | **3** | 3 | 3 | 3 | — |
+| (2,2,4) ILP | 16 | 5 | **5** | 6 | 5 (~1 s) | 5 | — |
+| (2,4,4) ILP | 32 | 11 | 12 (+1) | 14 | **11** (~3 min) | 11 | — |
+| (4,8) ILP | 32 | 21 | 22 (+1) | 25 | **21** (~85 min) | 21 | — |
+| (8,4,4) loaded | 128 | 75 | 85 (+10) | 87 | intractable | **78** (+3, warm-started CP-SAT @4 h) | 92 (+17) |
 
 **What this matrix shows:**
 
@@ -94,11 +95,24 @@ Numbers are `makespan` (lower is better; LB = max physical-edge load).
 | ILPRouter (small cells N ≤ 16) | `orbit_greedy` or `ilp_literal` | Both reach LB; ILP is the exact ground truth |
 | ILPRouter (N=32) | `ilp_literal` if you have minutes; `orbit_greedy` otherwise | ILP closes the +1 gap that orbit greedy has on (2,4,4)/(4,8) |
 | ILPRouter (N=128, i.e. 4×4×8) | `orbit_greedy` | ILP intractable; orbit greedy is the best practical choice |
-| **Loaded TPU routing** | **`cpsat_literal` warm-started from `fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json` (makespan 78, projected +7.5% vs P2P)** — fall back to `orbit_greedy` (makespan 85) for the no-CP-SAT baseline | CP-SAT @4 h warm-started from the makespan-80 fixture finds makespan 78 at `t_upper=79`. The precomputed schedule is shipped; use it via `--schedule-in` rather than re-running the 4 h solve |
+| **Loaded TPU routing** | **`spread_greedy(k=2)` (current testbed candidate, fixtures shipped — makespan 92) — or `cpsat_literal` warm-started (`cpsatliteralwarm`, makespan 78, projected +7.5% but measured ~0 % on TPU)** — fall back to `orbit_greedy` (makespan 85) for the no-CP-SAT baseline | CP-SAT @4 h warm-started from the makespan-80 fixture finds makespan 78 at `t_upper=79`. The precomputed schedule is shipped; use it via `--schedule-in` rather than re-running the 4 h solve. The 2026-05-17 hypothesis: TPU wall-clock is dominated by per-device DMA-engine concurrency and ICI bandwidth, not by round count. spread_greedy(k=2) caps simultaneous DMAs per device per round to test this. |
 
 ### Example invocations
 
 ```bash
+# spread_greedy(k=2) — per-device-DMA-capped headline; ship both regular
+# and inline-destinations kernels:
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --schedule-in fixtures/schedule_8x4x4_loaded_spread_greedy_k2.json \
+    --function-name _ragged_a2a_kernel_spread_greedy_k2_8_4_4 \
+    --out pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py
+
+# Other K values (1, 3, 4) ship as fixtures only; regenerate the kernel
+# with the same command pattern, substituting the K in the schedule path
+# and output filename.
+
 # Loaded TPU routing on 8x4x4 — production recommendation:
 # load the precomputed makespan-78 schedule and emit the kernel directly.
 python pallas_kernel/gen_orbit_greedy_kernel.py \

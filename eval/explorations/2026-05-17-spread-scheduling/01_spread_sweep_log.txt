@@ -1,0 +1,11 @@
+Loaded fixtures/routing_table_8x4x4_twist.json, n=128
+  k=1: makespan=145 viol=0 max_out=1 max_in=1 avg=1.0 rounds_used=145 t=0.42s
+    saved /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-17-spread-scheduling/schedule_k1.json
+  k=2: makespan=92 viol=0 max_out=2 max_in=2 avg=1.614 rounds_used=91 t=0.56s
+    saved /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-17-spread-scheduling/schedule_k2.json
+  k=3: makespan=88 viol=0 max_out=3 max_in=3 avg=1.703 rounds_used=87 t=0.67s
+    saved /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-17-spread-scheduling/schedule_k3.json
+  k=4: makespan=86 viol=0 max_out=4 max_in=4 avg=1.725 rounds_used=85 t=0.69s
+    saved /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-17-spread-scheduling/schedule_k4.json
+
+wrote /home/xutingl/collective_comm/TwistedAnalysis/eval/explorations/2026-05-17-spread-scheduling/01_spread_sweep_results.json

@@ -7,6 +7,7 @@ dimension-label permutation).
 
 | CNS filename | Source fixture | Scheduler | Makespan | Physical-edge violations |
 |---|---|---:|---:|---:|
+| `schedule_spreadgreedyk2_4x4x8_twisted.json` | `schedule_8x4x4_loaded_spread_greedy_k2.json` | `spread_greedy(k=2)` — per-device DMA-cap variant of `literal_greedy` | 92 | 0 |
 | `schedule_cpsatliteralwarm_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal_warm.json` | `cpsat_literal` warm-started from makespan-80 (OR-Tools, t_upper=79, 4 h budget) | **78** | 0 |
 | `schedule_cpsatliteral_4x4x8_twisted.json` | `schedule_8x4x4_loaded_cpsat_literal.json` | `cpsat_literal` (OR-Tools, t_upper=80, 30 min budget) | 80 | 0 |
 | `schedule_orbitfull_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json` | `orbit_greedy_full` | 85 | 0 |
@@ -15,9 +16,9 @@ dimension-label permutation).
 
 LB for this routing = 75 (max physical-edge load).
 
-**Recommended for production measurement runs: `cpsatliteralwarm`** — strictly best of the capacity-feasible schedules (78 vs 80 vs 85 vs 87). Projects to ~144.6 Kgbps vs P2P's measured 134.5 Kgbps (+7.5%) under linear-throughput scaling. Provenance: `eval/explorations/2026-05-16-closing-gap-to-lb-75/` (CP-SAT warm-started from the makespan-80 fixture, 4 h budget per `t_upper`; both `t_upper=79` and `t_upper=78` were FEASIBLE at makespan 78; `t_upper ∈ {77, 76}` timed out with no incumbent — evidence that the makespan-78 region is at or near the practical limit of warm-started CP-SAT at this budget).
+**Recommended for production measurement runs: `spreadgreedyk2` (and run a side-by-side TPU benchmark vs `cpsatliteralwarm`).** The makespan-78 `cpsatliteralwarm` schedule measured 132764 gbps on TPU v5e — essentially unchanged from `orbitfull` (132758 gbps) and ~1.3% below the P2P reference (134541 gbps), despite a simulator projection of +7.5%. The leading hypothesis is that per-device DMA-engine oversubscription dominates per-round wall-clock; `spread_greedy(k=2)` caps each device at 2 simultaneous outgoing AND incoming DMAs per round, trading higher simulator makespan (92 vs 78) for lower per-round contention. The other K values (`spread_greedy_k1` — P2P-style, makespan 145; `spread_greedy_k3` — makespan 88; `spread_greedy_k4` — makespan 86) are shipped in `fixtures/` for TPU-side comparison but not promoted to `cns_schedules/`. Provenance: `eval/explorations/2026-05-17-spread-scheduling/`.
 
-The previously-recommended `cpsatliteral` (makespan 80) is retained as the no-warm-start baseline.
+The previously-recommended `cpsatliteralwarm` (makespan 78, projected +7.5% vs P2P; measured ~0%) is retained as the makespan-optimal baseline.
 
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 

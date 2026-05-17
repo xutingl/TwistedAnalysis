@@ -20,7 +20,11 @@ _HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(_HERE.parent))
 
 from twisted_analysis.io.routing_table import load_routing_table
-from twisted_analysis.io.schedule import save_schedule, schedule_from_orbit_greedy
+from twisted_analysis.io.schedule import (
+    save_schedule,
+    schedule_from_orbit_greedy,
+    schedule_from_spread_greedy,
+)
 from twisted_analysis.topology import Topology
 
 
@@ -28,9 +32,19 @@ def _parse_slice(s: str) -> tuple[int, ...]:
     return tuple(int(x) for x in s.split(","))
 
 
-def _run(scheduler: str, topology: Topology, table: list, order: str) -> list[dict]:
+def _run(
+    scheduler: str,
+    topology: Topology,
+    table: list,
+    order: str,
+    *,
+    k: int | None = None,
+) -> list[dict]:
     if scheduler == "orbit_greedy":
         return schedule_from_orbit_greedy(topology, table, order=order)
+    if scheduler == "spread_greedy":
+        # k is guaranteed non-None here (validated before _run is called)
+        return schedule_from_spread_greedy(topology, table, k=k, order=order)
     raise ValueError(f"unknown scheduler: {scheduler!r}")
 
 
@@ -42,12 +56,24 @@ def main(argv=None) -> int:
                    help="Path to routing-table JSON (matrix-of-paths shape)")
     p.add_argument("--slice", required=True,
                    help="Comma-separated slice, e.g. 4,4,8 — must match the table size")
-    p.add_argument("--scheduler", default="orbit_greedy", choices=["orbit_greedy"])
+    p.add_argument("--scheduler", default="orbit_greedy",
+                   choices=["orbit_greedy", "spread_greedy"])
     p.add_argument("--order", default="lpt_tail_asc",
                    choices=["lpt_tail_asc", "lpt", "spt", "tail_asc"])
+    p.add_argument(
+        "--k",
+        type=int,
+        default=None,
+        help="Per-device-per-round DMA cap for spread_greedy (positive int). "
+             "Required when --scheduler spread_greedy.",
+    )
     p.add_argument("--out", default=None,
                    help="Output path (default: ./fixtures/schedule_<slice>_<scheduler>_<order>.json)")
     args = p.parse_args(argv)
+
+    # Validate scheduler-specific required args.
+    if args.scheduler == "spread_greedy" and args.k is None:
+        p.error("--k is required when --scheduler spread_greedy")
 
     slice_ = _parse_slice(args.slice)
     topology = Topology(slice=slice_)
@@ -58,7 +84,7 @@ def main(argv=None) -> int:
         )
 
     try:
-        entries = _run(args.scheduler, topology, table, args.order)
+        entries = _run(args.scheduler, topology, table, args.order, k=args.k)
     except ValueError as e:
         raise SystemExit(
             f"scheduler failed: {e}\n"

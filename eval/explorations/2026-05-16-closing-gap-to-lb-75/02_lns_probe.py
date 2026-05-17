@@ -20,7 +20,7 @@ from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
 ROUTING = "fixtures/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
-SEED_SCHEDULE = "fixtures/schedule_8x4x4_loaded_cpsat_literal.json"
+SEED_SCHEDULE = "eval/explorations/2026-05-16-closing-gap-to-lb-75/01_best_warm_start_schedule.json"
 
 N_ITERS = 100
 PER_SUBPROBLEM_S = 300

@@ -147,47 +147,58 @@ def cpsat_literal(
             if (f_idx, s) in y:
                 model.AddHint(y[(f_idx, s)], 1)
 
+    class _IncumbentCollector(cp_model.CpSolverSolutionCallback):
+        def __init__(self, y_vars):
+            super().__init__()
+            self._y_vars = y_vars
+            self.latest: dict[tuple[int, int], int] = {}
+
+        def on_solution_callback(self):
+            for key, var in self._y_vars.items():
+                self.latest[key] = self.Value(var)
+
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = float(time_limit_s)
     solver.parameters.num_search_workers = int(n_workers)
     if solver_msg:
         solver.parameters.log_search_progress = True
 
-    status = solver.Solve(model)
+    collector = _IncumbentCollector(y)
+    status = solver.Solve(model, collector)
 
     if status == cp_model.INFEASIBLE:
         raise RuntimeError(f"cpsat_literal: infeasible at t_upper={t_upper}")
-    if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE, cp_model.UNKNOWN):
+
+    if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        values: dict[tuple[int, int], int] = {
+            key: solver.Value(var) for key, var in y.items()
+        }
+    elif status == cp_model.UNKNOWN:
+        if not collector.latest:
+            raise RuntimeError(
+                f"cpsat_literal: status=UNKNOWN with no incumbent "
+                f"(time_limit_s={time_limit_s})"
+            )
+        values = collector.latest
+    else:
         raise RuntimeError(
             f"cpsat_literal: solver returned status={status} "
             f"(time_limit_s={time_limit_s})"
         )
-    if status == cp_model.UNKNOWN:
-        # UNKNOWN means "timeout / no proof", which is silent about whether
-        # an incumbent exists. Probe by reading a variable; success means
-        # incumbent exists, IndexError / RuntimeError means it does not.
-        try:
-            sample_var = next(iter(y.values()))
-            solver.Value(sample_var)
-        except (RuntimeError, IndexError) as exc:
-            raise RuntimeError(
-                f"cpsat_literal: status=UNKNOWN with no incumbent "
-                f"(time_limit_s={time_limit_s})"
-            ) from exc
 
     rounds: dict[tuple[int, int], int] = {}
     for f_idx, (src, dst, path) in enumerate(flows):
         L = len(path) - 1
-        chosen = None
         if f_idx in fixed_idx:
             chosen = fixed_idx[f_idx]
         else:
+            chosen = None
             for s in range(0, t_upper - L + 1):
-                if solver.Value(y[(f_idx, s)]) == 1:
+                if values.get((f_idx, s), 0) == 1:
                     chosen = s
                     break
-        if chosen is None:
-            raise RuntimeError(f"cpsat_literal: no start picked for flow {f_idx}")
+            if chosen is None:
+                raise RuntimeError(f"cpsat_literal: no start picked for flow {f_idx}")
         rounds[(src, dst)] = chosen
 
     entries = []

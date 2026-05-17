@@ -130,8 +130,8 @@ def test_cpsat_literal_extracts_incumbent_on_unknown_status():
 
     real_solve = cm.CpSolver.Solve
 
-    def fake_solve(self, model):
-        real_status = real_solve(self, model)
+    def fake_solve(self, model, callback=None):
+        real_status = real_solve(self, model, callback)
         # Force UNKNOWN even though a real incumbent exists.
         if real_status in (cm.OPTIMAL, cm.FEASIBLE):
             return cm.UNKNOWN

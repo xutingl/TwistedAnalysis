@@ -81,3 +81,14 @@ def test_spread_greedy_invalid_k_raises(tmp_path):
         spread_greedy(topology, table, k=0, order="lpt")
     with pytest.raises(ValueError, match="k must be a positive integer"):
         spread_greedy(topology, table, k=-1, order="lpt")
+
+
+def test_spread_greedy_via_dispatch():
+    """schedule_from_algorithm('spread_greedy', ...) must dispatch correctly."""
+    from twisted_analysis.io.schedule import schedule_from_algorithm
+    topology = Topology(slice=(8, 4, 4))
+    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    schedule = schedule_from_algorithm("spread_greedy", topology, table, k=2)
+    assert verify_capacity(schedule) == []
+    n = topology.n_nodes
+    assert len({(e["src"], e["dst"]) for e in schedule}) == n * (n - 1)

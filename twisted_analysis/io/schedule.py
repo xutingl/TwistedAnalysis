@@ -164,6 +164,25 @@ def schedule_from_literal_greedy(
     return literal_greedy(topology, table, order=order)
 
 
+def schedule_from_spread_greedy(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    k: int,
+    order: str = "lpt",
+) -> list[dict]:
+    """Adapter: spread_greedy -> schedule entries.
+
+    `k` is the per-device-per-round outgoing AND incoming DMA cap. See
+    `twisted_analysis.schedules.spread_greedy.spread_greedy` for tradeoffs.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.spread_greedy import spread_greedy
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return spread_greedy(topology, table, k=k, order=order)
+
+
 def schedule_from_ilp_literal(
     topology: Topology,
     table: list[list[list[int]]],
@@ -272,6 +291,7 @@ _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
     "literal_greedy": schedule_from_literal_greedy,
+    "spread_greedy": schedule_from_spread_greedy,
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
@@ -294,6 +314,10 @@ def schedule_from_algorithm(
       - "orbit_greedy_full": orbit greedy with full physical-edge accounting.
         Correct under any translation-symmetric workload (including loaded TPU routings).
       - "literal_greedy":    LMR-style per-flow earliest-feasible greedy.
+      - "spread_greedy":     `literal_greedy` plus a per-device-per-round DMA cap K.
+        Requires `k` kwarg (positive int). K=1 -> P2P-style (each device sends/receives
+        at most 1 DMA per round); K=infinity -> equivalent to `literal_greedy`.
+        Optional `order` (default "lpt").
       - "ilp_literal":       exact ILP on literal flows (CBC). Small cells only.
       - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
         than ilp_literal on this structure due to native at-most-one constraints

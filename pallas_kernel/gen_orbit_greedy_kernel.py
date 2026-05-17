@@ -552,6 +552,15 @@ def main(argv=None) -> int:
     )
     p.add_argument("--per-step-barrier", action="store_true",
                    help="Emit per-OrbitGreedy-step barriers (best-effort).")
+    p.add_argument(
+        "--inline-destinations",
+        action="store_true",
+        help="Bake per-step destinations into the kernel as compile-time "
+             "switch branches (jax.lax.switch(my_flat, _DEST_BRANCHES_k)) "
+             "instead of SMEM lookup. Drops the dest_table_ref input. "
+             "Larger generated file but eliminates the per-step SMEM load "
+             "from the inner critical path.",
+    )
     p.add_argument("--function-name", default=None)
     p.add_argument("--routing-table-out", default=None, type=Path,
                    help="Where to save the generated routing table "
@@ -696,6 +705,7 @@ def main(argv=None) -> int:
         function_name=args.function_name,
         dest_table=dest_table,
         orbit_steps=orbit_steps,
+        inline_destinations=args.inline_destinations,
     )
     out_path = args.out or (
         _HERE / "outputs" / f"_ragged_a2a_kernel_orbit_greedy_{slice_kern}.py"

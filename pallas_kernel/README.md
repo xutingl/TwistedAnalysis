@@ -12,7 +12,7 @@ that replaces the default `_ragged_a2a_kernel_point_to_point` inside
 |---|---|
 | [reference_kernel.py](reference_kernel.py) | Reference `ragged_all_to_all` and `_ragged_a2a_kernel_point_to_point` extracted from `google3/learning/brain/research/megablox/collectives/ragged_all_to_all.py`. The orbit-greedy kernel is a drop-in for the P2P branch only. |
 | [gen_orbit_greedy_kernel.py](gen_orbit_greedy_kernel.py) | Pipeline orchestrator. Either generates a routing table (via `--router`) or loads one (via `--routing-table`); generates a schedule from it; emits a kernel `.py` file. Persists the routing table and schedule as inspectable intermediates. |
-| `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py` | Generator output. One file per (topology, router, scheduler, order) combination. Current outputs: `orbit_greedy_8_4_4.py`, `orbit_greedy_full_8_4_4.py`, `literal_greedy_8_4_4.py`, and `cpsat_literal_warm_8_4_4.py` (makespan-78, current production recommendation for the loaded 8×4×4 routing). |
+| `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py` | Generator output. One file per (topology, router, scheduler, order) combination. Current outputs: `orbit_greedy_8_4_4.py`, `orbit_greedy_full_8_4_4.py`, `literal_greedy_8_4_4.py`, `cpsat_literal_warm_8_4_4.py` (makespan-78 production recommendation for the loaded 8×4×4 routing; SMEM `dest_table_ref` input), and `cpsat_literal_warm_inline_8_4_4.py` (same schedule with destinations baked as compile-time `jax.lax.switch` branches via `--inline-destinations`; no SMEM input). |
 
 ## What problem this kernel solves
 
@@ -105,6 +105,17 @@ python pallas_kernel/gen_orbit_greedy_kernel.py \
     --slice 8,4,4 \
     --routing-table fixtures/routing_table_8x4x4_twist.json \
     --schedule-in fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json
+
+# Same schedule, but with destinations inlined as jax.lax.switch branches
+# (no SMEM dest_table_ref input). Use this if profiling on TPU shows that
+# the per-step DEST_TABLE lookup is on the critical path:
+python pallas_kernel/gen_orbit_greedy_kernel.py \
+    --slice 8,4,4 \
+    --routing-table fixtures/routing_table_8x4x4_twist.json \
+    --schedule-in fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json \
+    --inline-destinations \
+    --function-name _ragged_a2a_kernel_cpsat_literal_warm_inline_8_4_4 \
+    --out pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_inline_8_4_4.py
 
 # To regenerate the makespan-78 schedule from scratch (e.g., on a different
 # routing table), run the warm-started CP-SAT probe from the 2026-05-16
@@ -348,6 +359,7 @@ closures — the destination table must be a `pallas_call` input.
 | `--routing-table-out` | `./fixtures/routing_table_<slice>_<router>.json` | Where to save a generated routing table. |
 | `--schedule-out` | `./fixtures/schedule_<slice>_<router_or_loaded>_<order>.json` | Where to save the schedule. |
 | `--out` | `./pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py` | Output kernel path. |
+| `--inline-destinations` | off | Bake per-step destinations into the kernel as compile-time `jax.lax.switch(my_flat, _DEST_BRANCHES_k)` branches instead of an SMEM `dest_table_ref` input. Drops the extra pallas_call input. Larger generated file but eliminates the per-step SMEM load from the inner critical path. Used to test whether SMEM DEST_TABLE lookup is a real wall-clock bottleneck on TPU. |
 
 ## Caveats / TODO
 

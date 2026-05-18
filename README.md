@@ -71,7 +71,7 @@ schedule-driven destination table differs.
 | `orbit_greedy_full` (`lpt_tail_asc`) | 85 | ≤ 85 | 132 758 gbps | −1.3 % |
 | `cpsat_literal_warm` (warm-started, `t_upper=79`, 4 h) | 78 | ≤ 78 | 132 764 gbps | −1.3 % |
 | `spread_greedy(k=1)` (P2P-style, LB-aware order) | 145 | 145 | 132 682 gbps | −1.4 % |
-| `spread_greedy(k=2)` (2-way pipelining) | 92 | 91 | (TODO — kernel ready at `pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py`) | — |
+| `spread_greedy(k=2)` (2-way pipelining) | 92 | 91 | 132764 gbps | —1.3 % |
 
 **LB:** physical-edge lower bound on this routing = 75.
 

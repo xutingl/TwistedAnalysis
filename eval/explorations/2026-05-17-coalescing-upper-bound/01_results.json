@@ -1,0 +1,46 @@
+[
+  {
+    "name": "cpsat_literal_warm",
+    "n_flows": 16256,
+    "makespan": 78,
+    "avg_hop_length": 3.465,
+    "uncoalesced_descriptors": 56320,
+    "coalesced_descriptors": 3822,
+    "coalescing_factor": 14.736,
+    "break_even_factor_for_kernel_switch": 3.465,
+    "headroom_above_break_even": 11.271
+  },
+  {
+    "name": "spread_greedy_k2",
+    "n_flows": 16256,
+    "makespan": 92,
+    "avg_hop_length": 3.465,
+    "uncoalesced_descriptors": 56320,
+    "coalesced_descriptors": 7369,
+    "coalescing_factor": 7.643,
+    "break_even_factor_for_kernel_switch": 3.465,
+    "headroom_above_break_even": 4.178
+  },
+  {
+    "name": "literal_greedy_lpt",
+    "n_flows": 16256,
+    "makespan": 87,
+    "avg_hop_length": 3.465,
+    "uncoalesced_descriptors": 56320,
+    "coalesced_descriptors": 5024,
+    "coalescing_factor": 11.21,
+    "break_even_factor_for_kernel_switch": 3.465,
+    "headroom_above_break_even": 7.746
+  },
+  {
+    "name": "orbit_greedy_full",
+    "n_flows": 16256,
+    "makespan": 85,
+    "avg_hop_length": 3.465,
+    "uncoalesced_descriptors": 56320,
+    "coalesced_descriptors": 5536,
+    "coalescing_factor": 10.173,
+    "break_even_factor_for_kernel_switch": 3.465,
+    "headroom_above_break_even": 6.709
+  }
+]

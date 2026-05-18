@@ -1,0 +1,462 @@
+
+Starting CP-SAT solver v9.15.6755
+Parameters: max_time_in_seconds: 3600 log_search_progress: true num_search_workers: 8
+
+Initial optimization model '': (model_fingerprint: 0x4d1174691473ae1)
+#Variables: 1'347'712 (#bools: 59'904 in objective) (1'226'074 primary variables)
+  - 1'347'712 Booleans in [0,1]
+#kExactlyOne: 16'256 (#literals: 1'227'904)
+#kLinear2: 119'040
+#kLinear3: 59'136
+#kLinearN: 59'904 (#terms: 4'294'144)
+
+Starting presolve at 3.63s
+  7.31e-01s  0.00e+00d  [DetectDominanceRelations] 
+  6.44e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=2 #num_dual_strengthening=1 
+  6.82e-02s  0.00e+00d  [ExtractEncodingFromLinear] #potential_supersets=76'160 
+  9.98e-01s  0.00e+00d  [DetectDuplicateColumns] 
+  5.56e-02s  0.00e+00d  [DetectDuplicateConstraints] 
+[Symmetry] Graph for symmetry has 1'721'088 nodes and 6'174'080 arcs.
+[Symmetry] Graph too large. Skipping. You can use symmetry_level:3 or more to force it.
+[SAT presolve] num removable Booleans: 0 / 1'346'944
+[SAT presolve] num trivial clauses: 0
+[SAT presolve] [0s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+[SAT presolve] [0.0303895s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+[SAT presolve] [0.148852s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+  5.54e-02s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  3.56e+00s  1.00e+00d *[Probe] #probed=53'086 
+  3.47e-01s  2.70e-01d  [MaxClique] 
+  6.69e-01s  0.00e+00d  [DetectDominanceRelations] 
+  2.15e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  7.71e-01s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  7.17e-02s  0.00e+00d  [DetectDuplicateConstraints] 
+  6.58e-02s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  8.04e-03s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  9.16e-03s  0.00e+00d  [DetectDifferentVariables] 
+  1.02e+00s  1.90e-02d  [ProcessSetPPC] #relevant_constraints=253'568 #num_inclusions=118'272 
+  4.05e-01s  1.95e-03d  [TransformClausesToExactlyOne] #num_amos=118'272 #num_clauses=59'136 #num_checked=59'136 
+  1.91e-02s  0.00e+00d  [DetectEncodedComplexDomains] 
+  2.19e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  1.37e+00s  1.00e+00d *[FindBigAtMostOneAndLinearOverlap] 
+  1.16e-01s  3.00e-02d  [FindBigVerticalLinearOverlap] 
+  1.08e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  1.37e-01s  8.87e-04d  [MergeClauses] 
+  6.60e-01s  0.00e+00d  [DetectDominanceRelations] 
+  2.01e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  6.61e-01s  0.00e+00d  [DetectDominanceRelations] 
+  2.00e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  8.46e-01s  0.00e+00d  [DetectDuplicateColumns] 
+  5.77e-02s  0.00e+00d  [DetectDuplicateConstraints] 
+[Symmetry] Graph for symmetry has 1'721'088 nodes and 6'174'080 arcs.
+[Symmetry] Graph too large. Skipping. You can use symmetry_level:3 or more to force it.
+[SAT presolve] num removable Booleans: 0 / 1'346'944
+[SAT presolve] num trivial clauses: 0
+[SAT presolve] [0s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+[SAT presolve] [0.0269846s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+[SAT presolve] [0.140469s] clauses:177'408 literals:413'952 vars:119'040 one_side_vars:0 simple_definition:60'672 singleton_clauses:0
+  5.24e-02s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  3.44e+00s  1.00e+00d *[Probe] #probed=53'086 
+  3.91e-01s  2.70e-01d  [MaxClique] 
+  6.67e-01s  0.00e+00d  [DetectDominanceRelations] 
+  2.03e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  6.95e-01s  0.00e+00d  [ProcessAtMostOneAndLinear] 
+  1.65e-01s  0.00e+00d  [DetectDuplicateConstraints] 
+  6.90e-02s  0.00e+00d  [DetectDuplicateConstraintsWithDifferentEnforcements] 
+  1.22e-02s  0.00e+00d  [DetectDominatedLinearConstraints] 
+  1.48e-02s  0.00e+00d  [DetectDifferentVariables] 
+  1.03e+00s  1.90e-02d  [ProcessSetPPC] #relevant_constraints=253'568 #num_inclusions=118'272 
+  3.63e-01s  1.95e-03d  [TransformClausesToExactlyOne] #num_amos=118'272 #num_clauses=59'136 #num_checked=59'136 
+  1.95e-02s  0.00e+00d  [DetectEncodedComplexDomains] 
+  2.02e-02s  0.00e+00d  [FindAlmostIdenticalLinearConstraints] 
+  1.39e+00s  1.00e+00d *[FindBigAtMostOneAndLinearOverlap] 
+  1.29e-01s  3.00e-02d  [FindBigVerticalLinearOverlap] 
+  1.71e-02s  0.00e+00d  [FindBigHorizontalLinearOverlap] 
+  2.04e-01s  8.87e-04d  [MergeClauses] 
+  6.70e-01s  0.00e+00d  [DetectDominanceRelations] 
+  2.03e+00s  0.00e+00d  [PresolveToFixPoint] #num_loops=1 #num_dual_strengthening=1 
+  1.28e-02s  0.00e+00d  [MergeNoOverlap] 
+  1.38e-02s  0.00e+00d  [MergeNoOverlap2D] 
+  2.15e+00s  0.00e+00d  [ExpandObjective] #entries=100'000'056 #tight_variables=1'396'197 #tight_constraints=20'641 #expands=768 
+
+Presolve summary:
+  - 768 affine relations were detected.
+  - rule 'TODO dual: only one blocking constraint?' was applied 354'816 times.
+  - rule 'affine: new relation' was applied 768 times.
+  - rule 'bool_or: implications' was applied 118'272 times.
+  - rule 'linear2: convert ax + by != cte to clauses' was applied 118'272 times.
+  - rule 'linear: positive clause' was applied 59'136 times.
+  - rule 'linear: positive equal one' was applied 59'904 times.
+  - rule 'objective: expanded via tight equality' was applied 768 times.
+  - rule 'objective: shifted cost with exactly ones' was applied 768 times.
+  - rule 'presolve: 0 unused variables removed.' was applied 1 time.
+  - rule 'presolve: iteration' was applied 2 times.
+
+Presolved optimization model '': (model_fingerprint: 0xef2af47717ce5260)
+#Variables: 1'346'944 (#bools: 59'904 in objective) (1'285'210 primary variables)
+  - 1'346'944 Booleans in [0,1]
+#kBoolAnd: 118'272 (#enforced: 118'272) (#literals: 236'544)
+#kBoolOr: 59'136 (#literals: 177'408)
+#kExactlyOne: 76'160 (#literals: 5'522'048)
+[Symmetry] Graph for symmetry has 1'720'320 nodes and 6'174'080 arcs.
+[Symmetry] Graph too large. Skipping. You can use symmetry_level:3 or more to force it.
+
+Preloading model.
+#Bound  51.93s best:inf   next:[0,59904]  initial_domain
+#Model  53.20s var:1346944/1346944 constraints:253568/253568
+
+Starting search at 53.42s with 8 workers.
+6 full problem subsolvers: [core, default_lp, max_lp, no_lp, quick_restart, reduced_costs]
+2 first solution subsolvers: [fj, fs_random_no_lp]
+9 interleaved subsolvers: [feasibility_pump, graph_arc_lns, graph_cst_lns, graph_dec_lns, graph_var_lns, ls, rins/rens, rnd_cst_lns, rnd_var_lns]
+3 helper subsolvers: [neighborhood_helper, synchronization_agent, update_gap_integral]
+
+#Bound 100.38s best:inf   next:[1,59904]  bool_core (num_cores=1 [size:68 mw:1 amo:28 lit:56 d:7] a=59837 d=7 fixed=0/1347010 clauses=153'431)
+#Bound 116.91s best:inf   next:[2,59904]  bool_core (num_cores=2 [size:276 mw:1 amo:121 lit:242 d:9] a=59562 d=9 fixed=0/1347323 clauses=145'087)
+#Bound 127.08s best:inf   next:[3,59904]  bool_core (num_cores=3 [size:770 mw:1 d:10] a=58793 d=10 fixed=0/1348245 clauses=147'589)
+#Bound 153.79s best:inf   next:[4,59904]  bool_core (num_cores=4 [size:68 mw:1 amo:32 lit:64 d:7] a=58726 d=10 fixed=0/1349080 clauses=147'702)
+#Bound 191.68s best:inf   next:[5,59904]  bool_core (num_cores=5 [size:68 mw:1 amo:30 lit:60 d:7] a=58659 d=10 fixed=0/1349181 clauses=147'258)
+#Bound 203.09s best:inf   next:[6,59904]  bool_core (num_cores=6 [size:207 mw:1 amo:93 lit:186 d:8] a=58453 d=10 fixed=0/1349423 clauses=148'345)
+#Bound 203.96s best:inf   next:[7,59904]  bool_core (num_cores=7 [size:630 mw:1 d:10] a=57824 d=10 fixed=0/1350164 clauses=150'527)
+#Bound 204.50s best:inf   next:[8,59904]  bool_core (num_cores=8 [size:207 mw:1 amo:92 lit:184 d:8] a=57618 d=10 fixed=0/1350998 clauses=152'503)
+#Bound 233.83s best:inf   next:[9,59904]  bool_core (num_cores=9 [size:68 mw:1 amo:29 lit:58 d:7] a=57551 d=10 fixed=0/1351178 clauses=152'870)
+#Bound 244.65s best:inf   next:[10,59904] bool_core (num_cores=10 [size:630 mw:1 d:10] a=56922 d=10 fixed=0/1351844 clauses=154'023)
+#Bound 263.10s best:inf   next:[11,59904] bool_core (num_cores=11 [size:68 mw:1 amo:33 lit:66 d:7] a=56855 d=10 fixed=0/1352539 clauses=155'390)
+#Bound 274.66s best:inf   next:[12,59904] bool_core (num_cores=12 [size:207 mw:1 amo:92 lit:184 d:8] a=56649 d=10 fixed=0/1352778 clauses=154'765)
+#Bound 307.48s best:inf   next:[13,59904] bool_core (num_cores=13 [size:68 mw:1 amo:30 lit:60 d:7] a=56582 d=10 fixed=0/1352958 clauses=156'565)
+#Bound 321.74s best:inf   next:[14,59904] bool_core (num_cores=14 [size:766 mw:1 d:10] a=55817 d=10 fixed=0/1353759 clauses=157'938)
+#Bound 323.62s best:inf   next:[15,59904] bool_core (num_cores=15 [size:1 mw:1] a=55817 d=10 fixed=3/1354524 clauses=160'469)
+#Bound 357.77s best:inf   next:[16,59904] bool_core (num_cores=16 [size:68 mw:1 amo:30 lit:60 d:7] a=55750 d=10 fixed=3/1354972 clauses=162'373)
+#Bound 371.06s best:inf   next:[17,59904] bool_core (num_cores=17 [size:276 mw:1 amo:124 lit:248 d:9] a=55475 d=10 fixed=3/1355283 clauses=153'296)
+#Bound 389.54s best:inf   next:[18,59904] bool_core (num_cores=18 [size:68 mw:1 amo:29 lit:58 d:7] a=55408 d=10 fixed=3/1355500 clauses=163'311)
+#Bound 400.35s best:inf   next:[19,59904] bool_core (num_cores=19 [size:700 mw:1 d:10] a=54709 d=10 fixed=3/1356236 clauses=155'012)
+#Bound 422.52s best:inf   next:[20,59904] bool_core (num_cores=20 [size:68 mw:1 amo:29 lit:58 d:7] a=54642 d=10 fixed=3/1357001 clauses=165'313)
+#Bound 425.16s best:inf   next:[21,59904] bool_core (num_cores=21 [size:207 mw:1 amo:92 lit:184 d:8] a=54436 d=10 fixed=3/1357244 clauses=156'494)
+#Bound 426.17s best:inf   next:[22,59904] bool_core (num_cores=22 [size:771 mw:1 d:10] a=53666 d=10 fixed=3/1358127 clauses=159'108)
+#Bound 462.47s best:inf   next:[23,59904] bool_core (num_cores=23 [size:68 mw:1 amo:30 lit:60 d:7] a=53599 d=10 fixed=3/1358963 clauses=159'710)
+#Bound 473.24s best:inf   next:[24,59904] bool_core (num_cores=24 [size:276 mw:1 amo:124 lit:248 d:9] a=53324 d=10 fixed=3/1359274 clauses=160'295)
+#Bound 474.31s best:inf   next:[25,59904] bool_core (num_cores=25 [size:841 mw:1 d:10] a=52484 d=10 fixed=3/1360264 clauses=162'927)
+#Bound 475.45s best:inf   next:[26,59904] bool_core (num_cores=26 [size:994 mw:1 d:10] a=51491 d=10 fixed=3/1362096 clauses=166'700)
+#Bound 504.86s best:inf   next:[27,59904] bool_core (num_cores=27 [size:68 mw:1 amo:29 lit:58 d:7] a=51424 d=10 fixed=3/1363155 clauses=168'224)
+#Bound 515.80s best:inf   next:[28,59904] bool_core (num_cores=28 [size:207 mw:1 amo:95 lit:190 d:8] a=51218 d=10 fixed=3/1363398 clauses=167'453)
+#Bound 516.75s best:inf   next:[29,59904] bool_core (num_cores=29 [size:630 mw:1 d:10] a=50589 d=10 fixed=3/1364137 clauses=169'678)
+#Bound 534.89s best:inf   next:[30,59904] bool_core (num_cores=30 [size:68 mw:1 amo:30 lit:60 d:7] a=50522 d=10 fixed=3/1364832 clauses=171'635)
+#Bound 547.25s best:inf   next:[31,59904] bool_core (num_cores=31 [size:3 mw:1 amo:1 lit:2 d:11] a=50520 d=11 fixed=5/1364870 clauses=165'345)
+#Bound 547.88s best:inf   next:[32,59904] bool_core (num_cores=32 [size:277 mw:1 amo:121 lit:242 d:9] a=50244 d=11 fixed=5/1365528 clauses=167'071)
+#Bound 572.18s best:inf   next:[33,59904] bool_core (num_cores=33 [size:68 mw:1 amo:31 lit:62 d:7] a=50177 d=11 fixed=5/1365749 clauses=168'042)
+#Bound 586.60s best:inf   next:[34,59904] bool_core (num_cores=34 [size:701 mw:1 d:10] a=49477 d=11 fixed=5/1366484 clauses=169'071)
+#Bound 606.40s best:inf   next:[35,59904] bool_core (num_cores=35 [size:70 mw:1 amo:31 lit:62 d:7] a=49408 d=11 fixed=5/1367252 clauses=171'881)
+#Bound 629.08s best:inf   next:[36,59904] bool_core (num_cores=36 [size:68 mw:1 amo:31 lit:62 d:7] a=49341 d=11 fixed=5/1367356 clauses=171'708)
+#Bound 639.49s best:inf   next:[37,59904] bool_core (num_cores=37 [size:1 mw:1] a=49341 d=11 fixed=6/1367392 clauses=172'916)
+#Bound 661.70s best:inf   next:[38,59904] bool_core (num_cores=38 [size:68 mw:1 amo:31 lit:62 d:7] a=49274 d=11 fixed=6/1367954 clauses=174'470)
+#Bound 675.18s best:inf   next:[39,59904] bool_core (num_cores=39 [size:278 mw:1 amo:123 lit:246 d:9] a=48997 d=11 fixed=6/1368266 clauses=174'607)
+#Bound 675.88s best:inf   next:[40,59904] bool_core (num_cores=40 [size:279 mw:1 amo:122 lit:244 d:9] a=48719 d=11 fixed=6/1368697 clauses=176'049)
+#Bound 695.43s best:inf   next:[41,59904] bool_core (num_cores=41 [size:74 mw:1 amo:33 lit:66 d:7] a=48646 d=11 fixed=6/1368925 clauses=173'136)
+#Bound 715.54s best:inf   next:[42,59904] bool_core (num_cores=42 [size:68 mw:1 amo:30 lit:60 d:7] a=48579 d=11 fixed=6/1369031 clauses=172'751)
+#Bound 725.84s best:inf   next:[43,59904] bool_core (num_cores=43 [size:344 mw:1 d:9] a=48236 d=11 fixed=6/1369410 clauses=173'660)
+#Bound 726.37s best:inf   next:[44,59904] bool_core (num_cores=44 [size:423 mw:1 d:9] a=47814 d=11 fixed=6/1370174 clauses=175'832)
+#Bound 726.87s best:inf   next:[45,59904] bool_core (num_cores=45 [size:566 mw:1 d:10] a=47249 d=11 fixed=6/1371160 clauses=177'871)
+#Bound 743.20s best:inf   next:[46,59904] bool_core (num_cores=46 [size:70 mw:1 amo:30 lit:60 d:7] a=47180 d=11 fixed=6/1371793 clauses=180'960)
+#Bound 754.56s best:inf   next:[47,59904] bool_core (num_cores=47 [size:214 mw:1 amo:93 lit:186 d:8] a=46967 d=11 fixed=6/1372044 clauses=179'896)
+#Bound 793.64s best:inf   next:[48,59904] bool_core (num_cores=48 [size:68 mw:1 amo:31 lit:62 d:7] a=46900 d=11 fixed=6/1372230 clauses=181'902)
+#Bound 845.10s best:inf   next:[49,59904] bool_core (num_cores=49 [size:68 mw:1 amo:31 lit:62 d:7] a=46833 d=11 fixed=6/1372332 clauses=181'567)
+#Bound 846.46s best:inf   next:[50,59904] bool_core (num_cores=50 [size:276 mw:1 amo:120 lit:240 d:9] a=46558 d=11 fixed=6/1372642 clauses=181'332)
+#Bound 876.51s best:inf   next:[51,59904] bool_core (num_cores=51 [size:71 mw:1 amo:31 lit:62 d:7] a=46488 d=11 fixed=6/1372866 clauses=175'879)
+#Bound 909.41s best:inf   next:[52,59904] bool_core (num_cores=52 [size:69 mw:1 amo:32 lit:64 d:7] a=46420 d=11 fixed=6/1372972 clauses=176'716)
+#Bound 956.05s best:inf   next:[53,59904] bool_core (num_cores=53 [size:68 mw:1 amo:29 lit:58 d:7] a=46353 d=11 fixed=6/1373074 clauses=176'546)
+#Bound 972.20s best:inf   next:[54,59904] bool_core (num_cores=54 [size:279 mw:1 amo:122 lit:244 d:9] a=46075 d=11 fixed=6/1373389 clauses=177'417)
+#Bound 991.56s best:inf   next:[55,59904] bool_core (num_cores=55 [size:68 mw:1 amo:31 lit:62 d:7] a=46008 d=11 fixed=6/1373611 clauses=177'646)
+#Bound 992.25s best:inf   next:[56,59904] bool_core (num_cores=56 [size:345 mw:1 d:9] a=45664 d=11 fixed=6/1373990 clauses=178'774)
+#Bound 992.72s best:inf   next:[57,59904] bool_core (num_cores=57 [size:207 mw:1 amo:90 lit:180 d:8] a=45458 d=11 fixed=6/1374539 clauses=180'527)
+#Bound 1021.02s best:inf   next:[58,59904] bool_core (num_cores=58 [size:68 mw:1 amo:31 lit:62 d:7] a=45391 d=11 fixed=6/1374721 clauses=181'227)
+#Bound 1034.32s best:inf   next:[59,59904] bool_core (num_cores=59 [size:277 mw:1 amo:124 lit:248 d:9] a=45115 d=11 fixed=6/1375032 clauses=181'408)
+#Bound 1056.96s best:inf   next:[60,59904] bool_core (num_cores=60 [size:68 mw:1 amo:29 lit:58 d:7] a=45048 d=11 fixed=6/1375250 clauses=182'377)
+#Bound 1070.07s best:inf   next:[61,59904] bool_core (num_cores=61 [size:700 mw:1 d:10] a=44349 d=11 fixed=6/1375986 clauses=183'941)
+#Bound 1093.83s best:inf   next:[62,59904] bool_core (num_cores=62 [size:68 mw:1 amo:29 lit:58 d:7] a=44282 d=11 fixed=6/1376751 clauses=184'787)
+#Bound 1116.81s best:inf   next:[63,59904] bool_core (num_cores=63 [size:68 mw:1 amo:28 lit:56 d:7] a=44215 d=11 fixed=6/1376855 clauses=184'683)
+#Bound 1144.90s best:inf   next:[64,59904] bool_core (num_cores=64 [size:68 mw:1 amo:32 lit:64 d:7] a=44148 d=11 fixed=6/1376960 clauses=184'554)
+#Bound 1145.36s best:inf   next:[65,59904] bool_core (num_cores=65 [size:279 mw:1 amo:128 lit:256 d:9] a=43870 d=11 fixed=6/1377272 clauses=185'050)
+#Bound 1163.97s best:inf   next:[66,59904] bool_core (num_cores=66 [size:68 mw:1 amo:30 lit:60 d:7] a=43803 d=11 fixed=6/1377488 clauses=187'057)
+#Bound 1193.35s best:inf   next:[67,59904] bool_core (num_cores=67 [size:68 mw:1 amo:31 lit:62 d:7] a=43736 d=11 fixed=6/1377591 clauses=187'071)
+#Bound 1219.05s best:inf   next:[68,59904] bool_core (num_cores=68 [size:68 mw:1 amo:30 lit:60 d:7] a=43669 d=11 fixed=6/1377693 clauses=186'689)
+#Bound 1256.27s best:inf   next:[69,59904] bool_core (num_cores=69 [size:69 mw:1 amo:30 lit:60 d:7] a=43601 d=11 fixed=6/1377797 clauses=188'629)
+#Bound 1269.88s best:inf   next:[70,59904] bool_core (num_cores=70 [size:345 mw:1 d:9] a=43257 d=11 fixed=6/1378178 clauses=188'713)
+#Bound 1299.08s best:inf   next:[71,59904] bool_core (num_cores=71 [size:68 mw:1 amo:30 lit:60 d:7] a=43190 d=11 fixed=6/1378588 clauses=189'832)
+#Bound 1330.39s best:inf   next:[72,59904] bool_core (num_cores=72 [size:68 mw:1 amo:31 lit:62 d:7] a=43123 d=11 fixed=6/1378691 clauses=189'692)
+#Bound 1343.17s best:inf   next:[73,59904] bool_core (num_cores=73 [size:348 mw:1 d:9] a=42776 d=11 fixed=6/1379073 clauses=190'103)
+#Bound 1343.95s best:inf   next:[74,59904] bool_core (num_cores=74 [size:348 mw:1 d:9] a=42429 d=11 fixed=6/1379766 clauses=192'132)
+#Bound 1367.52s best:inf   next:[75,59904] bool_core (num_cores=75 [size:68 mw:1 amo:28 lit:56 d:7] a=42362 d=11 fixed=6/1380179 clauses=193'305)
+#Bound 1380.08s best:inf   next:[76,59904] bool_core (num_cores=76 [size:277 mw:1 amo:122 lit:244 d:9] a=42086 d=11 fixed=6/1380493 clauses=192'712)
+#Bound 1380.74s best:inf   next:[77,59904] bool_core (num_cores=77 [size:488 mw:1 d:9] a=41599 d=11 fixed=6/1381133 clauses=186'539)
+#Bound 1381.96s best:inf   next:[78,59904] bool_core (num_cores=78 [size:1063 mw:1 d:11] a=40537 d=11 fixed=6/1382681 clauses=190'103)
+#Bound 1400.21s best:inf   next:[79,59904] bool_core (num_cores=79 [size:68 mw:1 amo:31 lit:62 d:7] a=40470 d=11 fixed=6/1383809 clauses=191'088)
+#Bound 1400.85s best:inf   next:[80,59904] bool_core (num_cores=80 [size:207 mw:1 amo:90 lit:180 d:8] a=40264 d=11 fixed=6/1384050 clauses=192'025)
+#Bound 1424.20s best:inf   next:[81,59904] bool_core (num_cores=81 [size:68 mw:1 amo:29 lit:58 d:7] a=40197 d=11 fixed=6/1384232 clauses=191'974)
+#Bound 1436.27s best:inf   next:[82,59904] bool_core (num_cores=82 [size:142 mw:1 amo:60 lit:120 d:8] a=40056 d=11 fixed=6/1384410 clauses=191'794)
+#Bound 1436.52s best:inf   next:[83,59904] bool_core (num_cores=82 [cover] a=40056 d=11 fixed=7/1384491 clauses=192'677)
+#Bound 1459.89s best:inf   next:[84,59904] bool_core (num_cores=83 [size:68 mw:1 amo:29 lit:58 d:7] a=39989 d=11 fixed=7/1384603 clauses=193'591)
+#Bound 1494.17s best:inf   next:[85,59904] bool_core (num_cores=84 [size:68 mw:1 amo:30 lit:60 d:7] a=39922 d=11 fixed=7/1384707 clauses=193'341)
+#Bound 1534.99s best:inf   next:[86,59904] bool_core (num_cores=85 [size:70 mw:1 amo:32 lit:64 d:7] a=39853 d=11 fixed=7/1384812 clauses=195'098)
+#Bound 1572.18s best:inf   next:[87,59904] bool_core (num_cores=86 [size:69 mw:1 amo:31 lit:62 d:7] a=39785 d=11 fixed=7/1384916 clauses=196'014)
+#Bound 1573.11s best:inf   next:[88,59904] bool_core (num_cores=87 [size:210 mw:1 amo:95 lit:190 d:8] a=39576 d=11 fixed=7/1385161 clauses=197'273)
+#Bound 1608.74s best:inf   next:[89,59904] bool_core (num_cores=88 [size:68 mw:1 amo:30 lit:60 d:7] a=39509 d=11 fixed=7/1385341 clauses=197'260)
+#Bound 1638.97s best:inf   next:[90,59904] bool_core (num_cores=89 [size:71 mw:1 amo:32 lit:64 d:7] a=39439 d=11 fixed=7/1385447 clauses=200'108)
+#Bound 1652.29s best:inf   next:[91,59904] bool_core (num_cores=90 [size:490 mw:1 d:9] a=38950 d=11 fixed=7/1385973 clauses=200'325)
+#Bound 1671.89s best:inf   next:[92,59904] bool_core (num_cores=91 [size:68 mw:1 amo:30 lit:60 d:7] a=38883 d=11 fixed=7/1386528 clauses=202'906)
+#Bound 1693.72s best:inf   next:[93,59904] bool_core (num_cores=92 [size:68 mw:1 amo:30 lit:60 d:7] a=38816 d=11 fixed=7/1386631 clauses=202'555)
+#Bound 1705.84s best:inf   next:[94,59904] bool_core (num_cores=93 [size:1 mw:1] a=38816 d=11 fixed=8/1386668 clauses=195'770)
+#Bound 1706.68s best:inf   next:[95,59904] bool_core (num_cores=94 [size:212 mw:1 amo:94 lit:188 d:8] a=38605 d=11 fixed=8/1387122 clauses=197'675)
+#Bound 1748.67s best:inf   next:[96,59904] bool_core (num_cores=95 [size:68 mw:1 amo:29 lit:58 d:7] a=38538 d=11 fixed=8/1387305 clauses=198'349)
+#Bound 1759.30s best:inf   next:[97,59904] bool_core (num_cores=96 [size:348 mw:1 d:9] a=38191 d=11 fixed=8/1387689 clauses=198'802)
+#Bound 1777.02s best:inf   next:[98,59904] bool_core (num_cores=97 [size:68 mw:1 amo:31 lit:62 d:7] a=38124 d=11 fixed=8/1388102 clauses=200'481)
+#Bound 1802.91s best:inf   next:[99,59904] bool_core (num_cores=98 [size:68 mw:1 amo:31 lit:62 d:7] a=38057 d=11 fixed=8/1388204 clauses=200'100)
+#Bound 1842.85s best:inf   next:[100,59904] bool_core (num_cores=99 [size:68 mw:1 amo:31 lit:62 d:7] a=37990 d=11 fixed=8/1388306 clauses=199'899)
+#Bound 1843.32s best:inf   next:[101,59904] bool_core (num_cores=100 [size:209 mw:1 amo:94 lit:188 d:8] a=37782 d=11 fixed=8/1388549 clauses=200'417)
+#Bound 1843.81s best:inf   next:[102,59904] bool_core (num_cores=101 [size:276 mw:1 amo:122 lit:244 d:9] a=37507 d=11 fixed=8/1388937 clauses=202'074)
+#Bound 1844.43s best:inf   next:[103,59904] bool_core (num_cores=102 [size:701 mw:1 d:10] a=36807 d=11 fixed=8/1389789 clauses=204'105)
+#Bound 1844.99s best:inf   next:[104,59904] bool_core (num_cores=103 [size:276 mw:1 amo:123 lit:246 d:9] a=36532 d=11 fixed=8/1390763 clauses=206'350)
+#Bound 1875.94s best:inf   next:[105,59904] bool_core (num_cores=104 [size:68 mw:1 amo:30 lit:60 d:7] a=36465 d=11 fixed=8/1390981 clauses=207'206)
+#Bound 1892.11s best:inf   next:[106,59904] bool_core (num_cores=105 [size:346 mw:1 d:9] a=36120 d=11 fixed=8/1391362 clauses=206'912)
+#Bound 1924.85s best:inf   next:[107,59904] bool_core (num_cores=106 [size:68 mw:1 amo:30 lit:60 d:7] a=36053 d=11 fixed=8/1391773 clauses=208'425)
+#Bound 1945.02s best:inf   next:[108,59904] bool_core (num_cores=107 [size:68 mw:1 amo:29 lit:58 d:7] a=35986 d=11 fixed=8/1391876 clauses=208'463)
+#Bound 1958.39s best:inf   next:[109,59904] bool_core (num_cores=108 [size:276 mw:1 amo:123 lit:246 d:9] a=35711 d=11 fixed=8/1392188 clauses=208'445)
+#Bound 2007.31s best:inf   next:[110,59904] bool_core (num_cores=109 [size:68 mw:1 amo:31 lit:62 d:7] a=35644 d=11 fixed=8/1392406 clauses=209'863)
+#Bound 2023.68s best:inf   next:[111,59904] bool_core (num_cores=110 [size:278 mw:1 amo:123 lit:246 d:9] a=35367 d=11 fixed=8/1392718 clauses=209'222)
+#Bound 2057.14s best:inf   next:[112,59904] bool_core (num_cores=111 [size:68 mw:1 amo:32 lit:64 d:7] a=35300 d=11 fixed=8/1392938 clauses=211'117)
+#Bound 2076.03s best:inf   next:[113,59904] bool_core (num_cores=112 [size:68 mw:1 amo:29 lit:58 d:7] a=35233 d=11 fixed=8/1393039 clauses=211'104)
+#Bound 2105.79s best:inf   next:[114,59904] bool_core (num_cores=113 [size:68 mw:1 amo:31 lit:62 d:7] a=35166 d=11 fixed=8/1393143 clauses=210'665)
+#Bound 2106.40s best:inf   next:[115,59904] bool_core (num_cores=114 [size:347 mw:1 d:9] a=34820 d=11 fixed=8/1393524 clauses=210'248)
+#Bound 2127.83s best:inf   next:[116,59904] bool_core (num_cores=115 [size:70 mw:1 amo:30 lit:60 d:7] a=34751 d=11 fixed=8/1393938 clauses=204'238)
+#Bound 2170.28s best:inf   next:[117,59904] bool_core (num_cores=116 [size:68 mw:1 amo:30 lit:60 d:7] a=34684 d=11 fixed=9/1394043 clauses=213'878)
+#Bound 2171.88s best:inf   next:[118,59904] bool_core (num_cores=117 [size:277 mw:1 amo:124 lit:248 d:9] a=34408 d=11 fixed=9/1394355 clauses=205'275)
+#Bound 2192.31s best:inf   next:[119,59904] bool_core (num_cores=118 [size:68 mw:1 amo:30 lit:60 d:7] a=34341 d=11 fixed=9/1394573 clauses=215'233)
+#Bound 2228.30s best:inf   next:[120,59904] bool_core (num_cores=119 [size:68 mw:1 amo:31 lit:62 d:7] a=34274 d=11 fixed=9/1394676 clauses=215'366)
+#Bound 2229.20s best:inf   next:[121,59904] bool_core (num_cores=120 [size:770 mw:1 d:10] a=33505 d=11 fixed=9/1395480 clauses=207'557)
+#Bound 2229.44s best:inf   next:[122,59904] bool_core (num_cores=120 [cover] a=33505 d=11 fixed=10/1396249 clauses=209'128)
+#Bound 2256.77s best:inf   next:[123,59904] bool_core (num_cores=121 [size:68 mw:1 amo:29 lit:58 d:7] a=33438 d=11 fixed=10/1396699 clauses=209'987)
+#Bound 2271.49s best:inf   next:[124,59904] bool_core (num_cores=122 [size:276 mw:1 amo:121 lit:242 d:9] a=33163 d=11 fixed=10/1397011 clauses=210'409)
+#Bound 2297.13s best:inf   next:[125,59904] bool_core (num_cores=123 [size:68 mw:1 amo:31 lit:62 d:7] a=33096 d=11 fixed=10/1397231 clauses=210'370)
+#Bound 2308.34s best:inf   next:[126,59904] bool_core (num_cores=124 [size:1 mw:1] a=33096 d=11 fixed=11/1397267 clauses=212'002)
+#Bound 2309.29s best:inf   next:[127,59904] bool_core (num_cores=125 [size:276 mw:1 amo:125 lit:250 d:9] a=32821 d=11 fixed=11/1397925 clauses=214'313)
+#Bound 2309.94s best:inf   next:[128,59904] bool_core (num_cores=126 [size:420 mw:1 d:9] a=32402 d=11 fixed=11/1398493 clauses=216'292)
+#Bound 2326.68s best:inf   next:[129,59904] bool_core (num_cores=127 [size:68 mw:1 amo:28 lit:56 d:7] a=32335 d=11 fixed=11/1398978 clauses=217'536)
+#Bound 2344.12s best:inf   next:[130,59904] bool_core (num_cores=128 [size:72 mw:1 amo:32 lit:64 d:7] a=32264 d=11 fixed=11/1399087 clauses=221'016)
+#Bound 2361.62s best:inf   next:[131,59904] bool_core (num_cores=129 [size:68 mw:1 amo:30 lit:60 d:7] a=32197 d=11 fixed=11/1399192 clauses=220'993)
+#Bound 2392.62s best:inf   next:[132,59904] bool_core (num_cores=130 [size:68 mw:1 amo:30 lit:60 d:7] a=32130 d=11 fixed=11/1399295 clauses=220'079)
+#Bound 2411.22s best:inf   next:[133,59904] bool_core (num_cores=131 [size:68 mw:1 amo:32 lit:64 d:7] a=32063 d=11 fixed=11/1399398 clauses=220'353)
+#Bound 2422.79s best:inf   next:[134,59904] bool_core (num_cores=132 [size:345 mw:1 d:9] a=31719 d=11 fixed=11/1399776 clauses=220'247)
+#Bound 2423.65s best:inf   next:[135,59904] bool_core (num_cores=133 [size:280 mw:1 amo:121 lit:242 d:9] a=31440 d=11 fixed=12/1400398 clauses=221'810)
+#Bound 2424.31s best:inf   next:[136,59904] bool_core (num_cores=134 [size:207 mw:1 amo:94 lit:188 d:8] a=31234 d=11 fixed=12/1400761 clauses=214'885)
+#Bound 2448.13s best:inf   next:[137,59904] bool_core (num_cores=135 [size:68 mw:1 amo:30 lit:60 d:7] a=31167 d=11 fixed=12/1400939 clauses=224'768)
+#Bound 2448.58s best:inf   next:[138,59904] bool_core (num_cores=136 [size:207 mw:1 amo:92 lit:184 d:8] a=30961 d=11 fixed=12/1401181 clauses=216'089)
+#Bound 2469.13s best:inf   next:[139,59904] bool_core (num_cores=137 [size:68 mw:1 amo:30 lit:60 d:7] a=30894 d=11 fixed=12/1401361 clauses=216'155)
+#Bound 2478.74s best:inf   next:[140,59904] bool_core (num_cores=138 [size:2 mw:1 d:11] a=30893 d=11 fixed=12/1401398 clauses=219'757)
+#Bound 2502.12s best:inf   next:[141,59904] bool_core (num_cores=139 [size:68 mw:1 amo:29 lit:58 d:7] a=30826 d=11 fixed=12/1401779 clauses=220'137)
+#Bound 2516.43s best:inf   next:[142,59904] bool_core (num_cores=140 [size:207 mw:1 amo:91 lit:182 d:8] a=30620 d=11 fixed=12/1402022 clauses=220'759)
+#Bound 2516.93s best:inf   next:[143,59904] bool_core (num_cores=141 [size:213 mw:1 amo:96 lit:192 d:8] a=30408 d=11 fixed=12/1402348 clauses=222'165)
+#Bound 2545.09s best:inf   next:[144,59904] bool_core (num_cores=142 [size:68 mw:1 amo:30 lit:60 d:7] a=30341 d=11 fixed=12/1402530 clauses=222'993)
+#Bound 2579.82s best:inf   next:[145,59904] bool_core (num_cores=143 [size:68 mw:1 amo:30 lit:60 d:7] a=30274 d=11 fixed=12/1402633 clauses=222'802)
+#Bound 2600.80s best:inf   next:[146,59904] bool_core (num_cores=144 [size:276 mw:1 amo:120 lit:240 d:9] a=29999 d=11 fixed=12/1402944 clauses=223'195)
+#Bound 2626.30s best:inf   next:[147,59904] bool_core (num_cores=145 [size:68 mw:1 amo:31 lit:62 d:7] a=29932 d=11 fixed=12/1403165 clauses=224'083)
+#Bound 2647.67s best:inf   next:[148,59904] bool_core (num_cores=146 [size:68 mw:1 amo:31 lit:62 d:7] a=29865 d=11 fixed=12/1403267 clauses=223'908)
+#Bound 2662.18s best:inf   next:[149,59904] bool_core (num_cores=147 [size:210 mw:1 amo:93 lit:186 d:8] a=29656 d=11 fixed=12/1403511 clauses=224'184)
+#Bound 2699.95s best:inf   next:[150,59904] bool_core (num_cores=148 [size:72 mw:1 amo:31 lit:62 d:7] a=29585 d=11 fixed=12/1403697 clauses=229'022)
+#Bound 2725.68s best:inf   next:[151,59904] bool_core (num_cores=149 [size:70 mw:1 amo:31 lit:62 d:7] a=29516 d=11 fixed=12/1403805 clauses=230'948)
+#Bound 2751.87s best:inf   next:[152,59904] bool_core (num_cores=150 [size:68 mw:1 amo:32 lit:64 d:7] a=29449 d=11 fixed=12/1403909 clauses=230'652)
+#Bound 2797.45s best:inf   next:[153,59904] bool_core (num_cores=151 [size:68 mw:1 amo:30 lit:60 d:7] a=29382 d=11 fixed=12/1404010 clauses=230'266)
+#Bound 2826.10s best:inf   next:[154,59904] bool_core (num_cores=152 [size:68 mw:1 amo:29 lit:58 d:7] a=29315 d=11 fixed=12/1404113 clauses=230'177)
+#Bound 2865.17s best:inf   next:[155,59904] bool_core (num_cores=153 [size:68 mw:1 amo:30 lit:60 d:7] a=29248 d=11 fixed=12/1404217 clauses=230'027)
+#Bound 2866.54s best:inf   next:[156,59904] bool_core (num_cores=154 [size:418 mw:1 d:9] a=28831 d=11 fixed=12/1404670 clauses=230'422)
+#Bound 2892.23s best:inf   next:[157,59904] bool_core (num_cores=155 [size:68 mw:1 amo:29 lit:58 d:7] a=28764 d=11 fixed=12/1405153 clauses=231'953)
+#Bound 2906.43s best:inf   next:[158,59904] bool_core (num_cores=156 [size:419 mw:1 d:9] a=28346 d=11 fixed=12/1405608 clauses=232'085)
+#Bound 2929.60s best:inf   next:[159,59904] bool_core (num_cores=157 [size:68 mw:1 amo:30 lit:60 d:7] a=28279 d=11 fixed=12/1406092 clauses=233'770)
+#Bound 2951.39s best:inf   next:[160,59904] bool_core (num_cores=158 [size:68 mw:1 amo:30 lit:60 d:7] a=28212 d=11 fixed=12/1406195 clauses=233'664)
+#Bound 2980.18s best:inf   next:[161,59904] bool_core (num_cores=159 [size:68 mw:1 amo:31 lit:62 d:7] a=28145 d=11 fixed=12/1406298 clauses=233'888)
+#Bound 3014.03s best:inf   next:[162,59904] bool_core (num_cores=160 [size:68 mw:1 amo:30 lit:60 d:7] a=28078 d=11 fixed=12/1406400 clauses=233'559)
+#Bound 3014.89s best:inf   next:[163,59904] bool_core (num_cores=161 [size:490 mw:1 d:9] a=27589 d=11 fixed=12/1406925 clauses=234'119)
+#Bound 3033.16s best:inf   next:[164,59904] bool_core (num_cores=162 [size:8 mw:1 amo:3 lit:6 d:10] a=27582 d=11 fixed=12/1407420 clauses=237'443)
+#Bound 3051.32s best:inf   next:[165,59904] bool_core (num_cores=163 [size:68 mw:1 amo:30 lit:60 d:7] a=27515 d=11 fixed=12/1407734 clauses=237'918)
+#Bound 3066.45s best:inf   next:[166,59904] bool_core (num_cores=164 [size:140 mw:1 amo:60 lit:120 d:8] a=27376 d=11 fixed=12/1407909 clauses=236'991)
+#Bound 3066.77s best:inf   next:[167,59904] bool_core (num_cores=164 [cover] a=27376 d=11 fixed=13/1407988 clauses=229'668)
+#Bound 3093.20s best:inf   next:[168,59904] bool_core (num_cores=165 [size:68 mw:1 amo:31 lit:62 d:7] a=27309 d=11 fixed=13/1408098 clauses=229'675)
+#Bound 3095.98s best:inf   next:[169,59904] bool_core (num_cores=166 [size:207 mw:1 amo:88 lit:176 d:8] a=27103 d=11 fixed=13/1408339 clauses=230'998)
+#Bound 3114.78s best:inf   next:[170,59904] bool_core (num_cores=167 [size:71 mw:1 amo:31 lit:62 d:7] a=27033 d=11 fixed=13/1408526 clauses=233'699)
+#Bound 3133.15s best:inf   next:[171,59904] bool_core (num_cores=168 [size:68 mw:1 amo:30 lit:60 d:7] a=26966 d=11 fixed=13/1408631 clauses=233'607)
+#Bound 3181.39s best:inf   next:[172,59904] bool_core (num_cores=169 [size:68 mw:1 amo:31 lit:62 d:7] a=26899 d=11 fixed=13/1408734 clauses=233'327)
+#Bound 3204.46s best:inf   next:[173,59904] bool_core (num_cores=170 [size:68 mw:1 amo:32 lit:64 d:7] a=26832 d=11 fixed=13/1408836 clauses=233'276)
+#Bound 3217.37s best:inf   next:[174,59904] bool_core (num_cores=171 [size:491 mw:1 d:9] a=26342 d=11 fixed=13/1409360 clauses=234'515)
+#Bound 3251.13s best:inf   next:[175,59904] bool_core (num_cores=172 [size:68 mw:1 amo:30 lit:60 d:7] a=26275 d=11 fixed=13/1409916 clauses=235'355)
+#Bound 3272.09s best:inf   next:[176,59904] bool_core (num_cores=173 [size:69 mw:1 amo:31 lit:62 d:7] a=26207 d=11 fixed=13/1410020 clauses=235'439)
+#Bound 3320.02s best:inf   next:[177,59904] bool_core (num_cores=174 [size:68 mw:1 amo:29 lit:58 d:7] a=26140 d=11 fixed=13/1410123 clauses=235'637)
+#Bound 3371.89s best:inf   next:[178,59904] bool_core (num_cores=175 [size:69 mw:1 amo:30 lit:60 d:7] a=26072 d=11 fixed=13/1410228 clauses=236'421)
+#Bound 3389.85s best:inf   next:[179,59904] bool_core (num_cores=176 [size:211 mw:1 amo:89 lit:178 d:8] a=25862 d=11 fixed=13/1410475 clauses=236'893)
+#Bound 3406.92s best:inf   next:[180,59904] bool_core (num_cores=177 [size:68 mw:1 amo:32 lit:64 d:7] a=25795 d=11 fixed=13/1410662 clauses=237'647)
+#Bound 3435.14s best:inf   next:[181,59904] bool_core (num_cores=178 [size:68 mw:1 amo:31 lit:62 d:7] a=25728 d=11 fixed=13/1410763 clauses=237'435)
+#Bound 3457.31s best:inf   next:[182,59904] bool_core (num_cores=179 [size:68 mw:1 amo:31 lit:62 d:7] a=25661 d=11 fixed=13/1410865 clauses=237'294)
+#Bound 3471.66s best:inf   next:[183,59904] bool_core (num_cores=180 [size:2 mw:1 d:11] a=25660 d=11 fixed=13/1410901 clauses=240'123)
+#Bound 3492.23s best:inf   next:[184,59904] bool_core (num_cores=181 [size:68 mw:1 amo:32 lit:64 d:7] a=25593 d=11 fixed=13/1411160 clauses=241'669)
+#Bound 3509.76s best:inf   next:[185,59904] bool_core (num_cores=182 [size:68 mw:1 amo:31 lit:62 d:7] a=25526 d=11 fixed=13/1411261 clauses=241'863)
+#Bound 3545.07s best:inf   next:[186,59904] bool_core (num_cores=183 [size:68 mw:1 amo:28 lit:56 d:7] a=25459 d=11 fixed=13/1411363 clauses=241'629)
+#Bound 3561.93s best:inf   next:[187,59904] bool_core (num_cores=184 [size:1 mw:1] a=25459 d=11 fixed=14/1411402 clauses=242'138)
+#Bound 3581.70s best:inf   next:[188,59904] bool_core (num_cores=185 [size:68 mw:1 amo:30 lit:60 d:7] a=25392 d=11 fixed=14/1411532 clauses=243'119)
+
+Task timing                   n [     min,      max]      avg      dev     time         n [     min,      max]      avg      dev    dtime
+              'core':         1 [  59.14m,   59.14m]   59.14m   0.00ns   59.14m         2 [   1.58s,   42.81m]   21.42m   21.39m   42.83m
+        'default_lp':         1 [  59.14m,   59.14m]   59.14m   0.00ns   59.14m         2 [   1.58s,   48.93m]   24.48m   24.45m   48.95m
+  'feasibility_pump':         1 [   5.08s,    5.08s]    5.08s   0.00ns    5.08s         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+                'fj':      1898 [558.94ms,    3.80s] 932.60ms 271.05ms   29.50m      1898 [104.39ms, 220.52ms] 171.57ms  33.85ms    5.43m
+   'fs_random_no_lp':         1 [  59.17m,   59.17m]   59.17m   0.00ns   59.17m         2 [   1.58s,    1.52h]   45.51m   45.48m    1.52h
+     'graph_arc_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+     'graph_cst_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+     'graph_dec_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+     'graph_var_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+                'ls':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+            'max_lp':         1 [  59.11m,   59.11m]   59.11m   0.00ns   59.11m         2 [   2.22s,    8.73m]    4.38m    4.34m    8.76m
+             'no_lp':         1 [  59.14m,   59.14m]   59.14m   0.00ns   59.14m         2 [   1.58s,    1.05h]   31.43m   31.41m    1.05h
+     'quick_restart':         1 [  59.14m,   59.14m]   59.14m   0.00ns   59.14m         2 [   1.58s,    5.48m]    2.75m    2.73m    5.51m
+     'reduced_costs':         1 [  59.11m,   59.11m]   59.11m   0.00ns   59.11m         2 [   1.59s,    2.24m]    1.14m    1.11m    2.27m
+         'rins/rens':      1330 [   1.08s,   34.15s]    1.33s    2.01s   29.58m         6 [100.00ms, 100.17ms] 100.03ms  61.85us 600.17ms
+       'rnd_cst_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+       'rnd_var_lns':         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns         0 [  0.00ns,   0.00ns]   0.00ns   0.00ns   0.00ns
+
+Search stats              Bools  Conflicts     Branches  Restarts  BacktrackToRoot   Backtrack     BoolPropag  IntegerPropag
+             'core':  1'411'635  7'543'792  507'049'712     4'599       39'942'492  50'937'774  8'663'568'658    161'073'280
+       'default_lp':  1'346'944  4'830'237   32'249'308        86        3'435'846   8'241'092  1'662'850'261     12'013'143
+  'fs_random_no_lp':  1'346'944  7'244'834   85'223'797        35       21'603'098  29'755'799  4'159'534'594     19'483'023
+           'max_lp':  1'346'944          0       55'298         0           53'086      53'086      7'401'504      7'456'802
+            'no_lp':  1'346'944  4'988'042  134'272'945        86       32'414'437  39'024'747  3'045'286'277     28'731'533
+    'quick_restart':  1'346'944     31'734  178'276'503     3'020       13'796'716  14'594'039  2'234'544'939    137'253'528
+    'reduced_costs':  1'346'944        798   14'942'150        10        4'071'897   4'298'142     97'430'018    112'345'121
+
+SAT formula           Fixed  Equiv      Total    VarLeft  BinaryClauses  PermanentClauses  TemporaryClauses
+             'core':     14      0  1'411'635  1'411'621        506'934           230'069            10'892
+       'default_lp':      0      0  1'346'944  1'346'944        236'544           135'385             6'885
+  'fs_random_no_lp':      0      0  1'346'944  1'346'944        236'544           135'410            11'772
+           'max_lp':      0      0  1'346'944  1'346'944        236'544           135'296                 0
+            'no_lp':      0      0  1'346'944  1'346'944        236'544           135'379            14'316
+    'quick_restart':      0      0  1'346'944  1'346'944        236'544           135'469             9'829
+    'reduced_costs':      0      0  1'346'944  1'346'944        236'544           135'448               741
+
+SAT stats             ClassicMinim  LitRemoved  LitRemovedBinary     LitLearned   LitForgotten   Subsumed
+             'core':     3'625'527  39'942'119       129'560'993  5'365'024'658  4'414'109'408    935'982
+       'default_lp':     2'762'338  19'513'626        64'001'605  4'184'311'459  2'899'984'807  1'216'870
+  'fs_random_no_lp':     4'361'459  31'110'053       114'824'697  7'087'532'268  4'846'853'871  1'950'123
+           'max_lp':             0           0                 0              0              0          0
+            'no_lp':     2'874'505  21'646'704        76'098'841  5'793'983'160  4'121'550'530  1'167'245
+    'quick_restart':         3'553      11'849           197'472      8'766'655      5'565'503        887
+    'reduced_costs':           391      14'120             3'614        560'096              0         46
+
+Vivification            Clauses    Decisions  LitTrue  Subsumed  LitRemoved  DecisionReused  Conflicts
+             'core':  1'516'716  111'458'182        2    21'181   6'292'198       1'412'010      3'884
+       'default_lp':    181'400    8'758'702        0        34         132               2          0
+  'fs_random_no_lp':  1'254'495   52'508'812        0       159         792               5          0
+           'max_lp':          0            0        0         0           0               0          0
+            'no_lp':  1'924'069   79'839'050        0       108         456              15          0
+    'quick_restart':    816'455   33'717'828        0       199       8'491             545          3
+    'reduced_costs':    207'093   10'650'807        0       106         428               5          0
+
+Clause deletion       at_true  l_and_not(l)  to_binary  sub_conflict  sub_extra  sub_decisions  sub_eager  sub_vivify  sub_probing  sub_inpro  blocked  eliminated  forgotten    promoted  conflicts
+             'core':    1'247             0         10       914'450    189'940             75     21'532      21'181        1'896      1'643        0           0  6'354'081  19'267'202  7'543'792
+       'default_lp':        0             0          0     1'201'998    214'233              4     14'872          34            0          0        0           0  3'392'236  12'907'260  4'830'237
+  'fs_random_no_lp':        0             0          0     1'926'000    287'682              0     24'123         159            0          0        0           0  4'995'250  19'594'382  7'244'834
+           'max_lp':        0             0          0             0          0              0          0           0            0          0        0           0          0           0          0
+            'no_lp':        0             0          0     1'148'601    179'463             76     18'644         108            0          0        0           0  3'626'927  13'711'974  4'988'042
+    'quick_restart':        0             0          0           840        348              0         47         199            0          0        0           0     20'369      52'395     31'734
+    'reduced_costs':        0             0          0            30         11              0         16         106            0          0        0           0          0       1'403        798
+
+Lp stats            Component  Iterations  AddedCuts  OPTIMAL  DUAL_F.  DUAL_U.
+         'max_lp':          1      24'163          0        0    2'213        0
+  'reduced_costs':          1     185'029      1'126      272   16'453      523
+
+Lp dimension                   Final dimension of first component
+         'max_lp':  253568 rows, 1346944 columns, 5936000 entries
+  'reduced_costs':    14049 rows, 1346944 columns, 268243 entries
+
+Lp debug            CutPropag  CutEqPropag  Adjust  Overflow     Bad  BadScaling
+         'max_lp':          0            0       0         0       0           0
+  'reduced_costs':          0            0   7'239         0  20'555           0
+
+Lp pool             Constraints  Updates  Simplif  Merged  Shortened  Split  Strengthened    Cuts/Call
+         'max_lp':      253'568        0        0       0          0      0             0          0/0
+  'reduced_costs':      254'694        0        0       0          0      0             0  1'126/2'363
+
+Lp Cut           reduced_costs
+         CG_FF:             44
+          CG_K:              8
+         CG_KL:             12
+          CG_R:             18
+     MIR_1_RLT:            115
+      MIR_4_FF:             47
+      MIR_5_FF:             21
+      MIR_5_KL:              2
+      MIR_6_FF:             29
+      MIR_6_KL:              1
+  ZERO_HALF_FF:            572
+  ZERO_HALF_KL:              2
+   ZERO_HALF_R:            255
+
+LNS stats           Improv/Calls  Closed  Difficulty  TimeLimit
+  'graph_arc_lns':           0/0      0%    5.00e-01       0.10
+  'graph_cst_lns':           0/0      0%    5.00e-01       0.10
+  'graph_dec_lns':           0/0      0%    5.00e-01       0.10
+  'graph_var_lns':           0/0      0%    5.00e-01       0.10
+      'rins/rens':         14/14     57%    7.95e-01       0.10
+    'rnd_cst_lns':           0/0      0%    5.00e-01       0.10
+    'rnd_var_lns':           0/0      0%    5.00e-01       0.10
+
+LS stats                                    Batches  Restarts/Perturbs  LinMoves   GenMoves  CompoundMoves  Bactracks  WeightUpdates  ScoreComputed
+                             'fj_restart':       92                 38    23'414          0              0          0             41    101'031'275
+                    'fj_restart_compound':      105                 27         0        237              0        109              0    257'800'924
+                'fj_restart_compound_obj':       65                 27         0        148              2         66              0    158'853'693
+            'fj_restart_compound_perturb':      160                 43         0  1'044'131      1'043'875          0              0    101'868'327
+        'fj_restart_compound_perturb_obj':      163                 40         0    922'146        921'874          0              0    111'227'452
+                       'fj_restart_decay':      116                 30   231'269          0              0          0             46    107'314'676
+              'fj_restart_decay_compound':      146                 29         0        328              4        152              0    357'761'160
+          'fj_restart_decay_compound_obj':      113                 36         0        269             16        111              0    273'709'003
+      'fj_restart_decay_compound_perturb':      169                 50         0  1'165'632      1'165'359          0              0    104'003'763
+  'fj_restart_decay_compound_perturb_obj':       77                 19         0    482'449        482'314          0              0     49'837'599
+                   'fj_restart_decay_obj':      161                 35   632'368          0              0          0            107    129'018'737
+               'fj_restart_decay_perturb':       56                 25   129'483          0              0          0              0     44'135'002
+           'fj_restart_decay_perturb_obj':       73                 30   154'994          0              0          0              0     58'556'771
+                         'fj_restart_obj':      213                 36   692'196          0              0          0            639    170'833'243
+                     'fj_restart_perturb':       49                 30   124'617          0              0          0              0     38'080'107
+                 'fj_restart_perturb_obj':      140                 32   204'909          0              0          0              2    120'073'404
+
+Objective bounds     Num
+       'bool_core':  188
+  'initial_domain':    1
+
+Solution repositories    Added  Queried  Synchro
+    'alternative_path':      0        0        0
+      'best_solutions':      0        0        0
+   'fj solution hints':    519        0      519
+        'lp solutions':  2'032    1'330    1'723
+                'pump':      0        0
+
+Clauses shared        #Exported  #Imported  #BinaryRead  #BinaryTotal
+             'core':         49        223            0             0
+       'default_lp':          9        114            0             0
+  'fs_random_no_lp':          7        266            0             0
+           'max_lp':          0          0            0             0
+            'no_lp':         15        176            0             0
+    'quick_restart':        201         71            0             0
+    'reduced_costs':          0        258            0             0
+
+LRAT_status: NA
+CpSolverResponse summary:
+status: UNKNOWN
+objective: 59904
+best_bound: 188
+integers: 1347191
+booleans: 1346944
+conflicts: 0
+branches: 55298
+propagations: 7401504
+integer_propagations: 7456802
+restarts: 0
+lp_iterations: 24163
+walltime: 3604.41
+usertime: 3604.41
+deterministic_time: 16062.8
+gap_integral: 176598
+
+No incumbent found within time budget.

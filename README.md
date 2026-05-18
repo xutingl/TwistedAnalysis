@@ -57,6 +57,33 @@ the loaded 8×4×4 routing (which the deployed Pallas kernel actually uses):
 - [eval/explorations/2026-05-16-closing-gap-to-lb-75/](eval/explorations/2026-05-16-closing-gap-to-lb-75/) — warm-started CP-SAT @4 h/probe reaches **makespan 78** at `t_upper=79`, projected **+7.5% above P2P**. LNS at 5–30% destroy cannot escape the makespan-78 local optimum (every subproblem provably INFEASIBLE in seconds). LB=75 remains open.
 - [eval/explorations/2026-05-17-spread-scheduling/](eval/explorations/2026-05-17-spread-scheduling/) — `spread_greedy(k)` shipped to test the hypothesis that per-device DMA-engine oversubscription, not round count, is the binding TPU wall-clock constraint. K=2 is the headline (makespan 92, vs cpsat_literal_warm's 78), saved as `fixtures/schedule_8x4x4_loaded_spread_greedy_k2.json` with pre-generated Pallas kernel.
 
+### TPU v5e wall-clock measurements (loaded 8×4×4)
+
+Empirical AllToAll throughput of each generated Pallas kernel against the
+reference P2P rotation kernel on TPU v5e, `slice=(8, 4, 4)`, routing =
+`fixtures/routing_table_8x4x4_twist.json`. All measurements use the same
+payload and reference kernel scaffolding — only the iteration-order /
+schedule-driven destination table differs.
+
+| Schedule | Sim makespan | Rounds (≈ per-device DMAs in series) | Measured throughput | vs P2P |
+|---|---:|---:|---:|---:|
+| reference P2P (rotation) | ~340 (simulator 4–9× sub-LB) | 127 (= N − 1) | **134 541 gbps** | baseline |
+| `orbit_greedy_full` (`lpt_tail_asc`) | 85 | ≤ 85 | 132 758 gbps | −1.3 % |
+| `cpsat_literal_warm` (warm-started, `t_upper=79`, 4 h) | 78 | ≤ 78 | 132 764 gbps | −1.3 % |
+| `spread_greedy(k=1)` (P2P-style, LB-aware order) | 145 | 145 | 132 682 gbps | −1.4 % |
+| `spread_greedy(k=2)` (2-way pipelining) | 92 | 91 | (TODO — kernel ready at `pallas_kernel/outputs/_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py`) | — |
+
+**LB:** physical-edge lower bound on this routing = 75.
+
+**What this table says:**
+
+- **Simulator makespan is a poor predictor of TPU wall-clock at this scale.** The makespan-78 schedule (`cpsat_literal_warm`) and the makespan-145 schedule (`spread_greedy(k=1)`) measure within 0.1 % of each other (132 682 vs 132 764 gbps) — and both are within 1.4 % of P2P's makespan-340 rotation. The schedule barely moves the needle.
+- **K=1 decomposition** (the one apples-to-apples per-round comparison vs P2P, since both emit 1 DMA per device per round): K=1 has 1.142× more rounds but is 1.014× slower wall-clock → implied **0.888×** per-round time (≈11 % faster per round than P2P). LB-aware destination ordering does pay off, but the 18 extra rounds (forced by physical-edge conflicts in the routing) eat almost all the gain.
+- **If K=1 hit N−1=127 rounds at the same per-round time**, projected throughput would be ~151 500 gbps (+12.6 % vs P2P). That's the gap a better routing or near-LB scheduling could close.
+- **The cluster at ~132 700 gbps** across three very different schedules (orbit_greedy K~5, cpsat_warm K=∞, spread_greedy K=1) means *something else* dominates wall-clock — per-DMA setup, HBM bandwidth, or per-step kernel overhead — not the round count, not the LB-awareness, not the per-device DMA cap.
+
+**Next data point needed:** measure `spread_greedy(k=2)` (`_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py`, makespan 92, 91 rounds, 2 DMAs per device per round). If it beats K=1 substantially (≥ 5 %), DMA-engine concurrency is real and K=2 is the new sweet spot. If it ties K=1 (within 1 %), the DMA engine doesn't gain from 2-way parallelism on this hardware and `spread_greedy` is bounded by per-DMA setup. If it loses to K=1, per-device DMA serialization is the bottleneck and we should investigate sub-flow chunking.
+
 ### Two capacity models — the source of historical confusion
 
 Earlier versions of this project claimed `orbit_greedy` was "LB-tight on

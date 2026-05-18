@@ -82,7 +82,28 @@ schedule-driven destination table differs.
 - **If K=1 hit N−1=127 rounds at the same per-round time**, projected throughput would be ~151 500 gbps (+12.6 % vs P2P). That's the gap a better routing or near-LB scheduling could close.
 - **The cluster at ~132 700 gbps** across three very different schedules (orbit_greedy K~5, cpsat_warm K=∞, spread_greedy K=1) means *something else* dominates wall-clock — per-DMA setup, HBM bandwidth, or per-step kernel overhead — not the round count, not the LB-awareness, not the per-device DMA cap.
 
-**Next data point needed:** measure `spread_greedy(k=2)` (`_ragged_a2a_kernel_spread_greedy_k2_8_4_4.py`, makespan 92, 91 rounds, 2 DMAs per device per round). If it beats K=1 substantially (≥ 5 %), DMA-engine concurrency is real and K=2 is the new sweet spot. If it ties K=1 (within 1 %), the DMA engine doesn't gain from 2-way parallelism on this hardware and `spread_greedy` is bounded by per-DMA setup. If it loses to K=1, per-device DMA serialization is the bottleneck and we should investigate sub-flow chunking.
+### Packet-size sweep (`cpsat_literal_warm` kernel, 2026-05-18)
+
+Hardware sensitivity to the kernel's `packet_size` knob (see [`pallas_kernel/reference_kernel.py:466-475`](pallas_kernel/reference_kernel.py#L466-L475)). All other settings held identical; only `packet_size` varies. Measured on `cpsat_literal_warm` (makespan 78) on the same TPU v5e setup as the table above.
+
+| `packet_size` (bytes) | Measured throughput | vs 2¹⁵ peak |
+|---|---:|---:|
+| 2¹³ = 8 KB    | 126 987 gbps | −4.4 % |
+| 2¹⁴ = 16 KB   | 130 743 gbps | −1.5 % |
+| 2¹⁵ = 32 KB   | **132 764 gbps** | baseline (current default) |
+| 2¹⁶ = 64 KB   | 123 356 gbps | −7.1 % |
+| 2¹⁷ = 128 KB  | 111 780 gbps | −15.8 % |
+
+**What this curve says:**
+
+- **32 KB is the genuine sweet spot.** Throughput is convex with a peak at the current default — no easy win from changing this knob alone.
+- **The dropoff is asymmetric.** Halving packet size loses only −1.5 % (16 KB) and quartering loses −4.4 % (8 KB), but doubling loses −7.1 % (64 KB) and quadrupling loses −15.8 % (128 KB). The right edge is a cliff (VMEM/pipeline collapse); the left edge is a gentle slope.
+- **Per-DMA setup cost is bounded by ~5–10 % of total throughput.** If setup cost were ~50 % of per-packet wall-clock (the naïve reading of the inline-vs-regular kernel comparison), 4× more DMAs (8 KB vs 32 KB) would cost ~30 %, not 4.4 %. So the headroom available to *any* DMA-count-reduction strategy is bounded by ~5–10 %.
+- **The asymmetry kills naïve coalescing.** Per-edge coalescing inherently increases per-descriptor payload (fusing N adjacent rounds → N× packet size). 2× coalescing → 64 KB → starts at −7.1 % baseline penalty; the DMA-count savings would have to *exceed* that just to break even. 4× coalescing → 128 KB → starts at −15.8 %; almost certainly net negative.
+
+This refines the [coalescing upper-bound diagnostic](eval/explorations/2026-05-17-coalescing-upper-bound/) verdict: the *theoretical* coalescing factor was 14.7×, but the *achievable* factor under the 64–128 KB packet cap is ~1.5–2×. Combined with the ~5–10 % bound on total DMA-cost-savings, the realistic Option-3 net gain is probably ≤ a few percent — not the original 4.25× DMA reduction.
+
+**Next data points needed:** TPU profiler trace of the 64 KB run (which microarchitectural resource is saturating?), and a sub-flow chunking probe (whether sub-32-KB chunking inside a per-flow DMA recovers more pipeline parallelism than 8 KB simple packets did).
 
 ### Two capacity models — the source of historical confusion
 

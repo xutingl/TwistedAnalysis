@@ -51,40 +51,68 @@ def _gen(**overrides):
     return generate_kernel_source(**defaults)
 
 
-def test_packed_state_emits_preamble_table():
-    """--packed-state must emit a _my_state preamble fori_loop that fills the
-    per-source packed state from dest_table_ref + sizes/input/output refs."""
+def test_packed_state_emits_preamble_scratch_writes():
+    """--packed-state must emit a preamble fori_loop that writes the per-source
+    packed state into scratch_ref (SMEM ref, allocated by the caller).
+
+    We use scratch_ref (not jnp.zeros + state.at[].set()) because the latter
+    lowers to lax.scatter, which Pallas TPU does not support.
+    """
     src = _gen(packed_state=True)
-    assert "_my_state" in src, "packed_state must declare a _my_state variable"
+    assert "scratch_ref[k, 0]" in src, (
+        "packed_state must write dst into scratch_ref[k, 0]"
+    )
+    assert "scratch_ref[k, 1]" in src
+    assert "scratch_ref[k, 2]" in src
+    assert "scratch_ref[k, 3]" in src
     assert "input_offsets_ref" in src
     assert "sizes_ref" in src
     assert "output_offsets_ref" in src
-    # The preamble must run BEFORE the main hot loop. We assert that the
-    # _my_state build appears in the source earlier than the main fori_loop's
-    # `_body` definition.
-    state_pos = src.find("_my_state")
+    # Must NOT use the scatter-emitting pattern:
+    assert ".at[k, 0].set" not in src, (
+        "must not use state.at[k, X].set() — that emits lax.scatter which "
+        "Pallas TPU lowering does not support"
+    )
+    # The preamble must run BEFORE the main hot loop.
+    preamble_pos = src.find("scratch_ref[k, 0] =")
     body_pos = src.find("def _body(")
-    assert 0 <= state_pos < body_pos, (
-        "preamble _my_state initialization must precede the main loop"
+    assert 0 <= preamble_pos < body_pos, (
+        "preamble scratch_ref writes must precede the main loop"
     )
 
 
-def test_packed_state_hot_loop_reads_packed_array():
+def test_packed_state_hot_loop_reads_from_scratch_ref():
     """In the main hot loop, the per-step SMEM reads must be replaced with
-    reads from _my_state."""
+    reads from scratch_ref."""
     src = _gen(packed_state=True)
-    # Find the main `_body` definition block
     body_start = src.find("def _body(")
     assert body_start != -1
-    # Find the next top-level function or end of _body block (use heuristic:
-    # _body is followed by `jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, ...)`)
     body_end = src.find("jax.lax.fori_loop(0, _NUM_ORBITS * num_packets", body_start)
     assert body_end != -1, "could not locate main fori_loop call after _body"
     body_block = src[body_start:body_end]
-    # The body must reference _my_state to pick up at least one of the packed fields
-    assert "_my_state" in body_block, (
-        "main loop body must read from _my_state when packed_state=True"
+    assert "scratch_ref[k, 0]" in body_block, (
+        "main loop body must read dst from scratch_ref[k, 0] when packed_state=True"
     )
+    # The body must NOT make the old direct lookups:
+    assert "dest_table_ref[my_flat, k]" not in body_block
+    assert "sizes_ref[dst" not in body_block
+
+
+def test_packed_state_build_pallas_call_kwargs_emits_scratch_shapes():
+    """build_pallas_call_kwargs() must publish scratch_shapes so the caller
+    allocates the SMEM scratch buffer that scratch_ref binds to."""
+    src = _gen(packed_state=True)
+    assert "scratch_shapes" in src, (
+        "packed_state variant must expose scratch_shapes via build_pallas_call_kwargs"
+    )
+    assert "pltpu.SMEM" in src
+
+
+def test_packed_state_does_not_assert_scratch_ref_is_none():
+    """The kernel body must not assert scratch_ref is None when packed_state=True
+    (it's expected to be the SMEM scratch buffer)."""
+    src = _gen(packed_state=True)
+    assert "assert scratch_ref is None" not in src
 
 
 def test_packed_state_output_parses_as_python():
@@ -95,12 +123,13 @@ def test_packed_state_output_parses_as_python():
 
 def test_packed_state_off_emits_old_pattern():
     """Without --packed-state, the hot loop must still use the old direct
-    SMEM-lookup pattern."""
+    SMEM-lookup pattern and assert scratch_ref is None."""
     src = _gen(packed_state=False)
     assert "dest_table_ref[my_flat, k]" in src, (
         "default mode must still read dst directly from dest_table_ref"
     )
-    assert "_my_state" not in src
+    assert "scratch_ref[k," not in src
+    assert "assert scratch_ref is None" in src
 
 
 def test_wait_batch_size_zero_is_unchanged():

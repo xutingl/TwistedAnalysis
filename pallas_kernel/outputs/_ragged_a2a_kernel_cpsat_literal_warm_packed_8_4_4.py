@@ -288,8 +288,8 @@ def _ragged_a2a_kernel_cpsat_literal_warm_packed_8_4_4(
       * Assumes 1 group per device (uniform AllToAll).
       * `axis_name` is a flat string (e.g. "x"), as in the reference.
     """
-    assert scratch_ref is None
-    del scratch_ref
+    # Option A: scratch_ref is the per-source packed state buffer
+    # (shape (K, 4) int32 SMEM, allocated by the caller via scratch_shapes).
     assert scratch_sems is None
     del scratch_sems
     assert not transpose, (
@@ -365,29 +365,30 @@ def _ragged_a2a_kernel_cpsat_literal_warm_packed_8_4_4(
     _NUM_ORBITS = 127
 
     # ---- Option A: per-source packed state preamble ----
-    # Build _my_state[k] = (dst, sizes_ref[dst], input_offsets_ref[dst],
-    #                       output_offsets_ref[dst]) for each orbit k.
-    # Trades a K-iteration one-time fori_loop for the elimination of
-    # 3 dependent SMEM reads per main-loop iteration.
-    import jax.numpy as jnp
-    _initial_state = jnp.zeros((_NUM_ORBITS, 4), dtype=jnp.int32)
-    def _build_state(k, state):
+    # Build scratch_ref[k] = (dst, sizes_ref[dst], input_offsets_ref[dst],
+    #                         output_offsets_ref[dst]) for each orbit k.
+    # scratch_ref is an SMEM scratch buffer of shape (K, 4) int32, allocated
+    # by the caller via `scratch_shapes=[pltpu.SMEM((K, 4), jnp.int32)]` on
+    # the pallas_call. Subscript writes into Pallas SMEM refs do NOT lower
+    # to scatter (unlike `jnp.zeros(...).at[k].set(...)`), which is required
+    # for TPU lowering compatibility.
+    def _build_state(k, _):
         dst = dest_table_ref[my_flat, k]
-        state = state.at[k, 0].set(dst)
-        state = state.at[k, 1].set(sizes_ref[dst])
-        state = state.at[k, 2].set(input_offsets_ref[dst])
-        state = state.at[k, 3].set(output_offsets_ref[dst])
-        return state
-    _my_state = jax.lax.fori_loop(0, _NUM_ORBITS, _build_state, _initial_state)
+        scratch_ref[k, 0] = dst
+        scratch_ref[k, 1] = sizes_ref[dst]
+        scratch_ref[k, 2] = input_offsets_ref[dst]
+        scratch_ref[k, 3] = output_offsets_ref[dst]
+        return _
+    jax.lax.fori_loop(0, _NUM_ORBITS, _build_state, None)
 
-    # ---- main loop reads packed state ----
+    # ---- main loop reads packed state from scratch_ref ----
     def _body(i, _state):
         packet_idx = lax.div(i, _NUM_ORBITS)
         k = lax.rem(i, _NUM_ORBITS)
-        dst_flat = _my_state[k, 0]
-        size_total = _my_state[k, 1]
-        in_off_base = _my_state[k, 2]
-        out_off_base = _my_state[k, 3]
+        dst_flat = scratch_ref[k, 0]
+        size_total = scratch_ref[k, 1]
+        in_off_base = scratch_ref[k, 2]
+        out_off_base = scratch_ref[k, 3]
         size = lax.min(packet_size, lax.max(size_total - packet_idx * packet_size, 0))
         input_offset = in_off_base + packet_idx * packet_size
         output_offset = out_off_base + packet_idx * packet_size
@@ -429,10 +430,17 @@ def _ragged_a2a_kernel_cpsat_literal_warm_packed_8_4_4(
         ).wait()
 
 def build_pallas_call_kwargs():
-    """Helper for inserting _DEST_TABLE_NP as an extra pallas_call input."""
+    """Packed-state variant: dest_table + a scratch SMEM buffer for _my_state.
+
+    The caller must thread `scratch_shapes` into the pallas_call so
+    `scratch_ref` resolves to an SMEM Ref of shape (K, 4) int32. Without
+    it the kernel will receive scratch_ref=None and fail.
+    """
     import jax.numpy as jnp
+    _K = 127
     return {
         "dest_table": jnp.asarray(_DEST_TABLE_NP),
         "extra_in_spec": pl.BlockSpec(memory_space=pltpu.SMEM),
         "input_output_aliases_shift": 1,
+        "scratch_shapes": [pltpu.SMEM((_K, 4), jnp.int32)],
     }

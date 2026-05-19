@@ -143,6 +143,8 @@ def generate_kernel_source(
     dest_table: np.ndarray,
     orbit_steps: list[list[int]],
     inline_destinations: bool = False,
+    packed_state: bool = False,
+    wait_batch_size: int = 0,
 ) -> str:
     """Emit kernel source from already-computed dest_table + orbit_steps.
 
@@ -161,6 +163,21 @@ def generate_kernel_source(
     K = dest_table.shape[1]
     if K != N - 1:
         raise RuntimeError(f"Expected dest_table cols = {N - 1}; got {K}")
+    if packed_state and per_step_barrier:
+        raise ValueError("--packed-state is incompatible with --per-step-barrier")
+    if packed_state and inline_destinations:
+        raise ValueError("--packed-state is incompatible with --inline-destinations")
+    if wait_batch_size and per_step_barrier:
+        raise ValueError("--wait-batch-size is incompatible with --per-step-barrier")
+    if wait_batch_size and inline_destinations:
+        raise ValueError("--wait-batch-size is incompatible with --inline-destinations")
+    if wait_batch_size and packed_state:
+        raise ValueError(
+            "--wait-batch-size combined with --packed-state not supported in this pass; "
+            "run them as separate experiments."
+        )
+    if wait_batch_size < 0:
+        raise ValueError(f"--wait-batch-size must be >= 0, got {wait_batch_size}")
     makespan_hop0 = len(orbit_steps)
 
     L: list[str] = []
@@ -364,31 +381,160 @@ def generate_kernel_source(
             L.append('    jax.lax.fori_loop(0, num_packets, _body, None)')
         else:
             L.append(f'    _NUM_ORBITS = {K}')
-            L.append('    def _body(i, _state):')
-            L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
-            L.append('        k = lax.rem(i, _NUM_ORBITS)')
-            L.append('        dst_flat = dest_table_ref[my_flat, k]')
-            L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
-            L.append('        return _state')
-            L.append('')
-            L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
+            if packed_state:
+                # --- Option A: build per-source packed state, then read it in hot loop ---
+                L.append('')
+                L.append('    # ---- Option A: per-source packed state preamble ----')
+                L.append('    # Build _my_state[k] = (dst, sizes_ref[dst], input_offsets_ref[dst],')
+                L.append('    #                       output_offsets_ref[dst]) for each orbit k.')
+                L.append('    # Trades a K-iteration one-time fori_loop for the elimination of')
+                L.append('    # 3 dependent SMEM reads per main-loop iteration.')
+                L.append('    import jax.numpy as jnp')
+                L.append('    _initial_state = jnp.zeros((_NUM_ORBITS, 4), dtype=jnp.int32)')
+                L.append('    def _build_state(k, state):')
+                L.append('        dst = dest_table_ref[my_flat, k]')
+                L.append('        state = state.at[k, 0].set(dst)')
+                L.append('        state = state.at[k, 1].set(sizes_ref[dst])')
+                L.append('        state = state.at[k, 2].set(input_offsets_ref[dst])')
+                L.append('        state = state.at[k, 3].set(output_offsets_ref[dst])')
+                L.append('        return state')
+                L.append('    _my_state = jax.lax.fori_loop(0, _NUM_ORBITS, _build_state, _initial_state)')
+                L.append('')
+                L.append('    # ---- main loop reads packed state ----')
+                L.append('    def _body(i, _state):')
+                L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
+                L.append('        k = lax.rem(i, _NUM_ORBITS)')
+                L.append('        dst_flat = _my_state[k, 0]')
+                L.append('        size_total = _my_state[k, 1]')
+                L.append('        in_off_base = _my_state[k, 2]')
+                L.append('        out_off_base = _my_state[k, 3]')
+                L.append('        size = lax.min(packet_size, lax.max(size_total - packet_idx * packet_size, 0))')
+                L.append('        input_offset = in_off_base + packet_idx * packet_size')
+                L.append('        output_offset = out_off_base + packet_idx * packet_size')
+                L.append('        @pl.when(size > 0)')
+                L.append('        def _():')
+                L.append('            if axis_size_local > 1:')
+                L.append('                pltpu.make_async_remote_copy(')
+                L.append('                    x_ref.at[pl.ds(input_offset, size)],')
+                L.append('                    o_ref.at[pl.ds(output_offset, size)],')
+                L.append('                    device_id={axis_name: dst_flat},')
+                L.append('                    send_sem=send_sem,')
+                L.append('                    recv_sem=recv_sem,')
+                L.append('                ).start()')
+                L.append('            else:')
+                L.append('                pltpu.make_async_copy(')
+                L.append('                    x_ref.at[pl.ds(input_offset, size)],')
+                L.append('                    o_ref.at[pl.ds(output_offset, size)],')
+                L.append('                    sem=send_sem,')
+                L.append('                ).start()')
+                L.append('        return _state')
+                L.append('')
+                L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
+            elif wait_batch_size > 0:
+                # --- Option B: batched outer loop with intermediate drain ---
+                L.append(f'    _WAIT_BATCH_SIZE = {wait_batch_size}')
+                L.append('    # ---- Option B: batched issue with intermediate semaphore drain ----')
+                L.append('    # Total inner iterations = _NUM_ORBITS * num_packets. We group them')
+                L.append('    # into batches of _WAIT_BATCH_SIZE issued DMAs, draining after each.')
+                L.append('    def _orbit_body(j, state):')
+                L.append('        i, cum_bytes = state')
+                L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
+                L.append('        k = lax.rem(i, _NUM_ORBITS)')
+                L.append('        dst_flat = dest_table_ref[my_flat, k]')
+                L.append('        size = lax.min(')
+                L.append('            packet_size,')
+                L.append('            lax.max(sizes_ref[dst_flat] - packet_idx * packet_size, 0),')
+                L.append('        )')
+                L.append('        input_offset = input_offsets_ref[dst_flat] + packet_idx * packet_size')
+                L.append('        output_offset = output_offsets_ref[dst_flat] + packet_idx * packet_size')
+                L.append('        @pl.when(size > 0)')
+                L.append('        def _():')
+                L.append('            if axis_size_local > 1:')
+                L.append('                pltpu.make_async_remote_copy(')
+                L.append('                    x_ref.at[pl.ds(input_offset, size)],')
+                L.append('                    o_ref.at[pl.ds(output_offset, size)],')
+                L.append('                    device_id={axis_name: dst_flat},')
+                L.append('                    send_sem=send_sem,')
+                L.append('                    recv_sem=recv_sem,')
+                L.append('                ).start()')
+                L.append('            else:')
+                L.append('                pltpu.make_async_copy(')
+                L.append('                    x_ref.at[pl.ds(input_offset, size)],')
+                L.append('                    o_ref.at[pl.ds(output_offset, size)],')
+                L.append('                    sem=send_sem,')
+                L.append('                ).start()')
+                L.append('        return (i + 1, cum_bytes + size)')
+                L.append('')
+                L.append('    def _batch_body(batch_idx, cum_bytes):')
+                L.append('        i_start = batch_idx * _WAIT_BATCH_SIZE')
+                L.append('        # Use a fori_loop of length _WAIT_BATCH_SIZE to issue the batch')
+                L.append('        # while accumulating cum_bytes:')
+                L.append('        (_, cum_bytes) = jax.lax.fori_loop(')
+                L.append('            0, _WAIT_BATCH_SIZE, _orbit_body, (i_start, cum_bytes)')
+                L.append('        )')
+                L.append('        # Drain after this batch:')
+                L.append('        pltpu.make_async_copy(')
+                L.append('            o_ref.at[pl.ds(0, cum_bytes)],')
+                L.append('            o_ref.at[pl.ds(0, cum_bytes)],')
+                L.append('            send_sem,')
+                L.append('        ).wait()')
+                L.append('        if axis_size_local > 1:')
+                L.append('            pltpu.make_async_copy(')
+                L.append('                o_ref.at[pl.ds(0, cum_bytes)],')
+                L.append('                o_ref.at[pl.ds(0, cum_bytes)],')
+                L.append('                recv_sem,')
+                L.append('            ).wait()')
+                L.append('        return cum_bytes')
+                L.append('')
+                L.append('    _total_iters = _NUM_ORBITS * num_packets')
+                L.append('    _num_batches = _total_iters // _WAIT_BATCH_SIZE')
+                L.append('    cum_bytes = jax.lax.fori_loop(0, _num_batches, _batch_body, 0)')
+                L.append('    # Handle any remainder (when _total_iters is not a multiple of _WAIT_BATCH_SIZE):')
+                L.append('    _remainder = _total_iters - _num_batches * _WAIT_BATCH_SIZE')
+                L.append('    (_, cum_bytes) = jax.lax.fori_loop(')
+                L.append('        0, _remainder, _orbit_body,')
+                L.append('        (_num_batches * _WAIT_BATCH_SIZE, cum_bytes),')
+                L.append('    )')
+            else:
+                L.append('    def _body(i, _state):')
+                L.append('        packet_idx = lax.div(i, _NUM_ORBITS)')
+                L.append('        k = lax.rem(i, _NUM_ORBITS)')
+                L.append('        dst_flat = dest_table_ref[my_flat, k]')
+                L.append('        _issue_packet(packet_idx, dst_flat, {axis_name: dst_flat})')
+                L.append('        return _state')
+                L.append('')
+                L.append('    jax.lax.fori_loop(0, _NUM_ORBITS * num_packets, _body, None)')
         L.append('')
-        L.append('    send_amount = total_send_amount_ref[0]')
-        L.append('    recv_amount = total_recv_amount_ref[0]')
-        L.append('    if enable_checks:')
-        L.append('        pl.debug_check(send_amount >= 0, "send_amount<0")')
-        L.append('        pl.debug_check(recv_amount >= 0, "recv_amount<0")')
-        L.append('    pltpu.make_async_copy(')
-        L.append('        o_ref.at[pl.ds(0, send_amount)],')
-        L.append('        o_ref.at[pl.ds(0, send_amount)],')
-        L.append('        send_sem,')
-        L.append('    ).wait()')
-        L.append('    if axis_size_local > 1:')
-        L.append('        pltpu.make_async_copy(')
-        L.append('            o_ref.at[pl.ds(0, recv_amount)],')
-        L.append('            o_ref.at[pl.ds(0, recv_amount)],')
-        L.append('            recv_sem,')
-        L.append('        ).wait()')
+        if wait_batch_size:
+            L.append('    # final drain: wait for any tail bytes from the remainder loop')
+            L.append('    pltpu.make_async_copy(')
+            L.append('        o_ref.at[pl.ds(0, cum_bytes)],')
+            L.append('        o_ref.at[pl.ds(0, cum_bytes)],')
+            L.append('        send_sem,')
+            L.append('    ).wait()')
+            L.append('    if axis_size_local > 1:')
+            L.append('        pltpu.make_async_copy(')
+            L.append('            o_ref.at[pl.ds(0, cum_bytes)],')
+            L.append('            o_ref.at[pl.ds(0, cum_bytes)],')
+            L.append('            recv_sem,')
+            L.append('        ).wait()')
+        else:
+            L.append('    send_amount = total_send_amount_ref[0]')
+            L.append('    recv_amount = total_recv_amount_ref[0]')
+            L.append('    if enable_checks:')
+            L.append('        pl.debug_check(send_amount >= 0, "send_amount<0")')
+            L.append('        pl.debug_check(recv_amount >= 0, "recv_amount<0")')
+            L.append('    pltpu.make_async_copy(')
+            L.append('        o_ref.at[pl.ds(0, send_amount)],')
+            L.append('        o_ref.at[pl.ds(0, send_amount)],')
+            L.append('        send_sem,')
+            L.append('    ).wait()')
+            L.append('    if axis_size_local > 1:')
+            L.append('        pltpu.make_async_copy(')
+            L.append('            o_ref.at[pl.ds(0, recv_amount)],')
+            L.append('            o_ref.at[pl.ds(0, recv_amount)],')
+            L.append('            recv_sem,')
+            L.append('        ).wait()')
     else:
         L.append('    _self_bytes = sizes_ref[my_flat]')
         L.append('    pltpu.make_async_copy(')
@@ -561,6 +707,26 @@ def main(argv=None) -> int:
              "Larger generated file but eliminates the per-step SMEM load "
              "from the inner critical path.",
     )
+    p.add_argument(
+        "--packed-state",
+        action="store_true",
+        help="Option A: precompute a per-source packed state array "
+             "_my_state[K, 4] holding (dst, sizes_ref[dst], "
+             "input_offsets_ref[dst], output_offsets_ref[dst]) for each orbit k, "
+             "then rewrite the hot loop to read from it. Trades a one-time "
+             "K-iteration preamble for an N(N-1)*num_packets-iteration savings "
+             "of 3 dependent SMEM reads per inner-loop step.",
+    )
+    p.add_argument(
+        "--wait-batch-size",
+        type=int,
+        default=0,
+        help="Option B: drain send/recv semaphores after every B issued DMAs "
+             "using make_async_copy(cumulative_bytes).wait(). 0 (default) means "
+             "no intermediate drain (current behavior, all DMAs issued before "
+             "single final wait). Typical experiment values: 127 (= N-1, one "
+             "drain per packet_idx) or 64 (half-N).",
+    )
     p.add_argument("--function-name", default=None)
     p.add_argument("--routing-table-out", default=None, type=Path,
                    help="Where to save the generated routing table "
@@ -706,6 +872,8 @@ def main(argv=None) -> int:
         dest_table=dest_table,
         orbit_steps=orbit_steps,
         inline_destinations=args.inline_destinations,
+        packed_state=args.packed_state,
+        wait_batch_size=args.wait_batch_size,
     )
     out_path = args.out or (
         _HERE / "outputs" / f"_ragged_a2a_kernel_orbit_greedy_{slice_kern}.py"

@@ -101,3 +101,29 @@ def test_packed_state_off_emits_old_pattern():
         "default mode must still read dst directly from dest_table_ref"
     )
     assert "_my_state" not in src
+
+
+def test_wait_batch_size_zero_is_unchanged():
+    """wait_batch_size=0 must produce identical output to no flag."""
+    src_default = _gen(wait_batch_size=0)
+    src_off = _gen()
+    assert src_default == src_off
+
+
+def test_wait_batch_size_127_emits_outer_packet_loop_with_intermediate_drain():
+    """wait_batch_size=127 wraps the main loop in an outer per-packet fori_loop
+    that drains after every 127 issued DMAs."""
+    src = _gen(wait_batch_size=127)
+    # Must NOT use the old flat fori_loop over _NUM_ORBITS * num_packets:
+    assert "jax.lax.fori_loop(0, _NUM_ORBITS * num_packets" not in src, (
+        "wait_batch_size>0 must replace the flat outer loop with a batched outer loop"
+    )
+    # Must emit an intermediate drain wait inside the outer loop:
+    assert ".wait()" in src
+    # Must keep a running cumulative byte counter:
+    assert "cum_bytes" in src, "expected a running cum_bytes counter for partial drain"
+
+
+def test_wait_batch_size_output_parses_as_python():
+    src = _gen(wait_batch_size=127)
+    ast.parse(src)

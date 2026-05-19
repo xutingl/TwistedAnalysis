@@ -72,6 +72,8 @@ schedule-driven destination table differs.
 | `cpsat_literal_warm` (warm-started, `t_upper=79`, 4 h) | 78 | ≤ 78 | 132 764 gbps | −1.3 % |
 | `spread_greedy(k=1)` (P2P-style, LB-aware order) | 145 | 145 | 132 682 gbps | −1.4 % |
 | `spread_greedy(k=2)` (2-way pipelining) | 92 | 91 | 132764 gbps | —1.3 % |
+| `cpsat_literal_warm_packed` (Option A: packed SMEM preamble) | 78 | ≤ 78 | TBD (to measure on TPU) | TBD |
+| `cpsat_literal_warm_pipelined` (Option B: batch-127 wait drain) | 78 | ≤ 78 | TBD (to measure on TPU) | TBD |
 
 **LB:** physical-edge lower bound on this routing = 75.
 

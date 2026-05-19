@@ -410,6 +410,37 @@ closures — the destination table must be a `pallas_call` input.
    [`../twisted_analysis/schedules/orbit_greedy.py`](../twisted_analysis/schedules/orbit_greedy.py)
    for the LB-relevant hop schedule).
 
+## Dispatch-path tuning options (2026-05-18)
+
+Two orthogonal CLI flags target the kernel's scalar dispatch path. They emit different kernel variants from the same schedule; choose between them at generation time. Both flags only apply to the default codepath (NOT `--per-step-barrier`, NOT `--inline-destinations`).
+
+### `--packed-state` (Option A)
+
+Insert a one-time preamble fori_loop that builds a per-source packed-state array `_my_state[K, 4]` carrying `(dst, sizes_ref[dst], input_offsets_ref[dst], output_offsets_ref[dst])` for each orbit `k`. The main hot loop then reads from `_my_state` instead of issuing 3 dependent SMEM reads per iteration.
+
+- **Preamble cost**: 1 fori_loop of K iterations, run once per kernel call (K ≈ N-1 = 127).
+- **Hot-loop savings**: 3 SMEM reads × `(N-1) × num_packets` iterations per call eliminated (replaced by 4 reads from `_my_state` — but those are from a single small array with high locality, so the compiler likely fuses them into 1 wide read).
+- **Caller integration**: identical to the default kernel — no extra inputs or scratch needed.
+
+### `--wait-batch-size N` (Option B)
+
+Group the inner loop's `(N-1) × num_packets` DMA issues into batches of `N` and insert a `make_async_copy(...).wait()` drain after each batch. The default kernel issues all DMAs and drains only at the very end; this flag inserts intermediate drains to test whether the DMA-engine in-flight queue is the bottleneck.
+
+- `N = 0` (default): no intermediate drains, identical to the legacy kernel.
+- `N = 127`: one drain per packet_idx (recommended starting probe).
+- `N = 64` or smaller: more frequent drains, less in-flight concurrency. Worth probing if `N=127` shows improvement.
+
+The kernel maintains a running `cum_bytes` counter and drains to it via the standard `make_async_copy(o_ref.at[pl.ds(0, cum_bytes)], ..., send_sem).wait()` pattern.
+
+### Generated variants
+
+| Variant | Source kernel | Flag combination |
+|---|---|---|
+| `_ragged_a2a_kernel_cpsat_literal_warm_packed_8_4_4.py` | cpsat_literal_warm (makespan 78) | `--packed-state` |
+| `_ragged_a2a_kernel_cpsat_literal_warm_pipelined_8_4_4.py` | cpsat_literal_warm (makespan 78) | `--wait-batch-size 127` |
+
+Both are produced from the same schedule fixture (`fixtures/schedule_8x4x4_loaded_cpsat_literal_warm.json`); structural correctness is verified by `tests/test_gen_kernel_options.py`. TPU wall-clock correctness must be verified out of band by the operator.
+
 ## Related
 
 - [docs/orbit_greedy_optimality.md](../docs/orbit_greedy_optimality.md) — the

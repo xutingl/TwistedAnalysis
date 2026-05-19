@@ -143,6 +143,8 @@ def generate_kernel_source(
     dest_table: np.ndarray,
     orbit_steps: list[list[int]],
     inline_destinations: bool = False,
+    packed_state: bool = False,
+    wait_batch_size: int = 0,
 ) -> str:
     """Emit kernel source from already-computed dest_table + orbit_steps.
 
@@ -561,6 +563,26 @@ def main(argv=None) -> int:
              "Larger generated file but eliminates the per-step SMEM load "
              "from the inner critical path.",
     )
+    p.add_argument(
+        "--packed-state",
+        action="store_true",
+        help="Option A: precompute a per-source packed state array "
+             "_my_state[K, 4] holding (dst, sizes_ref[dst], "
+             "input_offsets_ref[dst], output_offsets_ref[dst]) for each orbit k, "
+             "then rewrite the hot loop to read from it. Trades a one-time "
+             "K-iteration preamble for an N(N-1)*num_packets-iteration savings "
+             "of 3 dependent SMEM reads per inner-loop step.",
+    )
+    p.add_argument(
+        "--wait-batch-size",
+        type=int,
+        default=0,
+        help="Option B: drain send/recv semaphores after every B issued DMAs "
+             "using make_async_copy(cumulative_bytes).wait(). 0 (default) means "
+             "no intermediate drain (current behavior, all DMAs issued before "
+             "single final wait). Typical experiment values: 127 (= N-1, one "
+             "drain per packet_idx) or 64 (half-N).",
+    )
     p.add_argument("--function-name", default=None)
     p.add_argument("--routing-table-out", default=None, type=Path,
                    help="Where to save the generated routing table "
@@ -706,6 +728,8 @@ def main(argv=None) -> int:
         dest_table=dest_table,
         orbit_steps=orbit_steps,
         inline_destinations=args.inline_destinations,
+        packed_state=args.packed_state,
+        wait_batch_size=args.wait_batch_size,
     )
     out_path = args.out or (
         _HERE / "outputs" / f"_ragged_a2a_kernel_orbit_greedy_{slice_kern}.py"

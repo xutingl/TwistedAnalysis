@@ -1,0 +1,914 @@
+[
+  [
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 3,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": 0
+        },
+        {
+          "node_id": 0,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": 0
+        },
+        {
+          "node_id": 1,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 2,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 3,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": 0
+        },
+        {
+          "node_id": 4,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 5,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": 0
+        },
+        {
+          "node_id": 6,
+          "vc": -1
+        }
+      ]
+    },
+    {
+      "path": [
+        {
+          "node_id": 7,
+          "vc": -1
+        }
+      ]
+    }
+  ]
+]

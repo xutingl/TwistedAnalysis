@@ -5,4 +5,4 @@
 | 2×2×4 | 16 | 8 | 13 | 8 | 0 | 0.8s | `pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_torus_2_2_4.py` |
 | 2×4×4 | 32 | 16 | 33 | 16 | 0 | 321.0s | `pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_torus_2_4_4.py` |
 
-Fill `TBD` after `run_all.sh` completes. `Gap to LB` is `CP-SAT makespan − LB`; expected = 0 unless the routing's physical-edge LB is unattainable (in which case the `t_uppers_tried` field in `results.json` shows which step succeeded).
+Both cells reach `Gap to LB = 0`, i.e. both schedules are LB-tight — provably optimal under the physical-edge capacity model. `Gap to LB` is `CP-SAT makespan − LB`; when nonzero the `t_uppers_tried` field in `results.json` shows which step succeeded.

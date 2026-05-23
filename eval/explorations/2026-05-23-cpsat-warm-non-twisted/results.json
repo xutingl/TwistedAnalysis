@@ -20,5 +20,27 @@
     ],
     "chosen_status": "FEASIBLE",
     "out_schedule": "fixtures/schedule_torus_2x2x4_cpsat_literal_warm.json"
+  },
+  {
+    "slice": [
+      2,
+      4,
+      4
+    ],
+    "routing_table": "fixtures/routing_table_torus_2x4x4.json",
+    "lb": 16,
+    "seed_makespan": 33,
+    "cpsat_makespan": 16,
+    "cpsat_t_uppers_tried": [
+      {
+        "t_upper": 16,
+        "status": "FEASIBLE",
+        "makespan": 16,
+        "violations": 0,
+        "runtime_s": 321.03
+      }
+    ],
+    "chosen_status": "FEASIBLE",
+    "out_schedule": "fixtures/schedule_torus_2x4x4_cpsat_literal_warm.json"
   }
 ]

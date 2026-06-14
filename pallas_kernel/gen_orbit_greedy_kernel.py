@@ -541,18 +541,26 @@ def generate_kernel_source(
             L.append('            recv_sem,')
             L.append('        ).wait()')
     else:
+        # Per-step SEND drain ONLY. Issue one OrbitGreedy step's DMAs, then wait
+        # for THIS device's own sends to complete before issuing the next step.
+        # This bounds outstanding DMAs to one step's width (the TPU v4 / "pfc"
+        # fix; v4 has a smaller DMA descriptor queue than v5).
+        #
+        # The RECV side is drained ONCE at the very end for the true total
+        # `total_recv_amount_ref[0]`, exactly like the reference / non-barrier
+        # path. A per-step recv drain is INCORRECT: it would have to wait on
+        # recv_sem for THIS device's *send* byte-count (`cum`), but a device
+        # receives a different number of bytes than it sends -- per step AND in
+        # total -- under a ragged / non-uniform all-to-all. A send-keyed recv
+        # wait therefore blocks on bytes that never arrive => deadlock on EVERY
+        # TPU generation (this was the bug in the original --per-step-barrier).
+        L.append('    # ---- per-step SEND drain; single RECV drain at the end ----')
         L.append('    _self_bytes = sizes_ref[my_flat]')
         L.append('    pltpu.make_async_copy(')
         L.append('        o_ref.at[pl.ds(0, _self_bytes)],')
         L.append('        o_ref.at[pl.ds(0, _self_bytes)],')
         L.append('        send_sem,')
         L.append('    ).wait()')
-        L.append('    if axis_size_local > 1:')
-        L.append('        pltpu.make_async_copy(')
-        L.append('            o_ref.at[pl.ds(0, _self_bytes)],')
-        L.append('            o_ref.at[pl.ds(0, _self_bytes)],')
-        L.append('            recv_sem,')
-        L.append('        ).wait()')
         L.append('')
         if inline_destinations:
             L.append('    def _issue_orbit_inlined(branches):')
@@ -564,6 +572,7 @@ def generate_kernel_source(
             L.append('        jax.lax.fori_loop(0, num_packets, _pb, None)')
             L.append('')
             L.append('    def _drain_step_inlined(branches_list):')
+            L.append('        # SEND drain only: wait for this step\'s own sends.')
             L.append('        cum = 0')
             L.append('        for branches in branches_list:')
             L.append('            dst_idx = jax.lax.switch(my_flat, branches)')
@@ -573,12 +582,6 @@ def generate_kernel_source(
             L.append('            o_ref.at[pl.ds(0, cum)],')
             L.append('            send_sem,')
             L.append('        ).wait()')
-            L.append('        if axis_size_local > 1:')
-            L.append('            pltpu.make_async_copy(')
-            L.append('                o_ref.at[pl.ds(0, cum)],')
-            L.append('                o_ref.at[pl.ds(0, cum)],')
-            L.append('                recv_sem,')
-            L.append('            ).wait()')
             L.append('')
             for t, step in enumerate(orbit_steps):
                 L.append(f'    # ---- OrbitGreedy step {t} ({len(step)} orbit(s)) ----')
@@ -597,6 +600,7 @@ def generate_kernel_source(
             L.append('        jax.lax.fori_loop(0, num_packets, _pb, None)')
             L.append('')
             L.append('    def _drain_step(step_indices):')
+            L.append('        # SEND drain only: wait for this step\'s own sends.')
             L.append('        cum = 0')
             L.append('        for k in step_indices:')
             L.append('            cum = cum + sizes_ref[dest_table_ref[my_flat, k]]')
@@ -605,12 +609,6 @@ def generate_kernel_source(
             L.append('            o_ref.at[pl.ds(0, cum)],')
             L.append('            send_sem,')
             L.append('        ).wait()')
-            L.append('        if axis_size_local > 1:')
-            L.append('            pltpu.make_async_copy(')
-            L.append('                o_ref.at[pl.ds(0, cum)],')
-            L.append('                o_ref.at[pl.ds(0, cum)],')
-            L.append('                recv_sem,')
-            L.append('            ).wait()')
             L.append('')
             for t, step in enumerate(orbit_steps):
                 L.append(f'    # ---- OrbitGreedy step {t} ({len(step)} orbit(s)) ----')
@@ -618,6 +616,18 @@ def generate_kernel_source(
                     L.append(f'    _issue_orbit({k})')
                 L.append(f'    _drain_step({step!r})')
                 L.append('')
+        # Single final RECV drain for the TRUE total (ragged-safe), exactly like
+        # the reference kernel. All sends were already drained per step above.
+        L.append('    # ---- final RECV drain: wait for the true total received ----')
+        L.append('    recv_amount = total_recv_amount_ref[0]')
+        L.append('    if enable_checks:')
+        L.append('        pl.debug_check(recv_amount >= 0, "recv_amount<0")')
+        L.append('    if axis_size_local > 1:')
+        L.append('        pltpu.make_async_copy(')
+        L.append('            o_ref.at[pl.ds(0, recv_amount)],')
+        L.append('            o_ref.at[pl.ds(0, recv_amount)],')
+        L.append('            recv_sem,')
+        L.append('        ).wait()')
 
     L.append('')
     if inline_destinations:
@@ -718,7 +728,12 @@ def main(argv=None) -> int:
         help="Time limit (s) for the ilp_literal solver. Ignored otherwise.",
     )
     p.add_argument("--per-step-barrier", action="store_true",
-                   help="Emit per-OrbitGreedy-step barriers (best-effort).")
+                   help="Bound outstanding DMAs for small-DMA-queue targets "
+                        "(e.g. TPU v4 / 'pfc'): issue one OrbitGreedy step's "
+                        "DMAs, drain SEND sem, then next step; RECV sem is "
+                        "drained once at the end for the true total "
+                        "(ragged-safe). Without it all DMAs are issued up front "
+                        "(fine on TPU v5, hangs on v4).")
     p.add_argument(
         "--inline-destinations",
         action="store_true",

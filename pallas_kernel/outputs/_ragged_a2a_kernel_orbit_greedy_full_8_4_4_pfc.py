@@ -365,18 +365,13 @@ def _ragged_a2a_kernel_orbit_greedy_8_4_4_pfc(
 
     jax.lax.fori_loop(0, num_packets, _self_body, None)
 
+    # ---- per-step SEND drain; single RECV drain at the end ----
     _self_bytes = sizes_ref[my_flat]
     pltpu.make_async_copy(
         o_ref.at[pl.ds(0, _self_bytes)],
         o_ref.at[pl.ds(0, _self_bytes)],
         send_sem,
     ).wait()
-    if axis_size_local > 1:
-        pltpu.make_async_copy(
-            o_ref.at[pl.ds(0, _self_bytes)],
-            o_ref.at[pl.ds(0, _self_bytes)],
-            recv_sem,
-        ).wait()
 
     def _issue_orbit(k):
         dst_flat = dest_table_ref[my_flat, k]
@@ -387,6 +382,7 @@ def _ragged_a2a_kernel_orbit_greedy_8_4_4_pfc(
         jax.lax.fori_loop(0, num_packets, _pb, None)
 
     def _drain_step(step_indices):
+        # SEND drain only: wait for this step's own sends.
         cum = 0
         for k in step_indices:
             cum = cum + sizes_ref[dest_table_ref[my_flat, k]]
@@ -395,12 +391,6 @@ def _ragged_a2a_kernel_orbit_greedy_8_4_4_pfc(
             o_ref.at[pl.ds(0, cum)],
             send_sem,
         ).wait()
-        if axis_size_local > 1:
-            pltpu.make_async_copy(
-                o_ref.at[pl.ds(0, cum)],
-                o_ref.at[pl.ds(0, cum)],
-                recv_sem,
-            ).wait()
 
     # ---- OrbitGreedy step 0 (6 orbit(s)) ----
     _issue_orbit(0)
@@ -769,6 +759,16 @@ def _ragged_a2a_kernel_orbit_greedy_8_4_4_pfc(
     _issue_orbit(126)
     _drain_step([126])
 
+    # ---- final RECV drain: wait for the true total received ----
+    recv_amount = total_recv_amount_ref[0]
+    if enable_checks:
+        pl.debug_check(recv_amount >= 0, "recv_amount<0")
+    if axis_size_local > 1:
+        pltpu.make_async_copy(
+            o_ref.at[pl.ds(0, recv_amount)],
+            o_ref.at[pl.ds(0, recv_amount)],
+            recv_sem,
+        ).wait()
 
 def build_pallas_call_kwargs():
     """Helper for inserting _DEST_TABLE_NP as an extra pallas_call input."""

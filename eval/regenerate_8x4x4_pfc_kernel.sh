@@ -12,12 +12,17 @@
 #   schedule is submitted at once.
 #
 # THE FIX (--per-step-barrier):
-#   Issue the DMAs for one OrbitGreedy step at a time, then drain send_sem and
-#   recv_sem before the next step. This bounds outstanding DMAs to one step's
+#   Issue the DMAs for one OrbitGreedy step at a time, then drain the SEND
+#   semaphore before the next step. This bounds outstanding DMAs to one step's
 #   width (<= 6 orbits * num_packets here, vs ~127 * num_packets), which fits the
-#   v4 queue. The orbit_greedy_full schedule is prefix-balanced
-#   (incoming(<=t) >= outgoing(<=t) for every device at every step), so the
-#   per-step recv drain never blocks on not-yet-sent data -> no deadlock.
+#   v4 queue. The RECV semaphore is drained ONCE at the end for the true total
+#   (total_recv_amount_ref[0]), exactly like the reference kernel.
+#
+#   NOTE: an earlier version of --per-step-barrier also drained recv_sem PER
+#   STEP, keyed on this device's *send* bytes. Under a ragged all-to-all a device
+#   receives a different byte count than it sends, so that recv wait blocked
+#   forever -> deadlock on BOTH v4 AND v5. Fixed 2026-06-14 (send-only per-step
+#   drain + single final recv drain).
 #
 # The v5 kernel is left untouched; this emits a NEW file with a `_pfc` suffix.
 #

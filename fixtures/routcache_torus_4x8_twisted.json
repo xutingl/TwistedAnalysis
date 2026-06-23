@@ -1,0 +1,7874 @@
+[
+  [
+    {
+      "path": [
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": 0 },
+        { "node_id": 5, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ],
+  [
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": 0 },
+        { "node_id": 0, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 1, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": 0 },
+        { "node_id": 4, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": 0 },
+        { "node_id": 5, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 8, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 9, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 2, "vc": 0 },
+        { "node_id": 6, "vc": 0 },
+        { "node_id": 10, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 3, "vc": 0 },
+        { "node_id": 7, "vc": 0 },
+        { "node_id": 11, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": 0 },
+        { "node_id": 15, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 17, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 13, "vc": 0 },
+        { "node_id": 14, "vc": 0 },
+        { "node_id": 18, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": 0 },
+        { "node_id": 19, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": 0 },
+        { "node_id": 21, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": 0 },
+        { "node_id": 22, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": 0 },
+        { "node_id": 23, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 12, "vc": 0 },
+        { "node_id": 16, "vc": 0 },
+        { "node_id": 20, "vc": 0 },
+        { "node_id": 24, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 25, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 26, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 27, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": 0 },
+        { "node_id": 28, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": 0 },
+        { "node_id": 29, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": 0 },
+        { "node_id": 30, "vc": -1 }
+      ]
+    },
+    {
+      "path": [
+        { "node_id": 31, "vc": -1 }
+      ]
+    }
+  ]
+]

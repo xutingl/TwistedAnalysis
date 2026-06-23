@@ -21,6 +21,25 @@ LB for this routing = 75 (max physical-edge load).
 
 The previously-recommended `cpsatliteralwarm` (makespan 78, projected +7.5% vs P2P; measured ~0%) is retained as the makespan-optimal baseline.
 
+## Additional twisted-torus cells — `orbit_greedy_full` (2026-06-23)
+
+`orbit_greedy_full` (order `lpt_tail_asc`) schedules for three further loaded
+twisted-torus routings supplied as `fixtures/routcache_torus_<coords>_twisted.json`.
+The flatten `slice` is the torus coords with largest dim first (verified by
+single-hop topology consistency, not assumed). All are capacity-feasible (0
+physical-edge violations) and cover the full `N*(N-1)` AllToAll flow set.
+Regenerate via `scripts/generate_routcache_orbitfull_schedules.py`.
+
+| CNS filename | Source routcache | slice | N | Makespan | LB | Physical-edge violations |
+|---|---|---|---:|---:|---:|---:|
+| `schedule_orbitfull_4x8_twisted.json` | `routcache_torus_4x8_twisted.json` | (8, 4) | 32 | 23 | 21 | 0 |
+| `schedule_orbitfull_8x16_twisted.json` | `routcache_torus_8x16_twisted.json` | (16, 8) | 128 | 188 | 170 | 0 |
+| `schedule_orbitfull_4x8x8_twisted.json` | `routcache_torus_4x8x8_twisted.json` | (8, 8, 4) | 256 | 223 | 184 | 0 |
+
+Source fixtures (same content as the CNS copies):
+`schedule_<slice>_loaded_orbit_greedy_full_lpt_tail_asc.json` for slices
+`8x4`, `16x8`, `8x8x4` respectively.
+
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 
 This is the schedule produced by the pre-Task-10 `orbit_greedy` algorithm,

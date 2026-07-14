@@ -301,6 +301,44 @@ def schedule_from_lns_cpsat(
     )
 
 
+def schedule_from_ragged_fluid(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    workload,
+) -> list[dict]:
+    """Adapter: ragged_fluid -> schedule entries.
+
+    `workload` is a twisted_analysis.model.ragged.RaggedWorkload (load one
+    via twisted_analysis.io.workload.load_workload).
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.ragged_fluid import ragged_fluid
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return ragged_fluid(table, workload)
+
+
+def schedule_from_ragged_greedy(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    workload,
+    order: str = "lpt",
+    preemptive: bool = False,
+) -> list[dict]:
+    """Adapter: ragged_greedy -> schedule entries.
+
+    `workload` as in schedule_from_ragged_fluid. `order` in
+    {"lpt", "spt", "natural"}; `preemptive` allows chunk splitting.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.ragged_greedy import ragged_greedy
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return ragged_greedy(table, workload, order=order, preemptive=preemptive)
+
+
 _SCHEDULER_DISPATCH = {
     "orbit_greedy": schedule_from_orbit_greedy,
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
@@ -311,6 +349,8 @@ _SCHEDULER_DISPATCH = {
     "lp_rounding": schedule_from_lp_rounding,
     "local_search": schedule_from_local_search,
     "lns_cpsat": schedule_from_lns_cpsat,
+    "ragged_fluid": schedule_from_ragged_fluid,
+    "ragged_greedy": schedule_from_ragged_greedy,
 }
 
 
@@ -350,6 +390,13 @@ def schedule_from_algorithm(
         incumbents. Requires `seed_schedule` kwarg; tunables `n_iters` (default
         100), `per_subproblem_budget_s` (default 300), `destroy_size_frac`
         (default 0.05), `rng_seed` (default 0), `n_workers` (default 8).
+      - "ragged_fluid":      closed-form water-filling for ragged workloads.
+        Makespan-optimal in the fluid (continuous-rate) model; one entry per
+        flow at rate size/LB. Requires `workload` kwarg (RaggedWorkload).
+      - "ragged_greedy":     integral (rate=1) earliest-feasible greedy for
+        ragged workloads. Requires `workload` kwarg; optional `order`
+        ("lpt"/"spt"/"natural", default "lpt") and `preemptive` (default
+        False; True splits flows into chunks for lower makespan).
 
     Per-algorithm kwargs (e.g., `order`, `time_limit_s`, `t_upper`) are passed through.
     """

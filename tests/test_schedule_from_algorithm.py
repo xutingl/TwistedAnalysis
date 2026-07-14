@@ -28,3 +28,30 @@ def test_dispatcher_rejects_unknown_algorithm(tmp_path):
     table = load_routing_table(rt_path)
     with pytest.raises(ValueError, match="unknown algorithm"):
         schedule_from_algorithm("does_not_exist", topology, table)
+
+
+def test_dispatch_ragged_fluid_and_greedy():
+    from pathlib import Path
+
+    from twisted_analysis.io.routing_table import load_routing_table
+    from twisted_analysis.io.schedule import schedule_from_algorithm
+    from twisted_analysis.model.ragged import RaggedWorkload
+    from twisted_analysis.topology import Topology
+
+    fixtures = Path(__file__).resolve().parent.parent / "fixtures"
+    topology = Topology(slice=(8, 4, 4))
+    table = load_routing_table(fixtures / "routing_table_8x4x4_twist.json")
+    w = RaggedWorkload(demand={(0, 5): 64, (3, 9): 32, (100, 2): 96})
+
+    fluid = schedule_from_algorithm(
+        "ragged_fluid", topology, table, workload=w,
+    )
+    assert len(fluid) == 3
+    assert all("rate" in e and "size" in e for e in fluid)
+
+    greedy = schedule_from_algorithm(
+        "ragged_greedy", topology, table,
+        workload=w, order="lpt", preemptive=False,
+    )
+    assert len(greedy) == 3
+    assert all(e["rate"] == 1.0 for e in greedy)

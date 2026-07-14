@@ -1048,8 +1048,8 @@ achieving makespan = LB does not apply. The algorithm is still
 useful and capacity-feasible, but it is no longer claimed to be optimal
 in those cases.
 
-The fixtures `fixtures/schedule_2x4x4_ilp_ilp_literal.json` and
-`fixtures/schedule_4x8_ilp_ilp_literal.json` archive the literal-ILP
+The fixtures `fixtures/nonragged/schedule_2x4x4_ilp_ilp_literal.json` and
+`fixtures/nonragged/schedule_4x8_ilp_ilp_literal.json` archive the literal-ILP
 LB-tight schedules for these cells, so the +1 gap can be reproduced
 without re-running the (expensive) ILP.
 

@@ -40,7 +40,7 @@ def test_dispatch_ragged_fluid_and_greedy():
 
     fixtures = Path(__file__).resolve().parent.parent / "fixtures"
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(fixtures / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(fixtures / "routing" / "routing_table_8x4x4_twist.json")
     w = RaggedWorkload(demand={(0, 5): 64, (3, 9): 32, (100, 2): 96})
 
     fluid = schedule_from_algorithm(

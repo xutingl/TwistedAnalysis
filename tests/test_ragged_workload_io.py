@@ -8,8 +8,8 @@ from twisted_analysis.io.routing_table import load_routing_table
 from twisted_analysis.io.workload import load_workload
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
-WORKLOAD_FIXTURE = FIXTURES / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
-ROUTING_FIXTURE = FIXTURES / "routing_table_8x4x4_twist.json"
+WORKLOAD_FIXTURE = FIXTURES / "ragged" / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
+ROUTING_FIXTURE = FIXTURES / "routing" / "routing_table_8x4x4_twist.json"
 
 
 def test_load_small_workload_preserves_file_order(tmp_path):

@@ -83,7 +83,7 @@ def test_preemptive_splits_around_busy_slot():
 
 def _subsample_workload(n_flows):
     raw = json.loads((
-        FIXTURES / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
+        FIXTURES / "ragged" / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
     ).read_text())
     return RaggedWorkload(demand={
         (e["src"], e["dst"]): e["size"] for e in islice(raw, n_flows)
@@ -94,7 +94,7 @@ def _subsample_workload(n_flows):
 def test_fixture_subsample_feasible(preemptive):
     """Spec test 4 at reduced scale (first 300 flows) to keep runtime low."""
     w = _subsample_workload(300)
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     sched = ragged_greedy(table, w, order="lpt", preemptive=preemptive)
     assert verify_capacity_ragged(sched, quantum=w.quantum) == []
     assert verify_workload_coverage(sched, w) == []
@@ -106,7 +106,7 @@ def test_fixture_subsample_feasible(preemptive):
 
 def test_fixture_subsample_preemptive_no_worse():
     w = _subsample_workload(300)
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     ms_non = schedule_makespan_ragged(
         ragged_greedy(table, w, order="lpt", preemptive=False),
         quantum=w.quantum,

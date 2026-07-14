@@ -80,7 +80,7 @@ def test_legacy_schedule_verifies_and_matches_makespan():
     """Spec test 5: defaults (rate=1, size=1, quantum=1) reproduce the
     existing uniform semantics on a real fixture."""
     sched = load_schedule(
-        FIXTURES / "schedule_8x4x4_loaded_cpsat_literal_warm.json"
+        FIXTURES / "nonragged" / "schedule_8x4x4_loaded_cpsat_literal_warm.json"
     )
     assert verify_capacity(sched) == []
     assert verify_capacity_ragged(sched) == []

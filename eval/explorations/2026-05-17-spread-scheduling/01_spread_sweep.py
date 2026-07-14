@@ -23,7 +23,7 @@ from twisted_analysis.io.schedule import save_schedule
 from twisted_analysis.schedules.spread_greedy import spread_greedy
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 K_VALUES = [1, 2, 3, 4]
 ORDER = "lpt"

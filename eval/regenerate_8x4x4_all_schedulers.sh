@@ -15,7 +15,7 @@ set -u
 PROJ_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJ_ROOT"
 
-ROUTING_TABLE="fixtures/routing_table_8x4x4_twist.json"
+ROUTING_TABLE="fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE="8,4,4"
 PY=".venv/bin/python"
 
@@ -23,7 +23,7 @@ run() {
   local sched="$1"
   local order="${2:-lpt_tail_asc}"
   local out_kern="pallas_kernel/outputs/_ragged_a2a_kernel_${sched}_8_4_4.py"
-  local out_sched="fixtures/schedule_8x4x4_loaded_${sched}_${order}.json"
+  local out_sched="fixtures/nonragged/schedule_8x4x4_loaded_${sched}_${order}.json"
   echo "=== Running scheduler=${sched} order=${order} ==="
   if "$PY" pallas_kernel/gen_orbit_greedy_kernel.py \
         --slice "$SLICE" \

@@ -1,9 +1,17 @@
 # CNS Schedules
 
 Schedules for the loaded (8, 4, 4) twisted-torus routing
-(`fixtures/routing_table_8x4x4_twist.json`), renamed for the CNS pipeline
+(`fixtures/routing/routing_table_8x4x4_twist.json`), renamed for the CNS pipeline
 ((8, 4, 4) and (4, 4, 8) refer to the same physical topology under
 dimension-label permutation).
+
+> **Fixture layout note.** `fixtures/` is split into `routing/`, `nonragged/`,
+> and `ragged/`. This readme and the non-ragged CNS copies below live in
+> `fixtures/nonragged/cns_schedules/`; their non-ragged **source fixtures** are in
+> `fixtures/nonragged/`, and the routing tables / route caches they reference are
+> in `fixtures/routing/`. The **ragged** A2A section at the bottom documents files
+> that now live in `fixtures/ragged/cns_schedules/` (CNS copies) and
+> `fixtures/ragged/` (source fixtures + workload).
 
 | CNS filename | Source fixture | Scheduler | Makespan | Physical-edge violations |
 |---|---|---:|---:|---:|
@@ -17,14 +25,14 @@ dimension-label permutation).
 
 LB for this routing = 75 (max physical-edge load).
 
-**Recommended for production measurement runs: side-by-side TPU benchmark of `spreadgreedyk1`, `spreadgreedyk2`, and `cpsatliteralwarm` against the reference P2P kernel.** The makespan-78 `cpsatliteralwarm` schedule measured 132764 gbps on TPU v5e — essentially unchanged from `orbitfull` (132758 gbps) and ~1.3% below the P2P reference (134541 gbps), despite a simulator projection of +7.5%. The leading hypothesis is that per-device DMA-engine oversubscription dominates per-round wall-clock; `spread_greedy(k=K)` caps each device at K simultaneous outgoing AND incoming DMAs per round, trading higher simulator makespan for lower per-round contention. Two K values are promoted: `spreadgreedyk1` (makespan 145; same per-round structure as reference P2P but with LB-aware destination ordering instead of pure rotation) and `spreadgreedyk2` (makespan 92; smallest 2-way pipelining). The other K values (`spread_greedy_k3` — makespan 88; `spread_greedy_k4` — makespan 86) are shipped in `fixtures/` for follow-up comparison but not promoted to `cns_schedules/`. Provenance: `eval/explorations/2026-05-17-spread-scheduling/`.
+**Recommended for production measurement runs: side-by-side TPU benchmark of `spreadgreedyk1`, `spreadgreedyk2`, and `cpsatliteralwarm` against the reference P2P kernel.** The makespan-78 `cpsatliteralwarm` schedule measured 132764 gbps on TPU v5e — essentially unchanged from `orbitfull` (132758 gbps) and ~1.3% below the P2P reference (134541 gbps), despite a simulator projection of +7.5%. The leading hypothesis is that per-device DMA-engine oversubscription dominates per-round wall-clock; `spread_greedy(k=K)` caps each device at K simultaneous outgoing AND incoming DMAs per round, trading higher simulator makespan for lower per-round contention. Two K values are promoted: `spreadgreedyk1` (makespan 145; same per-round structure as reference P2P but with LB-aware destination ordering instead of pure rotation) and `spreadgreedyk2` (makespan 92; smallest 2-way pipelining). The other K values (`spread_greedy_k3` — makespan 88; `spread_greedy_k4` — makespan 86) are shipped in `fixtures/nonragged/` for follow-up comparison but not promoted to `cns_schedules/`. Provenance: `eval/explorations/2026-05-17-spread-scheduling/`.
 
 The previously-recommended `cpsatliteralwarm` (makespan 78, projected +7.5% vs P2P; measured ~0%) is retained as the makespan-optimal baseline.
 
 ## Additional twisted-torus cells — `orbit_greedy_full` (2026-06-23)
 
 `orbit_greedy_full` (order `lpt_tail_asc`) schedules for three further loaded
-twisted-torus routings supplied as `fixtures/routcache_torus_<coords>_twisted.json`.
+twisted-torus routings supplied as `fixtures/routing/routcache_torus_<coords>_twisted.json`.
 The flatten `slice` is the torus coords with largest dim first (verified by
 single-hop topology consistency, not assumed). All are capacity-feasible (0
 physical-edge violations) and cover the full `N*(N-1)` AllToAll flow set.
@@ -91,7 +99,7 @@ for the full search log.
 ## Ragged A2A schedules (2026-07-14)
 
 Schedules for the **ragged** (per-pair-sized) AllToAll workload
-`fixtures/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json` on the
+`fixtures/ragged/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json` on the
 same loaded (8, 4, 4) twisted-torus routing. Sizes are multiples of 32 in
 [32, 1024]; quantum = 32; **LB = 12,608 bytes = 394 quanta** (max
 size-weighted physical-edge load). All entries are verified 0-violation

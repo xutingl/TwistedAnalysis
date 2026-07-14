@@ -32,13 +32,13 @@ set -u
 PROJ_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJ_ROOT"
 
-ROUTING_TABLE="fixtures/routing_table_8x4x4_twist.json"
+ROUTING_TABLE="fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE="8,4,4"
 ORDER="lpt_tail_asc"
 PY=".venv/bin/python"
 
 OUT_KERN="pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_full_8_4_4_pfc.py"
-OUT_SCHED="fixtures/schedule_8x4x4_loaded_orbit_greedy_full_${ORDER}.json"
+OUT_SCHED="fixtures/nonragged/schedule_8x4x4_loaded_orbit_greedy_full_${ORDER}.json"
 
 echo "=== Generating TPU v4 (pfc) per-step-barrier kernel ==="
 "$PY" pallas_kernel/gen_orbit_greedy_kernel.py \

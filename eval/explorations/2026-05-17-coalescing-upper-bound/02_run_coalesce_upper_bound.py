@@ -17,7 +17,7 @@ from cpsat_coalesce import cpsat_coalesce
 from descriptor_counter import count_dma_descriptors
 
 
-ROUTING_PATH = REPO / "fixtures" / "routing_table_8x4x4_twist.json"
+ROUTING_PATH = REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"
 OUT_PATH = Path(__file__).resolve().parent / "02_results.json"
 SCHEDULE_OUT = Path(__file__).resolve().parent / "02_coalesce_schedule.json"
 

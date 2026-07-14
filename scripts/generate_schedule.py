@@ -5,7 +5,7 @@ in `_run` to add more schedulers.
 
 Usage:
     python scripts/generate_schedule.py \\
-        --routing-table fixtures/routing_table_8x4x4_twist.json \\
+        --routing-table fixtures/routing/routing_table_8x4x4_twist.json \\
         --slice 8,4,4 \\
         --scheduler orbit_greedy \\
         --order lpt_tail_asc
@@ -68,7 +68,7 @@ def main(argv=None) -> int:
              "Required when --scheduler spread_greedy.",
     )
     p.add_argument("--out", default=None,
-                   help="Output path (default: ./fixtures/schedule_<slice>_<scheduler>_<order>.json)")
+                   help="Output path (default: ./fixtures/nonragged/schedule_<slice>_<scheduler>_<order>.json)")
     args = p.parse_args(argv)
 
     # Validate scheduler-specific required args.
@@ -96,7 +96,7 @@ def main(argv=None) -> int:
 
     if args.out is None:
         slice_str = "x".join(str(s) for s in slice_)
-        out_path = _HERE.parent / "fixtures" / (
+        out_path = _HERE.parent / "fixtures" / "nonragged" / (
             f"schedule_{slice_str}_{args.scheduler}_{args.order}.json"
         )
     else:

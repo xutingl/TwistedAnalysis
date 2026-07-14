@@ -14,7 +14,7 @@ from twisted_analysis.schedules.verify import (
 )
 
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
-WORKLOAD = FIXTURES / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
+WORKLOAD = FIXTURES / "ragged" / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
 
 EXPECTED = [
     ("schedule_8x4x4_loaded_ragged_fluid.json", 399.0),
@@ -27,7 +27,7 @@ EXPECTED = [
 
 @pytest.mark.parametrize("fixture_name,expected_makespan", EXPECTED)
 def test_committed_fixture_is_clean_and_matches_readme(fixture_name, expected_makespan):
-    sched = load_schedule(FIXTURES / fixture_name)
+    sched = load_schedule(FIXTURES / "ragged" / fixture_name)
     workload = load_workload(WORKLOAD)
     assert verify_capacity_ragged(sched, quantum=32) == []
     assert verify_workload_coverage(sched, workload) == []

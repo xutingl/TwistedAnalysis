@@ -13,10 +13,10 @@ def test_cli_fluid_end_to_end(tmp_path, capsys):
     out = tmp_path / "sched.json"
     csv = tmp_path / "metrics.csv"
     rc = generate_ragged_schedule.main([
-        "--routing-table", str(FIXTURES / "routing_table_8x4x4_twist.json"),
+        "--routing-table", str(FIXTURES / "routing" / "routing_table_8x4x4_twist.json"),
         "--slice", "8,4,4",
         "--workload", str(
-            FIXTURES / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
+            FIXTURES / "ragged" / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
         ),
         "--scheduler", "ragged_fluid",
         "--out", str(out),

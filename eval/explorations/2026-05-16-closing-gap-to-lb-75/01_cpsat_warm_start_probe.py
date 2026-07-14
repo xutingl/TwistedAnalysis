@@ -2,7 +2,7 @@
 
 For each t_upper in {79, 78, 77, 76}, run cpsat_literal with a 4-hour
 (14400s) budget, warm-started from the previous best incumbent (initially
-fixtures/schedule_8x4x4_loaded_cpsat_literal.json; updated to whatever
+fixtures/nonragged/schedule_8x4x4_loaded_cpsat_literal.json; updated to whatever
 FEASIBLE incumbent the prior probe produced).
 
 Saves per-t_upper rows to 01_cpsat_warm_start_results.json. The best
@@ -19,13 +19,13 @@ from twisted_analysis.io.schedule import save_schedule, load_schedule
 from twisted_analysis.schedules.cpsat_literal import cpsat_literal
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 T_UPPER_SCHEDULE = [79, 78, 77, 76]
 TIME_LIMIT_S = 14400  # 4 hours
 WORKERS = 8
 
-SEED_SCHEDULE = "fixtures/schedule_8x4x4_loaded_cpsat_literal.json"
+SEED_SCHEDULE = "fixtures/nonragged/schedule_8x4x4_loaded_cpsat_literal.json"
 OUT = Path(__file__).parent / "01_cpsat_warm_start_results.json"
 BEST = Path(__file__).parent / "01_best_warm_start_schedule.json"
 

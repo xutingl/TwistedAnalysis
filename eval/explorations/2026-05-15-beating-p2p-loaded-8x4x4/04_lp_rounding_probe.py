@@ -10,7 +10,7 @@ from twisted_analysis.io.schedule import save_schedule
 from twisted_analysis.schedules.lp_rounding import lp_rounding
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 T_UPPER = 95
 N_TRIALS = 200

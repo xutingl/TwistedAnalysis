@@ -32,7 +32,7 @@ def _schedule_from_full(topology, table, order="lpt_tail_asc"):
 
 def test_orbit_greedy_full_zero_violations_on_loaded_8x4x4():
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     schedule = _schedule_from_full(topology, table)
     violations = verify_capacity(schedule)
     assert violations == [], (

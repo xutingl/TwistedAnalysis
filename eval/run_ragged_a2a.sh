@@ -11,9 +11,9 @@ CSV="$RESULTS/ragged_a2a.csv"
 rm -f "$CSV"
 
 COMMON=(
-  --routing-table fixtures/routing_table_8x4x4_twist.json
+  --routing-table fixtures/routing/routing_table_8x4x4_twist.json
   --slice 8,4,4
-  --workload fixtures/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json
+  --workload fixtures/ragged/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json
   --csv-append "$CSV"
 )
 

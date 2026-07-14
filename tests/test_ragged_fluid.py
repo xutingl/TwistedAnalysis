@@ -37,9 +37,9 @@ def test_small_case_rates_and_makespan():
 def test_fixture_scale_lb_certificate():
     """Spec test 3: fluid schedule is feasible at makespan 399 = LB + 5."""
     w = load_workload(
-        FIXTURES / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
+        FIXTURES / "ragged" / "ragged_a2a_workload_node_128_min_32_max_1024_discrete.json"
     )
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     sched = ragged_fluid(table, w)
     assert len(sched) == len(w.demand)  # one entry per flow
     assert all(0 < e["rate"] <= 1 for e in sched)

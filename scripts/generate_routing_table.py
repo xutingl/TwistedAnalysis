@@ -1,7 +1,7 @@
 """Generate a routing-table JSON file for a {S, 2S}^n twisted-torus topology.
 
-Output: matrix-of-paths JSON in the shape of fixtures/routing_table_8x4x4_twist.json
-(with `vc` omitted). Default destination: fixtures/routing_table_<slice>_<router>.json.
+Output: matrix-of-paths JSON in the shape of fixtures/routing/routing_table_8x4x4_twist.json
+(with `vc` omitted). Default destination: fixtures/routing/routing_table_<slice>_<router>.json.
 
 Usage:
     python scripts/generate_routing_table.py --slice 4,4,8 --router ilp
@@ -41,7 +41,7 @@ def main(argv=None) -> int:
                    help="Comma-separated slice, e.g. 4,4,8")
     p.add_argument("--router", default="ilp", choices=["ilp", "dor"])
     p.add_argument("--out", default=None,
-                   help="Output path (default: ./fixtures/routing_table_<slice>_<router>.json)")
+                   help="Output path (default: ./fixtures/routing/routing_table_<slice>_<router>.json)")
     args = p.parse_args(argv)
 
     slice_ = _parse_slice(args.slice)
@@ -50,7 +50,7 @@ def main(argv=None) -> int:
 
     if args.out is None:
         slice_str = "x".join(str(s) for s in slice_)
-        out_path = _HERE.parent / "fixtures" / f"routing_table_{slice_str}_{args.router}.json"
+        out_path = _HERE.parent / "fixtures" / "routing" / f"routing_table_{slice_str}_{args.router}.json"
     else:
         out_path = Path(args.out)
 

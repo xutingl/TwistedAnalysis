@@ -11,15 +11,15 @@ from twisted_analysis.io.schedule import load_schedule, save_schedule, schedule_
 from twisted_analysis.schedules.local_search import local_search_repair
 from twisted_analysis.schedules.verify import schedule_makespan, verify_capacity
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 FOLDER = Path(__file__).parent
 OUT = FOLDER / "05_local_search_results.json"
 
 # Seed paths from earlier phases.
 SEED_PATHS = [
-    Path("fixtures/schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json"),
-    Path("fixtures/schedule_8x4x4_loaded_literal_greedy_lpt.json"),
+    Path("fixtures/nonragged/schedule_8x4x4_loaded_orbit_greedy_full_lpt_tail_asc.json"),
+    Path("fixtures/nonragged/schedule_8x4x4_loaded_literal_greedy_lpt.json"),
     FOLDER / "02_best_random_shuffle_schedule.json",
     FOLDER / "03_best_cpsat_schedule.json",
     FOLDER / "04_best_lp_rounding_schedule.json",

@@ -12,7 +12,7 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
 def test_literal_greedy_zero_violations_on_loaded_8x4x4():
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     schedule = literal_greedy(topology, table, order="lpt")
     assert verify_capacity(schedule) == []
     # Sanity: every (src, dst) pair with src != dst appears exactly once.

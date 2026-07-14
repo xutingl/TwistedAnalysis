@@ -11,9 +11,9 @@ Pipeline (single cell):
 
 Usage:
     .venv/bin/python -u eval/explorations/2026-05-23-cpsat-warm-non-twisted/run_cpsat_warm.py \\
-        --routing-table fixtures/routing_table_torus_2x2x4.json \\
+        --routing-table fixtures/routing/routing_table_torus_2x2x4.json \\
         --slice 2,2,4 \\
-        --out-schedule fixtures/schedule_torus_2x2x4_cpsat_literal_warm.json \\
+        --out-schedule fixtures/nonragged/schedule_torus_2x2x4_cpsat_literal_warm.json \\
         --time-limit-s 300 \\
         --results-json eval/explorations/2026-05-23-cpsat-warm-non-twisted/results.json
 """

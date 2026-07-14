@@ -8,7 +8,7 @@ FIXT = Path(__file__).parent.parent / "fixtures"
 
 def _load(name: str) -> list[tuple[str, str, int, str]]:
     rows = []
-    with (FIXT / f"routing_{name}.csv").open() as f:
+    with (FIXT / "routing" / f"routing_{name}.csv").open() as f:
         r = csv.reader(f)
         next(r)  # header
         for row in r:

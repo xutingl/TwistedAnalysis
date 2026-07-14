@@ -1,10 +1,10 @@
 """Generate orbit_greedy_full schedules for the routcache twisted-torus cells.
 
-For each `fixtures/routcache_torus_<coords>_twisted.json` loaded routing, run the
-`orbit_greedy_full` scheduler (full physical-edge accounting) and emit:
+For each `fixtures/routing/routcache_torus_<coords>_twisted.json` loaded routing, run
+the `orbit_greedy_full` scheduler (full physical-edge accounting) and emit:
 
-  1. fixtures/schedule_<slice>_loaded_orbit_greedy_full_<order>.json
-  2. fixtures/cns_schedules/schedule_orbitfull_<coords>_twisted.json  (renamed copy)
+  1. fixtures/nonragged/schedule_<slice>_loaded_orbit_greedy_full_<order>.json
+  2. fixtures/nonragged/cns_schedules/schedule_orbitfull_<coords>_twisted.json  (renamed copy)
 
 Each schedule is verified for physical-edge capacity violations and its makespan
 / routing LB reported. The flatten `slice` for each cell is the torus coords with
@@ -41,7 +41,9 @@ CELLS = [
 ]
 
 FIX = _HERE.parent / "fixtures"
-CNS = FIX / "cns_schedules"
+ROUTING = FIX / "routing"
+NONRAGGED = FIX / "nonragged"
+CNS = NONRAGGED / "cns_schedules"
 
 
 def routing_lb(table: list[list[list[int]]]) -> int:
@@ -59,7 +61,7 @@ def main() -> int:
           f"{'violations':>11}")
     print("-" * 56)
     for fname, slice_, coords in CELLS:
-        table = load_routing_table(FIX / fname)
+        table = load_routing_table(ROUTING / fname)
         topo = Topology(slice=slice_)
         if len(table) != topo.n_nodes:
             raise SystemExit(
@@ -73,7 +75,7 @@ def main() -> int:
         lb = routing_lb(table)
 
         slice_str = "x".join(str(s) for s in slice_)
-        fix_out = FIX / f"schedule_{slice_str}_loaded_orbit_greedy_full_{ORDER}.json"
+        fix_out = NONRAGGED / f"schedule_{slice_str}_loaded_orbit_greedy_full_{ORDER}.json"
         cns_out = CNS / f"schedule_orbitfull_{coords}_twisted.json"
         save_schedule(entries, fix_out)
         save_schedule(entries, cns_out)

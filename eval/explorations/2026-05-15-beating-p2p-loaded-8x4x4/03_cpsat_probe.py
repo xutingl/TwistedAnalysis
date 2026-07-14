@@ -20,7 +20,7 @@ from twisted_analysis.io.schedule import save_schedule
 from twisted_analysis.schedules.cpsat_literal import cpsat_literal
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 T_UPPER_SCHEDULE = [84, 83, 82, 81, 80, 78, 76]
 TIME_LIMIT_S = 1800

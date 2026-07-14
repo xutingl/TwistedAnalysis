@@ -15,7 +15,7 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
 
 def test_loaded_8x4x4_orbit_greedy_has_violations():
-    schedule = load_schedule(FIXTURES / "schedule_8x4x4_loaded_lpt_tail_asc.json")
+    schedule = load_schedule(FIXTURES / "nonragged" / "schedule_8x4x4_loaded_lpt_tail_asc.json")
     violations = verify_capacity(schedule)
     # The exact count was 640 at the time this regression was added; we assert
     # "many" rather than the exact number to avoid brittleness if greedy

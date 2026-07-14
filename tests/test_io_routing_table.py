@@ -1,6 +1,6 @@
 """Routing-table save/load + RoutingTableRouter adapter.
 
-On-disk shape (matches fixtures/routing_table_8x4x4_twist.json minus vc):
+On-disk shape (matches fixtures/routing/routing_table_8x4x4_twist.json minus vc):
   list[N] of list[N] of {"path": [{"node_id": int}, ...]}
 """
 from __future__ import annotations

@@ -15,7 +15,7 @@ from twisted_analysis.io.schedule import (
 )
 from twisted_analysis.schedules.verify import schedule_makespan, verify_capacity
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 OUT = Path(__file__).with_suffix("").parent / "01_ordering_sweep_results.json"
 

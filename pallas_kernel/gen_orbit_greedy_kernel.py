@@ -17,11 +17,11 @@ Usage (CLI):
     # Reuse an existing routing-table:
     python pallas_kernel/gen_orbit_greedy_kernel.py \\
         --slice 8,4,4 \\
-        --routing-table fixtures/routing_table_8x4x4_twist.json
+        --routing-table fixtures/routing/routing_table_8x4x4_twist.json
 
 Default outputs:
-    routing table: ./fixtures/routing_table_<slice>_<router>.json
-    schedule:      ./fixtures/schedule_<slice>_<router>_<order>.json
+    routing table: ./fixtures/routing/routing_table_<slice>_<router>.json
+    schedule:      ./fixtures/nonragged/schedule_<slice>_<router>_<order>.json
     kernel:        ./pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py
 """
 from __future__ import annotations
@@ -766,11 +766,11 @@ def main(argv=None) -> int:
     p.add_argument("--function-name", default=None)
     p.add_argument("--routing-table-out", default=None, type=Path,
                    help="Where to save the generated routing table "
-                        "(default: ./fixtures/routing_table_<slice>_<router>.json). "
+                        "(default: ./fixtures/routing/routing_table_<slice>_<router>.json). "
                         "Ignored if --routing-table is given.")
     p.add_argument("--schedule-out", default=None, type=Path,
                    help="Where to save the schedule "
-                        "(default: ./fixtures/schedule_<slice>_<router_or_loaded>_<order>.json)")
+                        "(default: ./fixtures/nonragged/schedule_<slice>_<router_or_loaded>_<order>.json)")
     p.add_argument("--out", default=None, type=Path,
                    help="Output kernel path "
                         "(default: ./pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py)")
@@ -795,7 +795,7 @@ def main(argv=None) -> int:
         router_slug = args.router or "ilp"
         router, router_disp = _build_router(router_slug, topology)
         rt_path = args.routing_table_out or (
-            fixtures / f"routing_table_{slice_slug}_{router_slug}.json"
+            fixtures / "routing" / f"routing_table_{slice_slug}_{router_slug}.json"
         )
         save_routing_table(topology, router, rt_path)
         print(f"[1/4] wrote routing table {rt_path}", file=sys.stderr)
@@ -841,7 +841,7 @@ def main(argv=None) -> int:
             args.scheduler, topology, table, **sched_kwargs,
         )
         sched_path = args.schedule_out or (
-            fixtures
+            fixtures / "nonragged"
             / f"schedule_{slice_slug}_{router_slug}_{args.scheduler}_{args.order}.json"
         )
         save_schedule(schedule, sched_path)

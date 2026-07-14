@@ -17,7 +17,7 @@ from twisted_analysis.schedules.orbit_greedy_full import _orbit_hop_edge_sets
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 from twisted_analysis.io.schedule import save_schedule
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 N_SEEDS = 1000
 OUT = Path(__file__).parent / "02_random_orbit_shuffle_results.json"

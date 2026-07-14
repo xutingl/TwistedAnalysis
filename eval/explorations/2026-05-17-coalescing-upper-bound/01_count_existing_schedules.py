@@ -16,7 +16,7 @@ from twisted_analysis.io.schedule import load_schedule
 from descriptor_counter import count_dma_descriptors
 
 
-FIXTURES = REPO / "fixtures"
+FIXTURES = REPO / "fixtures" / "nonragged"
 OUT_PATH = Path(__file__).resolve().parent / "01_results.json"
 
 SCHEDULES = [

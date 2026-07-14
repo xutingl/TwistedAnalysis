@@ -49,7 +49,7 @@ status under the physical-edge model:
   intractable). Literal ILP at `t_upper = LB` is feasible on (2,4,4)-ilp
   and (4,8)-ilp, so the +1 gap is a heuristic-level sub-optimality, not a
   fundamental bound.
-- **Loaded routings** (e.g. `fixtures/routing_table_8x4x4_twist.json`):
+- **Loaded routings** (e.g. `fixtures/routing/routing_table_8x4x4_twist.json`):
   `orbit_greedy` is the best-known feasible schedule but its makespan/LB
   gap is 10/75 ≈ 13% — and the literal ILP can't determine whether `LB`
   is reachable.

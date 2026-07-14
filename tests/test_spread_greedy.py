@@ -25,7 +25,7 @@ def _per_device_per_round_max(schedule):
 
 def test_spread_greedy_zero_violations_loaded_8x4x4_k2():
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     schedule = spread_greedy(topology, table, k=2, order="lpt")
     assert verify_capacity(schedule) == []
     pairs = {(e["src"], e["dst"]) for e in schedule}
@@ -35,7 +35,7 @@ def test_spread_greedy_zero_violations_loaded_8x4x4_k2():
 
 def test_spread_greedy_respects_k_cap_loaded_8x4x4():
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     for k in (1, 2, 3, 4):
         schedule = spread_greedy(topology, table, k=k, order="lpt")
         out_max, in_max = _per_device_per_round_max(schedule)
@@ -57,7 +57,7 @@ def test_spread_greedy_k1_makespan_at_least_n_minus_one(tmp_path):
 def test_spread_greedy_large_k_matches_literal_greedy_makespan():
     """Cap is non-binding at K=N, so per-flow choices are identical to literal_greedy (same order, same tie-break)."""
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     spread = spread_greedy(topology, table, k=topology.n_nodes, order="lpt")
     lit = literal_greedy(topology, table, order="lpt")
     assert schedule_makespan(spread) == schedule_makespan(lit)
@@ -66,7 +66,7 @@ def test_spread_greedy_large_k_matches_literal_greedy_makespan():
 @pytest.mark.parametrize("order", ["lpt", "spt", "natural"])
 def test_spread_greedy_orderings_all_feasible(order):
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     schedule = spread_greedy(topology, table, k=2, order=order)
     assert verify_capacity(schedule) == []
 
@@ -87,7 +87,7 @@ def test_spread_greedy_via_dispatch():
     """schedule_from_algorithm('spread_greedy', ...) must dispatch correctly."""
     from twisted_analysis.io.schedule import schedule_from_algorithm
     topology = Topology(slice=(8, 4, 4))
-    table = load_routing_table(FIXTURES / "routing_table_8x4x4_twist.json")
+    table = load_routing_table(FIXTURES / "routing" / "routing_table_8x4x4_twist.json")
     schedule = schedule_from_algorithm("spread_greedy", topology, table, k=2)
     assert verify_capacity(schedule) == []
     n = topology.n_nodes

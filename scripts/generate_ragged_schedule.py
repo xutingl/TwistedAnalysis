@@ -2,9 +2,9 @@
 
 Usage:
     python scripts/generate_ragged_schedule.py \\
-        --routing-table fixtures/routing_table_8x4x4_twist.json \\
+        --routing-table fixtures/routing/routing_table_8x4x4_twist.json \\
         --slice 8,4,4 \\
-        --workload fixtures/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json \\
+        --workload fixtures/ragged/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json \\
         --scheduler ragged_greedy --order lpt [--preemptive]
 
 Verifies capacity and workload coverage before writing; exits non-zero on
@@ -58,7 +58,7 @@ def main(argv=None) -> int:
     p.add_argument("--preemptive", action="store_true",
                    help="ragged_greedy only: allow chunk splitting")
     p.add_argument("--out", default=None,
-                   help="Output path (default: fixtures/schedule_<slice>_loaded_"
+                   help="Output path (default: fixtures/ragged/schedule_<slice>_loaded_"
                         "ragged_<fluid|greedy_<order>[_pre]>.json)")
     p.add_argument("--csv-append", default=None, type=Path,
                    help="Append a metrics row to this CSV (header written if new)")
@@ -103,7 +103,7 @@ def main(argv=None) -> int:
         slice_str = "x".join(str(s) for s in slice_)
         suffix = ("fluid" if args.scheduler == "ragged_fluid"
                   else f"greedy_{args.order}" + ("_pre" if args.preemptive else ""))
-        out_path = _HERE.parent / "fixtures" / (
+        out_path = _HERE.parent / "fixtures" / "ragged" / (
             f"schedule_{slice_str}_loaded_ragged_{suffix}.json"
         )
     else:

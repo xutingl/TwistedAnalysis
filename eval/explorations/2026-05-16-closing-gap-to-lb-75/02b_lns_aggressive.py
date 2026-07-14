@@ -23,7 +23,7 @@ from twisted_analysis.io.schedule import save_schedule, load_schedule
 from twisted_analysis.schedules.lns_cpsat import lns_cpsat_repair
 from twisted_analysis.schedules.verify import verify_capacity, schedule_makespan
 
-ROUTING = "fixtures/routing_table_8x4x4_twist.json"
+ROUTING = "fixtures/routing/routing_table_8x4x4_twist.json"
 SLICE = (8, 4, 4)
 SEED_SCHEDULE = "eval/explorations/2026-05-16-closing-gap-to-lb-75/01_best_warm_start_schedule.json"
 

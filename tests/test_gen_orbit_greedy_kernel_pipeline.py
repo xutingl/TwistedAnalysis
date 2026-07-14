@@ -119,7 +119,7 @@ def test_dest_table_raises_on_incomplete_schedule():
 def test_pipeline_from_routing_table_8x4x4_twist_fixture(tmp_path: Path):
     """Exercise the example from the spec: load the existing 8x4x4 fixture
     and produce a schedule + kernel."""
-    rt = REPO / "fixtures" / "routing_table_8x4x4_twist.json"
+    rt = REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"
     assert rt.exists()
     sched_out = tmp_path / "sched_8x4x4.json"
     kernel_out = tmp_path / "kernel_8x4x4.py"

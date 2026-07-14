@@ -28,7 +28,7 @@ run_cell() {
     local time_limit_s="$4"
 
     local slice_slug="${slice_csv//,/x}"   # 2,2,4 -> 2x2x4
-    local schedule="fixtures/schedule_torus_${slice_slug}_cpsat_literal_warm.json"
+    local schedule="fixtures/nonragged/schedule_torus_${slice_slug}_cpsat_literal_warm.json"
     local kernel="pallas_kernel/outputs/_ragged_a2a_kernel_cpsat_literal_warm_torus_${slice_kern}.py"
     local log="${EXPLO}/run_log_${slice_slug}.txt"
 
@@ -55,7 +55,7 @@ run_cell() {
     echo
 }
 
-run_cell "2,2,4" "2_2_4" "fixtures/routing_table_torus_2x2x4.json"  300
-run_cell "2,4,4" "2_4_4" "fixtures/routing_table_torus_2x4x4.json" 1800
+run_cell "2,2,4" "2_2_4" "fixtures/routing/routing_table_torus_2x2x4.json"  300
+run_cell "2,4,4" "2_4_4" "fixtures/routing/routing_table_torus_2x4x4.json" 1800
 
 echo "=== done. See ${EXPLO}/results.json and ${EXPLO}/RESULTS.md ==="

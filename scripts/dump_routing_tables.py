@@ -5,7 +5,7 @@ from pathlib import Path
 
 from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 
-OUT = Path(__file__).parent.parent / "fixtures"
+OUT = Path(__file__).parent.parent / "fixtures" / "routing"
 
 
 def dump(slice_: tuple[int, ...], name: str, router_kind: str) -> None:
@@ -32,7 +32,7 @@ def dump(slice_: tuple[int, ...], name: str, router_kind: str) -> None:
 
 
 if __name__ == "__main__":
-    OUT.mkdir(exist_ok=True)
+    OUT.mkdir(parents=True, exist_ok=True)
     dump((2, 4), "2x4", "dor")
     dump((4, 8), "4x8", "dor")
     dump((2, 4), "2x4", "ilp")

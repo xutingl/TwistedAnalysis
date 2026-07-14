@@ -1,7 +1,7 @@
 """Ragged-workload on-disk I/O.
 
 Format: top-level list of `{"src": int, "dst": int, "size": int}` dicts
-(matches fixtures/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json).
+(matches fixtures/ragged/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json).
 Pair order in the file is preserved in the returned demand dict; the
 `natural` scheduler order iterates it.
 """

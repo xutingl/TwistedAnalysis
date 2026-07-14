@@ -87,3 +87,47 @@ not proof of infeasibility. A longer compute budget (4-8 h per probe) or a
 warm-start from the current makespan-80 incumbent could plausibly close
 more of the gap. See `eval/explorations/2026-05-15-beating-p2p-loaded-8x4x4/`
 for the full search log.
+
+## Ragged A2A schedules (2026-07-14)
+
+Schedules for the **ragged** (per-pair-sized) AllToAll workload
+`fixtures/ragged_a2a_workload_node_128_min_32_max_1024_discrete.json` on the
+same loaded (8, 4, 4) twisted-torus routing. Sizes are multiples of 32 in
+[32, 1024]; quantum = 32; **LB = 12,608 bytes = 394 quanta** (max
+size-weighted physical-edge load). All entries are verified 0-violation
+(rate-capacity sweepline) and coverage-exact (per-pair chunk sizes sum to
+the workload demand). Regenerate via `eval/run_ragged_a2a.sh`.
+
+**Format extension:** entries carry two additional fields beyond
+`{round, src, dst, path}`:
+
+- `rate` (float in (0, 1]) — the flow's share of every link on its path.
+- `size` (int, bytes) — the bytes moved by this entry; a flow may be split
+  across multiple chunk entries (its sizes sum to the workload demand, so
+  the demand matrix is recoverable from the schedule alone).
+
+Time model (pipelined-stream): an entry occupies path edge `i` during
+`[round + i, round + i + (size/32)/rate)` in quantum units; per-edge
+capacity is `sum(rate) <= 1` at all times. Greedy schedules use `rate = 1.0`
+throughout; only `raggedfluid` uses fractional rates (as small as 32/12608
+≈ 0.0025 — check DMA-sharing granularity before benchmarking it as-is).
+
+| CNS filename | Source fixture | Scheduler | Makespan (quanta) | Gap vs LB=394 | Entries | Max chunks/flow | Violations |
+|---|---|---|---:|---:|---:|---:|---:|
+| `schedule_raggedgreedylptpre_4x4x8_twisted.json` | `schedule_8x4x4_loaded_ragged_greedy_lpt_pre.json` | `ragged_greedy` lpt, preemptive | **394** | **0.00%** | 19,959 | 6 | 0 |
+| `schedule_raggedfluid_4x4x8_twisted.json` | `schedule_8x4x4_loaded_ragged_fluid.json` | `ragged_fluid` (closed-form water-filling) | 399 | +1.27% | 16,256 | 1 | 0 |
+| `schedule_raggedgreedylpt_4x4x8_twisted.json` | `schedule_8x4x4_loaded_ragged_greedy_lpt.json` | `ragged_greedy` lpt, non-preemptive | 410 | +4.06% | 16,256 | 1 | 0 |
+| `schedule_raggedgreedynatural_4x4x8_twisted.json` | `schedule_8x4x4_loaded_ragged_greedy_natural.json` | `ragged_greedy` natural, non-preemptive | 540 | +37.06% | 16,256 | 1 | 0 |
+| `schedule_raggedgreedyspt_4x4x8_twisted.json` | `schedule_8x4x4_loaded_ragged_greedy_spt.json` | `ragged_greedy` spt, non-preemptive | 588 | +49.24% | 16,256 | 1 | 0 |
+
+**Recommended for production measurement runs: `raggedgreedylptpre`** — it
+achieves the lower bound exactly (394 quanta, a certified-optimal integral
+schedule; every entry at `rate = 1.0`, so no fractional-rate hardware
+assumptions), at the cost of ~23% more DMA descriptors than one-entry-per-
+flow schedules (19,959 entries, at most 6 chunks per flow).
+`raggedgreedylpt` (410, one entry per flow, rate 1.0) is the
+minimal-descriptor fallback if per-DMA setup cost dominates at this entry
+count. `raggedfluid` is the theoretical baseline: makespan-optimal in the
+continuous-rate model but with 127 concurrent DMAs per device at tiny
+fractional rates — benchmark it only if the DMA engine's bandwidth-sharing
+behavior is what you want to measure.

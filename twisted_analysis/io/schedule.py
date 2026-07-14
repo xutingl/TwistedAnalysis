@@ -3,7 +3,7 @@
 Format: list of dicts, one per (round, src, dst) triple. Each dict has at
 least the keys: {"round": int, "src": int, "dst": int, "path": [int, ...]}.
 Optional fields: "rate" (float in (0, 1], default 1.0) and "size" (positive
-int in workload units, default 1) for ragged schedules.
+int in workload units — bytes for the shipped fixtures, NOT quanta; default 1) for ragged schedules.
 
 `src` and `dst` are flat-IDs; `path` is the sequence of flat-IDs traversed
 from src to dst (inclusive of both endpoints).

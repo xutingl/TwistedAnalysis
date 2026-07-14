@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from twisted_analysis.io.routing_table import load_routing_table
-from twisted_analysis.io.workload import load_workload
 from twisted_analysis.model.ragged import RaggedWorkload
 from twisted_analysis.schedules.ragged_greedy import ragged_greedy
 from twisted_analysis.schedules.verify import (

@@ -45,3 +45,13 @@ def test_rejects_bool_size():
 def test_rejects_empty():
     with pytest.raises(ValueError, match="at least one flow"):
         RaggedWorkload(demand={})
+
+
+def test_demand_is_copied_and_immutable():
+    src = {(0, 2): 64, (1, 2): 32}
+    w = RaggedWorkload(demand=src)
+    assert w.quantum == 32
+    src[(0, 2)] = 5  # mutating the caller's dict must not affect the workload
+    assert w.demand[(0, 2)] == 64
+    with pytest.raises(TypeError):
+        w.demand[(0, 2)] = 5  # mappingproxy rejects writes

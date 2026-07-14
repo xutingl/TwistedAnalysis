@@ -14,6 +14,7 @@ from collections import Counter
 from dataclasses import dataclass
 from functools import cached_property
 from math import gcd
+from types import MappingProxyType
 from typing import Mapping
 
 Edge = tuple[int, int]
@@ -33,6 +34,7 @@ class RaggedWorkload:
                 raise ValueError(
                     f"flow ({s}, {d}): size must be positive int, got {size!r}"
                 )
+        object.__setattr__(self, "demand", MappingProxyType(dict(self.demand)))
 
     @cached_property
     def quantum(self) -> int:

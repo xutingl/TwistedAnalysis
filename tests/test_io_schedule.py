@@ -279,3 +279,44 @@ def test_cli_generate_schedule_multi_hop_table_friendly_error(tmp_path: Path):
         f"raw traceback leaked to stderr:\n{res.stderr}"
     )
     assert not out.exists(), "no schedule should be written on failure"
+
+
+def test_rate_and_size_fields_roundtrip(tmp_path):
+    from twisted_analysis.io.schedule import load_schedule, save_schedule
+
+    entries = [{
+        "round": 0, "src": 0, "dst": 2, "path": [0, 1, 2],
+        "rate": 0.5, "size": 128,
+    }]
+    p = tmp_path / "s.json"
+    save_schedule(entries, p)
+    loaded = load_schedule(p)
+    assert loaded[0]["rate"] == 0.5
+    assert loaded[0]["size"] == 128
+
+
+def test_rate_zero_rejected(tmp_path):
+    import pytest
+    from twisted_analysis.io.schedule import save_schedule
+
+    entries = [{"round": 0, "src": 0, "dst": 1, "path": [0, 1], "rate": 0.0}]
+    with pytest.raises(ValueError, match="rate"):
+        save_schedule(entries, tmp_path / "s.json")
+
+
+def test_rate_above_one_rejected(tmp_path):
+    import pytest
+    from twisted_analysis.io.schedule import save_schedule
+
+    entries = [{"round": 0, "src": 0, "dst": 1, "path": [0, 1], "rate": 1.5}]
+    with pytest.raises(ValueError, match="rate"):
+        save_schedule(entries, tmp_path / "s.json")
+
+
+def test_size_zero_rejected(tmp_path):
+    import pytest
+    from twisted_analysis.io.schedule import save_schedule
+
+    entries = [{"round": 0, "src": 0, "dst": 1, "path": [0, 1], "size": 0}]
+    with pytest.raises(ValueError, match="size"):
+        save_schedule(entries, tmp_path / "s.json")

@@ -2,6 +2,8 @@
 
 Format: list of dicts, one per (round, src, dst) triple. Each dict has at
 least the keys: {"round": int, "src": int, "dst": int, "path": [int, ...]}.
+Optional fields: "rate" (float in (0, 1], default 1.0) and "size" (positive
+int in workload units, default 1) for ragged schedules.
 
 `src` and `dst` are flat-IDs; `path` is the sequence of flat-IDs traversed
 from src to dst (inclusive of both endpoints).
@@ -46,6 +48,18 @@ def _validate(entries: Iterable[ScheduleEntry]) -> list[dict]:
             raise ValueError(
                 f"entry {i}: path[-1]={path[-1]} != dst={e['dst']}"
             )
+        if "rate" in e:
+            rate = e["rate"]
+            if isinstance(rate, bool) or not isinstance(rate, (int, float)):
+                raise ValueError(f"entry {i}: rate={rate!r} must be a number")
+            if not (0 < rate <= 1):
+                raise ValueError(f"entry {i}: rate={rate!r} must be in (0, 1]")
+        if "size" in e:
+            size = e["size"]
+            if isinstance(size, bool) or not isinstance(size, int) or size < 1:
+                raise ValueError(
+                    f"entry {i}: size={size!r} must be a positive int"
+                )
         out.append(dict(e))
     return out
 

@@ -45,6 +45,8 @@ working with a weaker (smaller) feasible set than it claims.
 | `ilp_literal` | Exact ILP on the literal `N(N-1)` flow set (CBC) | Provably optimal under physical-edge capacity. Tractable up to N=32 (~minutes); intractable at N=128 (CBC hangs on 1.37M binary vars) |
 | `pipelined_orbit` | Orbit greedy with `t_{i+1} = t_i + 1` constraint | Diagnostic only; not optimal in general |
 | `round_robin` / `xla` | Latin-square rotation (baseline) | 4–9× over LB on full AllToAll |
+| `ragged_fluid` | Ragged workloads: closed-form water-filling (`rate = size/LB`), one entry per flow | Provably makespan- and entry-count-optimal in the continuous-rate (fluid) model; on the 128-node ragged fixture: LB = 394 quanta, makespan 399 (LB + pipeline fill) |
+| `ragged_greedy` | Ragged workloads: integral (`rate = 1`) earliest-feasible greedy; non-preemptive (1 entry/flow) or preemptive (chunked) variants; orders `lpt`/`spt`/`natural` | No LB guarantee; on the 128-node ragged fixture (LB = 394, `eval/run_ragged_a2a.sh`): non-preemptive `lpt` 410 (+4.06%), `natural` 540 (+37.06%), `spt` 588 (+49.24%); preemptive `lpt` reaches the LB exactly (394, 0.00% gap) at the cost of chunking (19959 entries, up to 6 chunks/flow, vs 16256 entries / 1 chunk non-preemptive) |
 
 A gap of 1 means the routing+schedule saturate every bottleneck link; >1
 quantifies inefficiency. **Performance varies materially by routing**: see
@@ -138,7 +140,7 @@ cat results/$(date +%Y-%m-%d)/headlines.csv   # aggregated summary
 - `twisted_analysis/simulator/` — step-synchronous engine + instrumentation.
 - `twisted_analysis/lp/` — time-indexed ILP + LP relaxation (PuLP/CBC).
 - `twisted_analysis/viz/` — matplotlib plot helpers.
-- `fixtures/` — persisted routing tables and schedules (`routing_table_<slice>_<router>.json`, `schedule_<slice>_<router>_<order>.json`); also legacy CSV from `scripts/dump_routing_tables.py`.
+- `fixtures/` — persisted routing tables and schedules (`routing_table_<slice>_<router>.json`, `schedule_<slice>_<router>_<order>.json`); also legacy CSV from `scripts/dump_routing_tables.py`. Ragged workloads are `ragged_a2a_workload_<...>.json` and their schedules `schedule_<slice>_loaded_ragged_<scheduler>.json`; ragged entries carry `rate`/`size` fields (see the 2026-07-14 spec).
 - `pallas_kernel/` — Pallas TPU kernel generator (consumes a routing table + schedule, emits `outputs/_ragged_a2a_kernel_<scheduler>_<slice>.py`). Current outputs include `orbit_greedy_8_4_4`, `orbit_greedy_full_8_4_4`, `literal_greedy_8_4_4`, `cpsat_literal_warm_8_4_4` (the makespan-78 production recommendation for the loaded 8×4×4 routing), and `cpsat_literal_warm_inline_8_4_4` (same schedule with `--inline-destinations`: per-step destinations baked as `jax.lax.switch` branches instead of an SMEM `dest_table_ref` input), and `spread_greedy_k2_8_4_4` / `spread_greedy_k2_inline_8_4_4` (per-device DMA-cap K=2; testbed for the DMA-oversubscription hypothesis from 2026-05-17), and `cpsat_literal_warm_torus_2_2_4` / `cpsat_literal_warm_torus_2_4_4` (non-twisted-torus AllToAll on slices (2,2,4) and (2,4,4); see [eval/explorations/2026-05-23-cpsat-warm-non-twisted/](eval/explorations/2026-05-23-cpsat-warm-non-twisted/)).
 - `scripts/` — reproducible CLIs:
   - `generate_routing_table.py` — `(slice, router) → fixtures/routing_table_<slice>_<router>.json`

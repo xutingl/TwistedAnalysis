@@ -62,6 +62,20 @@ def test_half_open_intervals_do_not_collide():
     assert verify_capacity_ragged(sched, quantum=32) == []
 
 
+def test_simultaneous_overlap_reports_single_complete_violation():
+    """5 chunks at rate 0.3 starting together on one edge: exactly one
+    violation carrying the true total (1.5) and all five flows."""
+    sched = [_chunk(0, i, 9, [0, 1], 0.3, 32) for i in range(5)]
+    # src is a stand-in id; all five share edge (0, 1) over [0, 10/3).
+    violations = verify_capacity_ragged(sched, quantum=32)
+    assert len(violations) == 1
+    v = violations[0]
+    assert v.edge == (0, 1)
+    assert v.time == 0.0
+    assert abs(v.total_rate - 1.5) < 1e-9
+    assert len(v.flows) == 5
+
+
 def test_legacy_schedule_verifies_and_matches_makespan():
     """Spec test 5: defaults (rate=1, size=1, quantum=1) reproduce the
     existing uniform semantics on a real fixture."""

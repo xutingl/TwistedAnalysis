@@ -16,6 +16,7 @@ Use this to:
 from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
+from itertools import groupby
 from typing import Iterable, Mapping
 
 
@@ -119,18 +120,21 @@ def verify_capacity_ragged(
         evs.sort(key=lambda t: (t[0], t[1]))
         acc = 0.0
         active: set[tuple[int, int, int]] = set()
-        for time, kind, rate, key in evs:
-            if kind == 1:
-                acc += rate
-                active.add(key)
-                if acc > 1 + tol:
-                    violations.append(RateViolation(
-                        edge=edge, time=time, total_rate=acc,
-                        flows=tuple(sorted(active)),
-                    ))
-            else:
-                acc -= rate
-                active.discard(key)
+        for time, group in groupby(evs, key=lambda t: t[0]):
+            saw_start = False
+            for _time, kind, rate, key in group:
+                if kind == 1:
+                    acc += rate
+                    active.add(key)
+                    saw_start = True
+                else:
+                    acc -= rate
+                    active.discard(key)
+            if saw_start and acc > 1 + tol:
+                violations.append(RateViolation(
+                    edge=edge, time=time, total_rate=acc,
+                    flows=tuple(sorted(active)),
+                ))
     violations.sort(key=lambda v: (v.time, v.edge))
     return violations
 

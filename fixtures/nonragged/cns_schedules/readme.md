@@ -29,24 +29,33 @@ LB for this routing = 75 (max physical-edge load).
 
 The previously-recommended `cpsatliteralwarm` (makespan 78, projected +7.5% vs P2P; measured ~0%) is retained as the makespan-optimal baseline.
 
-## Additional twisted-torus cells — `orbit_greedy_full` (2026-06-23)
+## Additional twisted-torus cells — `orbit_greedy_full` (2026-06-23, 8x8x16 added 2026-07-17)
 
-`orbit_greedy_full` (order `lpt_tail_asc`) schedules for three further loaded
+`orbit_greedy_full` (order `lpt_tail_asc`) schedules for further loaded
 twisted-torus routings supplied as `fixtures/routing/routcache_torus_<coords>_twisted.json`.
 The flatten `slice` is the torus coords with largest dim first (verified by
 single-hop topology consistency, not assumed). All are capacity-feasible (0
 physical-edge violations) and cover the full `N*(N-1)` AllToAll flow set.
-Regenerate via `scripts/generate_routcache_orbitfull_schedules.py`.
+Regenerate via `scripts/generate_routcache_orbitfull_schedules.py`
+(optionally pass coord labels, e.g. `... 8x8x16`, for a subset).
 
 | CNS filename | Source routcache | slice | N | Makespan | LB | Physical-edge violations |
 |---|---|---|---:|---:|---:|---:|
 | `schedule_orbitfull_4x8_twisted.json` | `routcache_torus_4x8_twisted.json` | (8, 4) | 32 | 23 | 21 | 0 |
 | `schedule_orbitfull_8x16_twisted.json` | `routcache_torus_8x16_twisted.json` | (16, 8) | 128 | 188 | 170 | 0 |
 | `schedule_orbitfull_4x8x8_twisted.json` | `routcache_torus_4x8x8_twisted.json` | (8, 8, 4) | 256 | 223 | 184 | 0 |
+| `schedule_orbitfull_8x8x16_twisted.json` | `routcache_torus_8x8x16_twisted.json` | (16, 8, 8) | 1024 | 1360 | 1192 | 0 |
 
 Source fixtures (same content as the CNS copies):
 `schedule_<slice>_loaded_orbit_greedy_full_lpt_tail_asc.json` for slices
-`8x4`, `16x8`, `8x8x4` respectively.
+`8x4`, `16x8`, `8x8x4`, `16x8x8` respectively.
+
+The 8x8x16 routcache and both copies of its schedule (~173 MB each,
+1,047,552 entries) are stored via **git LFS** — run `git lfs pull` if they
+are pointers. Its kernels ship as
+`pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_full_16_8_8.py`
+(TPU v5) and `..._16_8_8_pfc.py` (TPU v4 per-step-barrier variant);
+regenerate everything via `eval/regenerate_8x8x16_kernels.sh`.
 
 ## Step-model schedules — `orbit_pack` (2026-07-17)
 

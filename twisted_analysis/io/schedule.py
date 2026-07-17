@@ -197,6 +197,28 @@ def schedule_from_spread_greedy(
     return spread_greedy(topology, table, k=k, order=order)
 
 
+def schedule_from_orbit_pack(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    k: int,
+    c: int,
+) -> list[dict]:
+    """Adapter: orbit_pack -> schedule entries.
+
+    Step-model scheduler for barrier-delimited (--per-step-barrier / pfc)
+    execution: `k` orbits max per step, whole-path edge load <= `c` per
+    step. Verify with `verify_capacity_step`, NOT `verify_capacity` (the
+    staggered-hop model rejects these schedules by design). See
+    `twisted_analysis.schedules.orbit_pack.orbit_pack`.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.orbit_pack import orbit_pack
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return orbit_pack(topology, table, k=k, c=c)
+
+
 def schedule_from_ilp_literal(
     topology: Topology,
     table: list[list[list[int]]],
@@ -344,6 +366,7 @@ _SCHEDULER_DISPATCH = {
     "orbit_greedy_full": schedule_from_orbit_greedy_full,
     "literal_greedy": schedule_from_literal_greedy,
     "spread_greedy": schedule_from_spread_greedy,
+    "orbit_pack": schedule_from_orbit_pack,
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
@@ -372,6 +395,11 @@ def schedule_from_algorithm(
         Requires `k` kwarg (positive int). K=1 -> P2P-style (each device sends/receives
         at most 1 DMA per round); K=infinity -> equivalent to `literal_greedy`.
         Optional `order` (default "lpt").
+      - "orbit_pack":        packs whole orbits into barrier steps for the
+        step-model (--per-step-barrier / pfc) execution: <= `k` orbits per step,
+        whole-path edge load <= `c` per step. Requires `k` and `c` kwargs.
+        Verify with verify_capacity_step (staggered verify_capacity rejects
+        these schedules by design).
       - "ilp_literal":       exact ILP on literal flows (CBC). Small cells only.
       - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
         than ilp_literal on this structure due to native at-most-one constraints

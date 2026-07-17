@@ -11,6 +11,7 @@ Each schedule is verified for physical-edge capacity violations and its makespan
 largest dim first (verified by single-hop topology consistency, not assumed).
 
 Reproducible: `python scripts/generate_routcache_orbitfull_schedules.py`
+(optionally pass cns coord labels, e.g. `... 8x8x16`, to regenerate a subset).
 """
 from __future__ import annotations
 import sys
@@ -38,6 +39,7 @@ CELLS = [
     ("routcache_torus_4x8_twisted.json", (8, 4), "4x8"),
     ("routcache_torus_8x16_twisted.json", (16, 8), "8x16"),
     ("routcache_torus_4x8x8_twisted.json", (8, 8, 4), "4x8x8"),
+    ("routcache_torus_8x8x16_twisted.json", (16, 8, 8), "8x8x16"),
 ]
 
 FIX = _HERE.parent / "fixtures"
@@ -57,10 +59,16 @@ def routing_lb(table: list[list[list[int]]]) -> int:
 
 
 def main() -> int:
+    # Optional CLI args: cns coord labels (e.g. `8x8x16`) to regenerate a
+    # subset; no args regenerates every cell.
+    only = set(sys.argv[1:])
+    cells = [c for c in CELLS if not only or c[2] in only]
+    if only and len(cells) != len(only):
+        raise SystemExit(f"unknown cell(s): {only - {c[2] for c in cells}}")
     print(f"{'cell':>10} {'N':>4} {'slice':>10} {'makespan':>9} {'LB':>4} "
           f"{'violations':>11}")
     print("-" * 56)
-    for fname, slice_, coords in CELLS:
+    for fname, slice_, coords in cells:
         table = load_routing_table(ROUTING / fname)
         topo = Topology(slice=slice_)
         if len(table) != topo.n_nodes:

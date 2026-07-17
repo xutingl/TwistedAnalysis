@@ -186,6 +186,91 @@ def test_cli_verifier_fails_on_violating_schedule(tmp_path, monkeypatch):
         ])
 
 
+def _orbit_pack_8x4x4_schedule(tmp_path, k=6, c=3):
+    """Generate + save an orbit_pack schedule on the loaded 8x4x4 routing."""
+    from twisted_analysis.io.routing_table import load_routing_table
+    from twisted_analysis.io.schedule import save_schedule
+    from twisted_analysis.schedules.orbit_pack import orbit_pack
+    from twisted_analysis.topology import Topology
+
+    table = load_routing_table(
+        REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"
+    )
+    schedule = orbit_pack(Topology(slice=(8, 4, 4)), table, k=k, c=c)
+    sched_path = tmp_path / "orbit_pack_sched.json"
+    save_schedule(schedule, sched_path)
+    return sched_path
+
+
+def test_cli_capacity_model_step_accepts_orbit_pack_schedule(tmp_path):
+    """orbit_pack schedules are staggered-infeasible by design; the step
+    capacity model must gate them instead, and per-step-barrier codegen
+    must accept them (translation-symmetric rounds)."""
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    sched_in = _orbit_pack_8x4x4_schedule(tmp_path)
+    kern_out = tmp_path / "kern.py"
+
+    # Default (staggered) verifier must refuse this schedule.
+    with pytest.raises(SystemExit, match="capacity violation"):
+        main([
+            "--slice", "8,4,4",
+            "--routing-table",
+            str(REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"),
+            "--schedule-in", str(sched_in),
+            "--out", str(kern_out),
+        ])
+
+    # Step model at the schedule's declared caps must pass.
+    rc = main([
+        "--slice", "8,4,4",
+        "--routing-table",
+        str(REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"),
+        "--schedule-in", str(sched_in),
+        "--capacity-model", "step",
+        "--step-edge-cap", "3",
+        "--per-step-barrier",
+        "--function-name", "_test_orbit_pack_kernel",
+        "--out", str(kern_out),
+    ])
+    assert rc == 0
+    src = kern_out.read_text()
+    ast.parse(src)
+    assert "27 steps total" in src   # k=6, c=3 packing on this routing
+
+
+def test_cli_capacity_model_step_rejects_over_cap(tmp_path):
+    """--step-edge-cap below the schedule's actual per-step load must refuse."""
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    sched_in = _orbit_pack_8x4x4_schedule(tmp_path)   # per-step load <= 3
+    with pytest.raises(SystemExit, match="step-model capacity violation"):
+        main([
+            "--slice", "8,4,4",
+            "--routing-table",
+            str(REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"),
+            "--schedule-in", str(sched_in),
+            "--capacity-model", "step",
+            "--step-edge-cap", "2",
+            "--out", str(tmp_path / "kern.py"),
+        ])
+
+
+def test_cli_capacity_model_step_requires_edge_cap(tmp_path):
+    from pallas_kernel.gen_orbit_greedy_kernel import main
+
+    sched_in = _orbit_pack_8x4x4_schedule(tmp_path)
+    with pytest.raises(SystemExit):
+        main([
+            "--slice", "8,4,4",
+            "--routing-table",
+            str(REPO / "fixtures" / "routing" / "routing_table_8x4x4_twist.json"),
+            "--schedule-in", str(sched_in),
+            "--capacity-model", "step",
+            "--out", str(tmp_path / "kern.py"),
+        ])
+
+
 @pytest.mark.parametrize("scheduler", [
     "orbit_greedy", "orbit_greedy_full", "literal_greedy",
 ])

@@ -64,6 +64,85 @@ def schedule_makespan(schedule: Iterable[Mapping[str, object]]) -> int:
 
 
 @dataclass(frozen=True)
+class StepCapacityViolation:
+    round: int
+    kind: str      # "edge" | "send" | "recv"
+    key: object    # directed edge (u, v) for "edge"; device flat-id otherwise
+    load: int
+    cap: int
+
+
+def verify_capacity_step(
+    schedule: Iterable[Mapping[str, object]],
+    *,
+    max_edge_load: int,
+    max_dmas_per_device: int | None = None,
+) -> list[StepCapacityViolation]:
+    """Capacity check under the barrier-delimited STEP model.
+
+    Model: each distinct `round` is one synchronized step (what the
+    `--per-step-barrier` / pfc kernel executes). All DMAs of a step are in
+    flight together, so a flow occupies EVERY edge of its whole path within
+    its step; cross-step link interactions are serialized by the barrier
+    and are not checked. This intentionally differs from `verify_capacity`,
+    whose staggered-hop model (hop i fires at round + i) enforces cross-
+    round constraints the barrier makes irrelevant while missing
+    within-step whole-path contention.
+
+    Violations:
+      - "edge": > `max_edge_load` flows of one step traverse the same
+        directed edge (counting every hop of every path).
+      - "send"/"recv" (when `max_dmas_per_device` is given): a device
+        issues/receives more than that many DMAs in one step.
+    """
+    by_round: dict[int, list[Mapping[str, object]]] = defaultdict(list)
+    for entry in schedule:
+        by_round[int(entry["round"])].append(entry)
+
+    violations: list[StepCapacityViolation] = []
+    for r in sorted(by_round):
+        edge_load: dict[tuple[int, int], int] = defaultdict(int)
+        sends: dict[int, int] = defaultdict(int)
+        recvs: dict[int, int] = defaultdict(int)
+        for entry in by_round[r]:
+            path = entry["path"]
+            for i in range(len(path) - 1):
+                edge_load[(int(path[i]), int(path[i + 1]))] += 1
+            sends[int(entry["src"])] += 1
+            recvs[int(entry["dst"])] += 1
+        for edge in sorted(edge_load):
+            if edge_load[edge] > max_edge_load:
+                violations.append(StepCapacityViolation(
+                    round=r, kind="edge", key=edge,
+                    load=edge_load[edge], cap=max_edge_load,
+                ))
+        if max_dmas_per_device is not None:
+            for dev in sorted(sends):
+                if sends[dev] > max_dmas_per_device:
+                    violations.append(StepCapacityViolation(
+                        round=r, kind="send", key=dev,
+                        load=sends[dev], cap=max_dmas_per_device,
+                    ))
+            for dev in sorted(recvs):
+                if recvs[dev] > max_dmas_per_device:
+                    violations.append(StepCapacityViolation(
+                        round=r, kind="recv", key=dev,
+                        load=recvs[dev], cap=max_dmas_per_device,
+                    ))
+    return violations
+
+
+def schedule_step_count(schedule: Iterable[Mapping[str, object]]) -> int:
+    """Number of distinct rounds = barrier steps the pfc kernel executes.
+
+    This — not `schedule_makespan` — is the step model's cost metric: the
+    kernel compresses distinct round values to back-to-back steps, so
+    round gaps are free.
+    """
+    return len({int(entry["round"]) for entry in schedule})
+
+
+@dataclass(frozen=True)
 class RateViolation:
     edge: tuple[int, int]
     time: float

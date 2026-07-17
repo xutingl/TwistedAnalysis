@@ -48,6 +48,46 @@ Source fixtures (same content as the CNS copies):
 `schedule_<slice>_loaded_orbit_greedy_full_lpt_tail_asc.json` for slices
 `8x4`, `16x8`, `8x8x4` respectively.
 
+## Step-model schedules — `orbit_pack` (2026-07-17)
+
+TPU v4 measurements on the loaded 4×4×8 routing showed `orbitfull` slightly
+**beating** the reference P2P rotation while `cpsatliteralwarm`
+**underperforms** it, despite cpsat's lower simulator makespan (78 vs 85).
+Diagnosis: under `--per-step-barrier` (pfc) execution the binding wall-clock
+terms are the **barrier-step count** and **per-step device balance /
+congestion**, not the staggered-hop makespan. `cpsatliteralwarm` is
+device-jagged (Σ_t max-per-device sends = 268 vs 127 for orbitfull/P2P;
+incast up to 8 flows → one device in one round; ~9 devices idle per round),
+and its asymmetric rounds cannot use the per-step barrier at all. The
+`orbit_pack(K, C)` scheduler instead packs whole orbits (= permutations, so
+every device sends AND receives exactly the same count per step) into as few
+barrier steps as possible, subject to ≤ K orbits per step and whole-path
+union edge load ≤ C per step.
+
+**These schedules are step-model.** They are intentionally *infeasible*
+under the staggered-hop `verify_capacity` model (the barrier serializes
+steps, making cross-round staggered capacity irrelevant); they verify clean
+under `twisted_analysis.schedules.verify.verify_capacity_step` at their
+declared caps. Do not benchmark them with all-up-front (non-barrier)
+kernels as if they were staggered schedules; use the `_pfc` per-step-barrier
+kernels in `pallas_kernel/outputs/_ragged_a2a_kernel_orbit_pack_k{2,3,6}c3_8_4_4_pfc.py`.
+Regenerate everything via `eval/regenerate_8x4x4_orbit_pack_kernels.sh`.
+
+| CNS filename | Source fixture | K (DMAs/device/step) | Barrier steps | Max whole-path edge load per step | Step-model violations |
+|---|---|---:|---:|---:|---:|
+| `schedule_orbitpackk2c3_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k2c3.json` | 2 | 64 | 3 | 0 |
+| `schedule_orbitpackk3c3_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k3c3.json` | 3 | 43 | 3 | 0 |
+| `schedule_orbitpackk6c3_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k6c3.json` | 6 | **27** | 3 | 0 |
+
+Reference points: the `orbitfull` pfc kernel executes **80** barrier steps;
+P2P executes **127** rounds, and its own per-round whole-path edge load
+already reaches 3 (50 of 127 rounds) — so C=3 steps are no more congested
+than the baseline's worst round. K=6 is v4-DMA-queue-safe: the `orbitfull`
+pfc kernel's widest step already fires 6 orbits. Total per-device DMA issue
+work (127 DMAs) is identical across all of these schedules; the K sweep
+isolates the barrier-overhead vs within-step-congestion trade
+(`k6c3` = largest step reduction, `k2c3` = conservative).
+
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 
 This is the schedule produced by the pre-Task-10 `orbit_greedy` algorithm,

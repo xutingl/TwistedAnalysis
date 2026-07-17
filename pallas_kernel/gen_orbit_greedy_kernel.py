@@ -43,7 +43,11 @@ from twisted_analysis.io.schedule import (
     save_schedule,
     schedule_from_algorithm,
 )
-from twisted_analysis.schedules.verify import verify_capacity
+from twisted_analysis.schedules.verify import (
+    schedule_step_count,
+    verify_capacity,
+    verify_capacity_step,
+)
 from twisted_analysis.topology import Topology, DORRouter, ILPRouter
 
 
@@ -763,6 +767,27 @@ def main(argv=None) -> int:
              "single final wait). Typical experiment values: 127 (= N-1, one "
              "drain per packet_idx) or 64 (half-N).",
     )
+    p.add_argument(
+        "--capacity-model",
+        choices=["staggered", "step"],
+        default="staggered",
+        help="Which capacity model the stage-3 verifier enforces. "
+             "'staggered' (default): hop i of a flow fires at round + i, one "
+             "flow per directed edge per time — the orbit_greedy/literal "
+             "schedulers' model. 'step': each round is one barrier-delimited "
+             "step; all DMAs of a step occupy their WHOLE path together and "
+             "cross-step interactions are ignored (the --per-step-barrier "
+             "execution model; required for orbit_pack schedules, which are "
+             "staggered-infeasible by design).",
+    )
+    p.add_argument(
+        "--step-edge-cap",
+        type=int,
+        default=None,
+        help="Max whole-path edge load per step for --capacity-model step "
+             "(e.g. the orbit_pack 'c' the schedule was built with). "
+             "Required when --capacity-model step.",
+    )
     p.add_argument("--function-name", default=None)
     p.add_argument("--routing-table-out", default=None, type=Path,
                    help="Where to save the generated routing table "
@@ -775,6 +800,11 @@ def main(argv=None) -> int:
                    help="Output kernel path "
                         "(default: ./pallas_kernel/outputs/_ragged_a2a_kernel_orbit_greedy_<slice>.py)")
     args = p.parse_args(argv)
+
+    if args.capacity_model == "step" and args.step_edge_cap is None:
+        p.error("--step-edge-cap is required when --capacity-model step")
+    if args.capacity_model != "step" and args.step_edge_cap is not None:
+        p.error("--step-edge-cap only applies to --capacity-model step")
 
     slice_ = _parse_slice(args.slice)
     topology = Topology(slice=slice_)
@@ -847,23 +877,51 @@ def main(argv=None) -> int:
         save_schedule(schedule, sched_path)
         print(f"[2/4] wrote schedule     {sched_path}", file=sys.stderr)
 
-    # Stage 3 (new): verify physical-edge capacity.
-    violations = verify_capacity(schedule)
-    if violations:
-        # Remove the now-misleading schedule file so it doesn't linger as
-        # if it were valid.
-        sched_path.unlink(missing_ok=True)
+    # Stage 3 (new): verify capacity under the selected model.
+    if args.capacity_model == "step":
+        step_violations = verify_capacity_step(
+            schedule, max_edge_load=args.step_edge_cap,
+        )
+        if step_violations:
+            print(
+                f"\nERROR: schedule has {len(step_violations)} step-model "
+                f"capacity violation(s) at --step-edge-cap {args.step_edge_cap}. "
+                f"First 3: {step_violations[:3]}",
+                file=sys.stderr,
+            )
+            raise SystemExit(
+                f"refusing to emit kernel: step-model capacity violation "
+                f"count = {len(step_violations)} at edge cap "
+                f"{args.step_edge_cap} (routing={rt_path})"
+            )
         print(
-            f"\nERROR: schedule has {len(violations)} physical-edge capacity violation(s). "
-            f"First 3: {violations[:3]}",
+            f"[3/4] verified schedule  ({len(schedule)} flows, 0 step-model "
+            f"violations at edge cap {args.step_edge_cap}, "
+            f"{schedule_step_count(schedule)} barrier steps)",
             file=sys.stderr,
         )
-        raise SystemExit(
-            f"refusing to emit kernel for violating schedule "
-            f"(scheduler={args.scheduler}, routing={rt_path}); "
-            f"capacity violation count = {len(violations)}"
-        )
-    print(f"[3/4] verified schedule  ({len(schedule)} flows, 0 violations)", file=sys.stderr)
+    else:
+        violations = verify_capacity(schedule)
+        if violations:
+            if args.schedule_in is None:
+                # Remove the now-misleading schedule file so it doesn't
+                # linger as if it were valid. Never delete a user-provided
+                # --schedule-in file — it may be an expensive offline result
+                # whose intended model is 'step' (e.g. orbit_pack).
+                sched_path.unlink(missing_ok=True)
+            print(
+                f"\nERROR: schedule has {len(violations)} physical-edge capacity violation(s). "
+                f"First 3: {violations[:3]}",
+                file=sys.stderr,
+            )
+            raise SystemExit(
+                f"refusing to emit kernel for violating schedule "
+                f"(scheduler={args.scheduler}, routing={rt_path}); "
+                f"capacity violation count = {len(violations)}. "
+                f"If this schedule targets barrier-step execution "
+                f"(orbit_pack), pass --capacity-model step --step-edge-cap C."
+            )
+        print(f"[3/4] verified schedule  ({len(schedule)} flows, 0 violations)", file=sys.stderr)
 
     # Stage 4: kernel.
     dest_table, orbit_steps = _dest_table_and_orbit_steps_from_schedule(

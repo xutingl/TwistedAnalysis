@@ -97,6 +97,28 @@ work (127 DMAs) is identical across all of these schedules; the K sweep
 isolates the barrier-overhead vs within-step-congestion trade
 (`k6c3` = largest step reduction, `k2c3` = conservative).
 
+### 4×8×8 cell (2026-07-21)
+
+`orbit_pack(K=6, C=3)` on the loaded 4×8×8 twisted torus
+(`routcache_torus_4x8x8_twisted.json`, N=256, slice (8, 8, 4)). C=3 is
+feasible here too (hottest orbit internal load = 3); this routing is
+perfectly balanced — every directed edge carries exactly LB = 184.
+Regenerate via `eval/regenerate_8x8x4_orbit_pack_kernel.sh`.
+
+| CNS filename | Source fixture | K | Barrier steps | Max whole-path edge load per step | Step-model violations |
+|---|---|---:|---:|---:|---:|
+| `schedule_orbitpackk6c3_4x8x8_twisted.json` | `schedule_8x8x4_loaded_orbit_pack_k6c3.json` | 6 | **66** | 3 (all 66 steps at exactly 3) | 0 |
+
+Reference points on this cell: `orbitfull` = 177 distinct steps (makespan
+223); P2P = 255 rounds. The C=3 cap binds before K does — no step exceeds
+5 orbits (distribution: 4 orbits × 50 steps, 5 × 5, 3 × 8, 2 × 3) — and
+Σ per-step max edge load = 198 vs the hard floor of 184 (+7.6%), i.e.
+near wire-optimal. The shipped kernel
+(`pallas_kernel/outputs/_ragged_a2a_kernel_orbit_pack_k6c3_8_8_4.py`) is the
+**all-up-front (non-pfc) variant** — all DMAs issued at once, schedule =
+per-device issue order; fine on TPU v5, use a `--per-step-barrier` build for
+v4 (the schedule is translation-symmetric, so the pfc codegen accepts it).
+
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 
 This is the schedule produced by the pre-Task-10 `orbit_greedy` algorithm,

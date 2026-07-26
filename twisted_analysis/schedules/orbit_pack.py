@@ -32,13 +32,107 @@ The schedule is intentionally NOT feasible under `verify_capacity`'s
 staggered-hop model; check it with `verify_capacity_step` instead.
 Translation symmetry (identical per-source round columns) holds by
 orbit atomicity, so the `--per-step-barrier` codegen accepts it.
+
+`orbit_pack_shuffled` is the matched negative control. Without a
+barrier the step count is not a physical quantity — the schedule
+reaches the hardware only as the destination order the all-up-front
+kernel iterates — so a win over P2P could come either from orbit
+atomicity alone (every column a permutation: no incast, no idle
+devices) or from the FFD certification (bins emitted contiguously, so
+a sliding window of in-flight DMAs lands on orbits proven co-resident
+under `c`). The control holds the former fixed and forfeits only the
+latter.
 """
 from __future__ import annotations
+import random
 from collections import Counter
 
 from twisted_analysis.io.coords import flatten
 from twisted_analysis.lp.orbit import compute_orbits
 from twisted_analysis.topology import Topology
+
+
+def _orbit_data(topology: Topology, table: list[list[list[int]]]):
+    """Per-orbit whole-path edge loads and flow lists.
+
+    Returns `(orbit_edges, orbit_flows)`, both keyed by orbit id:
+    a Counter of directed-edge loads over every hop of every member
+    flow, and the `(src_flat, dst_flat, path)` triples themselves.
+    """
+    orbits = compute_orbits(topology)
+    slice_ = topology.slice
+    orbit_edges: dict = {}
+    orbit_flows: dict = {}
+    for orbit_id, members in orbits.items():
+        load: Counter = Counter()
+        flows = []
+        for src, dst in members:
+            src_flat = flatten(src, slice_)
+            dst_flat = flatten(dst, slice_)
+            path = list(table[src_flat][dst_flat])
+            flows.append((src_flat, dst_flat, path))
+            for i in range(len(path) - 1):
+                load[(path[i], path[i + 1])] += 1
+        orbit_edges[orbit_id] = load
+        orbit_flows[orbit_id] = flows
+    return orbit_edges, orbit_flows
+
+
+def _ffd_bins(orbit_edges, *, k: int, c: int) -> list[list]:
+    """First-fit-decreasing packing of orbits into steps; orbit ids per step.
+
+    Raises ValueError on invalid `k`/`c`, or when some orbit's own
+    whole-path load already exceeds `c` (no packing can satisfy the cap).
+    """
+    if not isinstance(k, int) or k < 1:
+        raise ValueError(f"k must be a positive integer; got {k!r}")
+    if not isinstance(c, int) or c < 1:
+        raise ValueError(f"c must be a positive integer; got {c!r}")
+
+    self_load = {o: max(load.values()) for o, load in orbit_edges.items()}
+    worst = max(self_load.values())
+    if worst > c:
+        offenders = sum(1 for v in self_load.values() if v > c)
+        raise ValueError(
+            f"c={c} is infeasible: {offenders} orbit(s) have internal "
+            f"whole-path edge load up to {worst}; need c >= {worst}"
+        )
+
+    # Hottest (then heaviest) orbits first, so they claim steps while
+    # co-residents with disjoint footprints still exist.
+    order = sorted(
+        orbit_edges,
+        key=lambda o: (-self_load[o], -sum(orbit_edges[o].values()), o),
+    )
+    bins: list[tuple[list, Counter]] = []   # (orbit_ids, union edge load)
+    for o in order:
+        oc = orbit_edges[o]
+        for members_in_bin, load in bins:
+            if len(members_in_bin) >= k:
+                continue
+            if all(load[e] + v <= c for e, v in oc.items()):
+                members_in_bin.append(o)
+                load.update(oc)
+                break
+        else:
+            bins.append(([o], Counter(oc)))
+    return [orbit_ids for orbit_ids, _load in bins]
+
+
+def _entries_from_bins(bins, orbit_flows) -> list[dict]:
+    """Flatten `[[orbit_id, ...], ...]` (step-major) into schedule entries."""
+    entries: list[dict] = []
+    for step, orbit_ids in enumerate(bins):
+        for o in orbit_ids:
+            for src_flat, dst_flat, path in orbit_flows[o]:
+                entries.append({
+                    "round": step,
+                    "src": src_flat,
+                    "dst": dst_flat,
+                    "path": path,
+                })
+    entries.sort(key=lambda e: (e["round"], e["src"]))
+    return entries
 
 
 def orbit_pack(
@@ -67,66 +161,66 @@ def orbit_pack(
       ValueError: on invalid `k`/`c`, or when `c` is below some orbit's
         internal whole-path load (no packing can satisfy the cap).
     """
-    if not isinstance(k, int) or k < 1:
-        raise ValueError(f"k must be a positive integer; got {k!r}")
-    if not isinstance(c, int) or c < 1:
-        raise ValueError(f"c must be a positive integer; got {c!r}")
+    orbit_edges, orbit_flows = _orbit_data(topology, table)
+    return _entries_from_bins(_ffd_bins(orbit_edges, k=k, c=c), orbit_flows)
 
-    orbits = compute_orbits(topology)
-    slice_ = topology.slice
 
-    orbit_edges: dict = {}   # orbit_id -> Counter of whole-path edge loads
-    orbit_flows: dict = {}   # orbit_id -> [(src_flat, dst_flat, path), ...]
-    for orbit_id, members in orbits.items():
-        load: Counter = Counter()
-        flows = []
-        for src, dst in members:
-            src_flat = flatten(src, slice_)
-            dst_flat = flatten(dst, slice_)
-            path = list(table[src_flat][dst_flat])
-            flows.append((src_flat, dst_flat, path))
-            for i in range(len(path) - 1):
-                load[(path[i], path[i + 1])] += 1
-        orbit_edges[orbit_id] = load
-        orbit_flows[orbit_id] = flows
+def orbit_pack_shuffled(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    k: int,
+    c: int,
+    seed: int = 0,
+) -> list[dict]:
+    """Negative control for `orbit_pack`: same steps, uncertified packing.
 
-    self_load = {o: max(load.values()) for o, load in orbit_edges.items()}
-    worst = max(self_load.values())
-    if worst > c:
-        offenders = sum(1 for v in self_load.values() if v > c)
-        raise ValueError(
-            f"c={c} is infeasible: {offenders} orbit(s) have internal "
-            f"whole-path edge load up to {worst}; need c >= {worst}"
-        )
+    Assigns orbits to steps uniformly at random while reproducing the
+    step-size profile that `orbit_pack(k, c)` found. Everything the
+    hardware win could be credited to is therefore held fixed:
 
-    # First-fit-decreasing: hottest (then heaviest) orbits first, so they
-    # claim steps while co-residents with disjoint footprints still exist.
-    order = sorted(
-        orbit_edges,
-        key=lambda o: (-self_load[o], -sum(orbit_edges[o].values()), o),
-    )
-    bins: list[tuple[list, Counter]] = []   # (orbit_ids, union edge load)
-    for o in order:
-        oc = orbit_edges[o]
-        for members_in_bin, load in bins:
-            if len(members_in_bin) >= k:
-                continue
-            if all(load[e] + v <= c for e, v in oc.items()):
-                members_in_bin.append(o)
-                load.update(oc)
-                break
-        else:
-            bins.append(([o], Counter(oc)))
+      - the same 127 orbits, still atomic, so every step is a set of
+        permutations and per-device send/recv counts stay balanced;
+      - the same step count T;
+      - the same per-step orbit counts, hence the same per-device DMA
+        depth in every step.
 
-    entries: list[dict] = []
-    for step, (orbit_ids, _load) in enumerate(bins):
-        for o in orbit_ids:
-            for src_flat, dst_flat, path in orbit_flows[o]:
-                entries.append({
-                    "round": step,
-                    "src": src_flat,
-                    "dst": dst_flat,
-                    "path": path,
-                })
-    entries.sort(key=lambda e: (e["round"], e["src"]))
-    return entries
+    The single forfeited property is the FFD certification itself: the
+    whole-path union edge load per step is no longer bounded by `c`, and
+    co-resident orbits are no longer adjacent in the emitted destination
+    order that the all-up-front (non-pfc) kernel iterates. Measuring this
+    against `orbit_pack` isolates congestion control as the treatment.
+    Read the achieved cap with `verify.max_step_edge_load` — it exceeds
+    `c` by construction, and the kernel generator needs it for
+    `--step-edge-cap`.
+
+    Args:
+      topology: source of `slice` / `n_nodes`.
+      table: routing table; `table[src][dst]` is the flat-ID path.
+      k: max orbits per step for the reference `orbit_pack` packing.
+      c: whole-path edge cap for the reference packing. Bounds the step
+         profile that gets reproduced; it does NOT bound this schedule.
+      seed: RNG seed. Vary it to measure the spread over assignments —
+        a single draw could be lucky.
+
+    Returns:
+      `{round, src, dst, path}` entries, rounds contiguous from 0, sorted
+      by (round, src) — same shape as `orbit_pack`.
+
+    Raises:
+      ValueError: propagated from the reference `orbit_pack(k, c)`.
+    """
+    orbit_edges, orbit_flows = _orbit_data(topology, table)
+    profile = [len(step) for step in _ffd_bins(orbit_edges, k=k, c=c)]
+
+    order = sorted(orbit_flows)          # deterministic base order
+    random.Random(seed).shuffle(order)
+
+    bins: list[list] = []
+    cut = 0
+    for size in profile:
+        bins.append(order[cut:cut + size])
+        cut += size
+    assert cut == len(order), f"profile covers {cut} of {len(order)} orbits"
+
+    return _entries_from_bins(bins, orbit_flows)

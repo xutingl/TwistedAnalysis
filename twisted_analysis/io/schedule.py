@@ -219,6 +219,31 @@ def schedule_from_orbit_pack(
     return orbit_pack(topology, table, k=k, c=c)
 
 
+def schedule_from_orbit_pack_shuffled(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    k: int,
+    c: int,
+    seed: int = 0,
+) -> list[dict]:
+    """Adapter: orbit_pack_shuffled -> schedule entries.
+
+    Negative control for `orbit_pack(k, c)`: same orbit set, same step
+    count, same per-step orbit counts, but a random orbit->step
+    assignment that forfeits the whole-path edge cap. Step-model like
+    `orbit_pack`, but it does NOT verify at `c` — read its achieved cap
+    with `verify.max_step_edge_load` and pass that to the kernel
+    generator's `--step-edge-cap`. See
+    `twisted_analysis.schedules.orbit_pack.orbit_pack_shuffled`.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.orbit_pack import orbit_pack_shuffled
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return orbit_pack_shuffled(topology, table, k=k, c=c, seed=seed)
+
+
 def schedule_from_ilp_literal(
     topology: Topology,
     table: list[list[list[int]]],
@@ -367,6 +392,7 @@ _SCHEDULER_DISPATCH = {
     "literal_greedy": schedule_from_literal_greedy,
     "spread_greedy": schedule_from_spread_greedy,
     "orbit_pack": schedule_from_orbit_pack,
+    "orbit_pack_shuffled": schedule_from_orbit_pack_shuffled,
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
@@ -400,6 +426,11 @@ def schedule_from_algorithm(
         whole-path edge load <= `c` per step. Requires `k` and `c` kwargs.
         Verify with verify_capacity_step (staggered verify_capacity rejects
         these schedules by design).
+      - "orbit_pack_shuffled": negative control for "orbit_pack" — same orbit
+        set, step count and per-step orbit counts, but a random orbit->step
+        assignment that gives up the `c` edge cap. Requires `k` and `c`;
+        optional `seed` (default 0). Isolates congestion control as the
+        treatment variable in hardware A/B runs.
       - "ilp_literal":       exact ILP on literal flows (CBC). Small cells only.
       - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
         than ilp_literal on this structure due to native at-most-one constraints

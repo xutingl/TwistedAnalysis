@@ -24,6 +24,7 @@ from twisted_analysis.io.schedule import (
     save_schedule,
     schedule_from_orbit_greedy,
     schedule_from_orbit_pack,
+    schedule_from_orbit_pack_shuffled,
     schedule_from_spread_greedy,
 )
 from twisted_analysis.topology import Topology
@@ -41,6 +42,7 @@ def _run(
     *,
     k: int | None = None,
     c: int | None = None,
+    seed: int = 0,
 ) -> list[dict]:
     if scheduler == "orbit_greedy":
         return schedule_from_orbit_greedy(topology, table, order=order)
@@ -51,6 +53,12 @@ def _run(
         # k and c are guaranteed non-None here (validated before _run).
         # order is ignored: orbit_pack uses a fixed FFD ordering.
         return schedule_from_orbit_pack(topology, table, k=k, c=c)
+    if scheduler == "orbit_pack_shuffled":
+        # Negative control: k/c define the step profile to reproduce, not
+        # a cap this schedule respects. order is ignored.
+        return schedule_from_orbit_pack_shuffled(
+            topology, table, k=k, c=c, seed=seed,
+        )
     raise ValueError(f"unknown scheduler: {scheduler!r}")
 
 
@@ -63,7 +71,8 @@ def main(argv=None) -> int:
     p.add_argument("--slice", required=True,
                    help="Comma-separated slice, e.g. 4,4,8 — must match the table size")
     p.add_argument("--scheduler", default="orbit_greedy",
-                   choices=["orbit_greedy", "spread_greedy", "orbit_pack"])
+                   choices=["orbit_greedy", "spread_greedy", "orbit_pack",
+                            "orbit_pack_shuffled"])
     p.add_argument("--order", default="lpt_tail_asc",
                    choices=["lpt_tail_asc", "lpt", "spt", "tail_asc"])
     p.add_argument(
@@ -84,6 +93,14 @@ def main(argv=None) -> int:
              "orbit_pack schedules are step-model: verify with "
              "verify_capacity_step, not verify_capacity.",
     )
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=0,
+        help="RNG seed for orbit_pack_shuffled's orbit->step assignment. "
+             "Ignored by other schedulers. Vary it to measure the spread "
+             "over random assignments.",
+    )
     p.add_argument("--out", default=None,
                    help="Output path (default: ./fixtures/nonragged/schedule_<slice>_<scheduler>_<order>.json)")
     args = p.parse_args(argv)
@@ -91,9 +108,9 @@ def main(argv=None) -> int:
     # Validate scheduler-specific required args.
     if args.scheduler == "spread_greedy" and args.k is None:
         p.error("--k is required when --scheduler spread_greedy")
-    if args.scheduler == "orbit_pack":
+    if args.scheduler in ("orbit_pack", "orbit_pack_shuffled"):
         if args.k is None or args.c is None:
-            p.error("--k and --c are required when --scheduler orbit_pack")
+            p.error(f"--k and --c are required when --scheduler {args.scheduler}")
 
     slice_ = _parse_slice(args.slice)
     topology = Topology(slice=slice_)
@@ -105,7 +122,7 @@ def main(argv=None) -> int:
 
     try:
         entries = _run(args.scheduler, topology, table, args.order,
-                       k=args.k, c=args.c)
+                       k=args.k, c=args.c, seed=args.seed)
     except ValueError as e:
         raise SystemExit(
             f"scheduler failed: {e}\n"

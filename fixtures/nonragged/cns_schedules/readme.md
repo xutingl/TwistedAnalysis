@@ -82,6 +82,15 @@ kernels as if they were staggered schedules; use the `_pfc` per-step-barrier
 kernels in `pallas_kernel/outputs/_ragged_a2a_kernel_orbit_pack_k{2,3,6}c3_8_4_4_pfc.py`.
 Regenerate everything via `eval/regenerate_8x4x4_orbit_pack_kernels.sh`.
 
+> **Superseded in part (2026-07-25).** The "use the `_pfc` kernels"
+> guidance above was written before measurement. TPU v4 runs show `k6c3`
+> beating P2P through the **non-pfc** kernel too, at parity with
+> `orbitfull`, with the barrier adding nothing — so the barrier-step count
+> these schedules minimize is not what is paying off. Non-pfc kernels ship
+> for K ∈ {2, 3, 6} via `eval/regenerate_8x4x4_orbit_pack_nonpfc_kernels.sh`
+> and are fair to benchmark. See the negative-control section below for
+> what is actually being tested and how to read it.
+
 | CNS filename | Source fixture | K (DMAs/device/step) | Barrier steps | Max whole-path edge load per step | Step-model violations |
 |---|---|---:|---:|---:|---:|
 | `schedule_orbitpackk2c3_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k2c3.json` | 2 | 64 | 3 | 0 |
@@ -116,8 +125,84 @@ Reference points on this cell: `orbitfull` = 177 distinct steps (makespan
 near wire-optimal. The shipped kernel
 (`pallas_kernel/outputs/_ragged_a2a_kernel_orbit_pack_k6c3_8_8_4.py`) is the
 **all-up-front (non-pfc) variant** — all DMAs issued at once, schedule =
-per-device issue order; fine on TPU v5, use a `--per-step-barrier` build for
-v4 (the schedule is translation-symmetric, so the pfc codegen accepts it).
+per-device issue order. (The schedule is translation-symmetric, so a
+`--per-step-barrier` build is also available via the pfc codegen if wanted.)
+
+## Negative control — `orbit_pack_shuffled` (2026-07-25)
+
+TPU v4 measurements of `orbitpackk6c3` came back with two results the
+step-model rationale above does not predict: the schedule beats the P2P
+rotation when run through the **all-up-front (non-pfc) kernel**, at parity
+with `orbitfull`; and adding the per-step barrier gains nothing.
+
+That is diagnostic. Without a barrier nothing serializes steps, so the
+barrier-step count — the entire headline of the section above, 27 vs
+`orbitfull`'s 80 vs P2P's 127 — is **not a physical quantity**. The
+non-pfc kernel body is a flat `.start()` issue loop with a single drain at
+the end, structurally identical to the reference P2P kernel; the only
+thing a schedule changes is the 128×127 destination table it iterates.
+So the win over P2P must come from one of two properties of that table:
+
+- **(a) orbit atomicity.** Every column is a permutation, so no incast and
+  no idle devices. P2P's flat-ID rotation has this too — but pairs it
+  with an arbitrary, topology-blind path footprint.
+- **(b) the FFD congestion certification.** Bins are emitted contiguously,
+  so the hardware's sliding window of in-flight DMAs lands on orbits the
+  packer proved co-resident under whole-path edge cap C. The ordering
+  *suggests* the step structure the barrier would have *enforced* — which
+  would also explain why the barrier adds nothing but drain cost.
+
+These schedules separate (a) from (b). They reproduce `orbitpackk6c3`'s
+step count and per-step orbit counts exactly, keep the same 127 orbits
+atomic, and assign orbits to steps at random. Everything (a) covers is
+held fixed; only (b) is forfeited.
+
+| CNS filename | Source fixture | Barrier steps | Max whole-path edge load per step | Max DMAs/device/step |
+|---|---|---:|---:|---:|
+| *(reference)* `schedule_orbitpackk6c3_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k6c3.json` | 27 | **3** | send 6, recv 6 |
+| `schedule_orbitpackk6c3shuf0_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k6c3_shuf0.json` | 27 | **8** | send 6, recv 6 |
+| `schedule_orbitpackk6c3shuf1_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k6c3_shuf1.json` | 27 | **8** | send 6, recv 6 |
+| `schedule_orbitpackk6c3shuf2_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_pack_k6c3_shuf2.json` | 27 | **8** | send 6, recv 6 |
+
+Congestion is the **only** variable that moves: 3 → 8, a 2.67× increase,
+consistent across all three seeds. Per-device DMA depth is byte-identical
+(6/6), so endpoint balance is held constant. For scale, P2P's own worst
+per-round whole-path load is 3 — the control is more congested than
+*either* comparison point.
+
+The generated kernels make this exact: after normalizing the function
+name, the executable body of
+`_ragged_a2a_kernel_orbit_pack_k6c3_shuf{0,1,2}_8_4_4.py` is **identical**
+to `_ragged_a2a_kernel_orbit_pack_k6c3_8_4_4.py`. Only `_DEST_TABLE_NP`
+differs. The A/B is a pure single-variable swap.
+
+**How to read the measurement:**
+
+- **Shuffled ≈ certified** → (b) buys nothing on this hardware. The win
+  over P2P is orbit atomicity alone, the `C` cap is inert, and
+  `orbit_pack` collapses to `orbit_greedy_full` plus machinery. Say so in
+  the writeup rather than claiming a congestion result.
+- **Shuffled measurably worse** → congestion control is real, and it is
+  carried by the destination **ordering**, not the barrier. That reframes
+  the algorithm: its product is an ordering, and the barrier is
+  scaffolding that turned out to be unnecessary on this target.
+
+Three seeds because one random assignment could be lucky; report the
+spread, not a single draw. Note these schedules do **not** verify at C=3
+— that is the point. `verify_capacity_step` clears them at edge cap 8, so
+their kernels are generated with `--step-edge-cap 8`, read back per seed
+via `scripts/schedule_stats.py --field edge_cap`. Both kernel variants
+ship: the **non-pfc** ones are the load-bearing A/B; the `_pfc` ones price
+the barrier when the steps it enforces were never certified. Regenerate
+everything via `eval/regenerate_8x4x4_orbit_pack_shuffled_kernels.sh`.
+
+**This control does not discriminate the remaining alternative:** that the
+collective is issue- or HBM-bound rather than ICI-bound at this size, in
+which case every endpoint-balanced schedule hits the same ceiling and the
+P2P gap comes from elsewhere. The v5e cluster at ~132,700 gbps across
+three very different schedules is the prior evidence for that reading. A
+payload-size sweep separates it — if ICI-bound, the orbit-vs-P2P gap holds
+or widens with payload; if overhead-bound, it shrinks.
 
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 

@@ -142,6 +142,29 @@ def schedule_step_count(schedule: Iterable[Mapping[str, object]]) -> int:
     return len({int(entry["round"]) for entry in schedule})
 
 
+def max_step_edge_load(schedule: Iterable[Mapping[str, object]]) -> int:
+    """Largest whole-path directed-edge load over any single step.
+
+    The smallest `max_edge_load` at which `verify_capacity_step` returns
+    no "edge" violations — i.e. the congestion cap the schedule actually
+    achieves, as opposed to the one it was built against. Use it to price
+    an uncertified packing (e.g. `orbit_pack_shuffled`) and to pick
+    `--step-edge-cap` when generating its kernel.
+    """
+    by_round: dict[int, dict[tuple[int, int], int]] = defaultdict(
+        lambda: defaultdict(int)
+    )
+    for entry in schedule:
+        edge_load = by_round[int(entry["round"])]
+        path = entry["path"]
+        for i in range(len(path) - 1):
+            edge_load[(int(path[i]), int(path[i + 1]))] += 1
+    return max(
+        (max(loads.values()) for loads in by_round.values() if loads),
+        default=0,
+    )
+
+
 @dataclass(frozen=True)
 class RateViolation:
     edge: tuple[int, int]

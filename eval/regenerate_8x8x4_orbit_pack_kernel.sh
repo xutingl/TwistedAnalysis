@@ -9,8 +9,7 @@
 # Unlike the 4x4x8 kernels in eval/regenerate_8x4x4_orbit_pack_kernels.sh,
 # this emits the all-up-front kernel variant (no --per-step-barrier): all DMAs
 # are issued at once and the schedule contributes the per-device issue ORDER
-# (sorted by barrier step). Fine on TPU v5 (deep DMA queue); on TPU v4 use a
-# --per-step-barrier variant instead. The schedule itself is step-model
+# (sorted by barrier step). The schedule itself is step-model
 # (verified with verify_capacity_step at edge cap 3; staggered
 # verify_capacity rejects it by design, hence --capacity-model step).
 #

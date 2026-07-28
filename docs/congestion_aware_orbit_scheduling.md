@@ -89,6 +89,18 @@ to parity only when the window spans all `N−1` rounds (at which point every
 schedule moves the same flows over the same routes). That variance is exactly
 the headroom this scheduler harvests.
 
+In practice, standard and largely automatic mechanisms mitigate part of this
+clustering. Packetization — the Megablox kernel, like our generated kernels,
+splits each transfer into fixed-size packets — interleaves packets from many
+concurrent flows on each link, smoothing the burst that a run of heavy offsets
+would otherwise present; and LRU- or age-based port arbitration re-mixes
+in-flight flows fairly regardless of the order in which they were issued
+(§3.3). These mechanisms dilute the destination order's influence in both
+directions: they soften the rotation order's worst windows, and they equally
+blunt part of an optimized schedule's advantage. The ~2× windowed-load gap
+above should therefore be read as an analytical upper bound on the achievable
+gain; measured end-to-end improvements (§6) are accordingly smaller.
+
 ### 3.2 Routing
 
 The routing table is the algorithm's only external constraint. It fixes, for

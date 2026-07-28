@@ -33,9 +33,41 @@ gbps at array size 131072).
 > kernel (hardware) both execute the same rotation destination order; the rest
 > of this report refers to both as **the rotation order**.
 
-## 2. Background
+## 2. Project Overview
 
-### 2.1 Topology: where the headroom is
+The project has three core components: a **scheduler** (with its supporting
+theoretical analysis), **simulation**, and **hardware experiments**.
+
+```
+topology + routing tables ──► scheduler ──► schedule (DMA ordering)
+                                  │
+                                  ├──► ICISim simulation
+                                  └──► Pallas kernel ──► hardware testbed
+```
+
+The scheduler takes a network topology and its routing tables as input. From
+these it computes the theoretical throughput upper bound (via the link-load
+lower bound `LB`, §3.2) and generates schedules that dictate the DMA ordering
+for the collective (§4).
+
+The scheduling algorithm, **Congestion-Aware Orbit Scheduling** (§4), operates
+on *translation orbits* — the `N−1` offset classes of the all-to-all, each a
+permutation in which every device sends once and receives once. From the
+routing table it computes each orbit's whole-path link-load profile, then
+either sequences orbits greedily so that heavy, twist-crossing orbits are kept
+apart (OrbitFull), or packs them into ordered steps of at most `K` orbits
+under a certified per-step link-load cap `C` (OrbitPack). Both variants
+preserve the rotation order's per-device uniformity and zero incast while
+bounding the link congestion of any window of concurrently executing rounds.
+
+The generated schedules are then evaluated on both
+backends: in simulation via ICISim (throughput and per-port queue depth,
+§6.1–6.2), and on hardware testbeds as generated Pallas kernels measured
+against the production rotation-order kernel (§5.2, §6.3).
+
+## 3. Background
+
+### 3.1 Topology: where the headroom is
 
 On a symmetric torus with minimal routing, uniform all-to-all is perfectly
 balanced by construction: every offset's paths tile the links uniformly, every
@@ -57,7 +89,7 @@ to parity only when the window spans all `N−1` rounds (at which point every
 schedule moves the same flows over the same routes). That variance is exactly
 the headroom this scheduler harvests.
 
-### 2.2 Routing
+### 3.2 Routing
 
 The routing table is the algorithm's only external constraint. It fixes, for
 every `(src, dst)` pair, the physical path — and therefore fixes (a) the
@@ -79,7 +111,7 @@ valid for *any* routing table; the routing only changes the achievable quality
 (its `LB` and its load variance across orbits), not the algorithm's
 correctness.
 
-### 2.3 Congestion spreading
+### 3.3 Congestion spreading
 
 The kernel issues each device's DMAs in destination-table order, and the
 hardware admits only a bounded number of outstanding transfers. Since all
@@ -94,11 +126,11 @@ heavy-path orbits so that the maximum whole-path link load over *any* window
 of `w` consecutive columns stays low (metric: `max_window_edge_load(w)`;
 per-routing lower bound `LB(w) = ⌈w · LB / (N−1)⌉`). The effective window
 width is set by DMA size and hardware queue depth, which is why the advantage
-over the rotation order varies with DMA size (§5).
+over the rotation order varies with DMA size (§6).
 
-## 3. Orbit Scheduling
+## 4. Orbit Scheduling
 
-### 3.1 Orbits
+### 4.1 Orbits
 
 The translation group of the torus acts on flows; the orbit of flow `(u, v)`
 is the set of all `N` flows with the same source→destination offset. For
@@ -113,7 +145,7 @@ over the links, computed directly from the routing table; on a twisted torus
 these profiles vary widely across orbits, and that variance is what the
 following two schedulers manage.
 
-### 3.2 OrbitFull (`orbit_greedy_full`)
+### 4.2 OrbitFull (`orbit_greedy_full`)
 
 OrbitFull sequences orbits greedily under full physical-edge accounting:
 orbits are processed heaviest-first (longest total path length, with a
@@ -125,7 +157,7 @@ light instead of letting index order cluster the heavy ones. On the loaded
 4×4×8 routing it schedules the 127 orbits with makespan 85 against the
 routing's lower bound of 75.
 
-### 3.3 OrbitPack(K, C) (`orbit_pack`)
+### 4.3 OrbitPack(K, C) (`orbit_pack`)
 
 OrbitPack makes the congestion bound explicit. It first-fit-decreasing packs
 whole orbits into ordered *steps*, admitting an orbit into a step only if
@@ -137,11 +169,11 @@ certified congestion cap. The instantiation used throughout this report is
 whole-path load, and `K = 6` packs the 127 orbits of the loaded 4×4×8 routing
 into 27 steps (K = 2 → 64 steps, K = 3 → 43).
 
-### 3.4 Why it helps
+### 4.4 Why it helps
 
 The design space has two axes, and the baselines each get one right. The
 rotation order is orbit-atomic but path-oblivious: its congestion over small
-windows runs ~2× the achievable minimum on twisted routings (§2.1).
+windows runs ~2× the achievable minimum on twisted routings (§3.1).
 Solver-based makespan-optimal schedules are path-aware but sacrifice orbit
 atomicity: they finish in fewer nominal rounds but are device-jagged (unequal
 per-device work per round, incast), and in practice fail to beat the rotation
@@ -154,9 +186,9 @@ full-window limit, the advantage is concentrated where the in-flight window is
 a small fraction of the schedule — equivalently, it is largest in the
 DMA-size regimes where congestion, not aggregate bandwidth, binds.
 
-## 4. Implementation
+## 5. Implementation
 
-### 4.1 Schedule generation
+### 5.1 Schedule generation
 
 Schedule generation is cheap, offline, and reproducible:
 
@@ -172,10 +204,10 @@ runs the same way with `--scheduler orbit_greedy_full`. Both complete in
 seconds on the 128-device cell. Verification is part of the pipeline:
 `verify_capacity_step` checks OrbitPack's per-step cap `C`,
 `max_window_edge_load` scores any schedule under the windowed-congestion
-metric of §2.3, and `scripts/schedule_stats.py` reports step count, achieved
+metric of §3.3, and `scripts/schedule_stats.py` reports step count, achieved
 edge cap, and per-device DMA depth for any schedule JSON.
 
-### 4.2 Pallas kernel generation
+### 5.2 Pallas kernel generation
 
 `pallas_kernel/gen_orbit_greedy_kernel.py` consumes a routing table plus a
 schedule JSON and emits a self-contained Pallas all-to-all kernel. Key design
@@ -209,16 +241,16 @@ points:
   baked into the program (`--inline-destinations`, per-step destinations as
   `jax.lax.switch` branches) — a code-size vs. preamble-cost trade-off.
 
-## 5. Results
+## 6. Results
 
-### 5.1 ICISim throughput
-
-*(to be filled)*
-
-### 5.2 ICISim queue-depth analysis
+### 6.1 ICISim throughput
 
 *(to be filled)*
 
-### 5.3 Hardware
+### 6.2 ICISim queue-depth analysis
+
+*(to be filled)*
+
+### 6.3 Hardware
 
 *(to be filled)*

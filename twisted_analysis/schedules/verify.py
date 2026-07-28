@@ -14,7 +14,7 @@ Use this to:
   2. Compare schedulers across routings.
 """
 from __future__ import annotations
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from itertools import groupby
 from typing import Iterable, Mapping
@@ -140,6 +140,64 @@ def schedule_step_count(schedule: Iterable[Mapping[str, object]]) -> int:
     round gaps are free.
     """
     return len({int(entry["round"]) for entry in schedule})
+
+
+def max_window_edge_load(
+    schedule: Iterable[Mapping[str, object]], w: int,
+) -> int:
+    """Max whole-path edge load over any `w` consecutive dest-table columns.
+
+    This is the quantity that predicts wall-clock on the all-up-front
+    (non-pfc) kernel. There is no barrier there, so `round` never reaches
+    the wire: the kernel issues a flat `.start()` stream and the DMA
+    queues decide concurrency. All devices walk their dest tables in
+    lockstep, so the concurrent set is a sliding window of columns whose
+    width is set by outstanding descriptors (payload / packet size) and
+    widened by the engine's LRU arbitration.
+
+    Columns are reconstructed the way the codegen builds `_DEST_TABLE_NP`
+    — per source, sort entries by `(round, dst)` — so this measures the
+    order the kernel actually iterates, not the order a scheduler
+    intended.
+
+    Lower bound: over the cyclic windows each column is counted `w`
+    times, so `>= ceil(w * LB_total / (N-1))` where `LB_total` is the max
+    physical-edge load of the whole collective (75 on the loaded 8x4x4
+    routing). Every schedule meets it with equality at `w = N-1`.
+    """
+    if not isinstance(w, int) or w < 1:
+        raise ValueError(f"w must be a positive integer; got {w!r}")
+
+    by_src: dict[int, list[tuple[int, int, tuple]]] = defaultdict(list)
+    for entry in schedule:
+        by_src[int(entry["src"])].append((
+            int(entry["round"]), int(entry["dst"]),
+            tuple(int(x) for x in entry["path"]),
+        ))
+    if not by_src:
+        return 0
+    for s in by_src:
+        by_src[s].sort()
+
+    n_cols = min(len(v) for v in by_src.values())
+    cols: list[Counter] = []
+    for k in range(n_cols):
+        c: Counter = Counter()
+        for s in by_src:
+            path = by_src[s][k][2]
+            for i in range(len(path) - 1):
+                c[(path[i], path[i + 1])] += 1
+        cols.append(c)
+
+    best, run = 0, Counter()
+    for k, c in enumerate(cols):
+        run.update(c)
+        if k >= w:
+            run.subtract(cols[k - w])
+            run = +run
+        if k >= w - 1 and run:
+            best = max(best, max(run.values()))
+    return best
 
 
 def max_step_edge_load(schedule: Iterable[Mapping[str, object]]) -> int:

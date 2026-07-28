@@ -24,6 +24,7 @@ from twisted_analysis.io.schedule import (
     save_schedule,
     schedule_from_orbit_greedy,
     schedule_from_orbit_pack,
+    schedule_from_orbit_block_seq,
     schedule_from_orbit_pack_shuffled,
     schedule_from_spread_greedy,
 )
@@ -43,6 +44,7 @@ def _run(
     k: int | None = None,
     c: int | None = None,
     seed: int = 0,
+    w: int | None = None,
 ) -> list[dict]:
     if scheduler == "orbit_greedy":
         return schedule_from_orbit_greedy(topology, table, order=order)
@@ -59,6 +61,10 @@ def _run(
         return schedule_from_orbit_pack_shuffled(
             topology, table, k=k, c=c, seed=seed,
         )
+    if scheduler == "orbit_block_seq":
+        # w is guaranteed non-None here (validated before _run). order,
+        # k and c are ignored.
+        return schedule_from_orbit_block_seq(topology, table, w=w)
     raise ValueError(f"unknown scheduler: {scheduler!r}")
 
 
@@ -72,7 +78,7 @@ def main(argv=None) -> int:
                    help="Comma-separated slice, e.g. 4,4,8 — must match the table size")
     p.add_argument("--scheduler", default="orbit_greedy",
                    choices=["orbit_greedy", "spread_greedy", "orbit_pack",
-                            "orbit_pack_shuffled"])
+                            "orbit_pack_shuffled", "orbit_block_seq"])
     p.add_argument("--order", default="lpt_tail_asc",
                    choices=["lpt_tail_asc", "lpt", "spt", "tail_asc"])
     p.add_argument(
@@ -101,6 +107,13 @@ def main(argv=None) -> int:
              "Ignored by other schedulers. Vary it to measure the spread "
              "over random assignments.",
     )
+    p.add_argument(
+        "--w",
+        type=int,
+        default=None,
+        help="Block size = sliding-window width to optimise for, used by "
+             "orbit_block_seq. Required when --scheduler orbit_block_seq.",
+    )
     p.add_argument("--out", default=None,
                    help="Output path (default: ./fixtures/nonragged/schedule_<slice>_<scheduler>_<order>.json)")
     args = p.parse_args(argv)
@@ -112,6 +125,9 @@ def main(argv=None) -> int:
         if args.k is None or args.c is None:
             p.error(f"--k and --c are required when --scheduler {args.scheduler}")
 
+    if args.scheduler == "orbit_block_seq" and args.w is None:
+        p.error("--w is required when --scheduler orbit_block_seq")
+
     slice_ = _parse_slice(args.slice)
     topology = Topology(slice=slice_)
     table = load_routing_table(args.routing_table)
@@ -122,7 +138,7 @@ def main(argv=None) -> int:
 
     try:
         entries = _run(args.scheduler, topology, table, args.order,
-                       k=args.k, c=args.c, seed=args.seed)
+                       k=args.k, c=args.c, seed=args.seed, w=args.w)
     except ValueError as e:
         raise SystemExit(
             f"scheduler failed: {e}\n"

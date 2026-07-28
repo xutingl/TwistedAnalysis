@@ -244,6 +244,29 @@ def schedule_from_orbit_pack_shuffled(
     return orbit_pack_shuffled(topology, table, k=k, c=c, seed=seed)
 
 
+def schedule_from_orbit_block_seq(
+    topology: Topology,
+    table: list[list[list[int]]],
+    *,
+    w: int,
+) -> list[dict]:
+    """Adapter: orbit_block_seq -> schedule entries.
+
+    Sequences orbits to minimise the max whole-path edge load over any
+    sliding window of `w` dest-table columns — the objective that
+    predicts wall-clock on the all-up-front (non-pfc) kernel, where no
+    barrier makes `round` observable. Emits one orbit per round, so
+    verify with `verify_capacity_step` at the window scale you care
+    about rather than at a per-round cap. See
+    `twisted_analysis.schedules.orbit_block_seq.orbit_block_seq`.
+    """
+    from twisted_analysis.io.routing_table import validate_routing_table_shape
+    from twisted_analysis.schedules.orbit_block_seq import orbit_block_seq
+
+    validate_routing_table_shape(table, topology.n_nodes)
+    return orbit_block_seq(topology, table, w=w)
+
+
 def schedule_from_ilp_literal(
     topology: Topology,
     table: list[list[list[int]]],
@@ -393,6 +416,7 @@ _SCHEDULER_DISPATCH = {
     "spread_greedy": schedule_from_spread_greedy,
     "orbit_pack": schedule_from_orbit_pack,
     "orbit_pack_shuffled": schedule_from_orbit_pack_shuffled,
+    "orbit_block_seq": schedule_from_orbit_block_seq,
     "ilp_literal": schedule_from_ilp_literal,
     "cpsat_literal": schedule_from_cpsat_literal,
     "lp_rounding": schedule_from_lp_rounding,
@@ -431,6 +455,11 @@ def schedule_from_algorithm(
         assignment that gives up the `c` edge cap. Requires `k` and `c`;
         optional `seed` (default 0). Isolates congestion control as the
         treatment variable in hardware A/B runs.
+      - "orbit_block_seq": uniform-block packing + bottleneck block ordering.
+        Minimises max whole-path edge load over any sliding window of `w`
+        dest-table columns — the objective that predicts wall-clock when no
+        barrier makes `round` observable. Requires `w`. Emits one orbit per
+        round (column k == orbit k for every source).
       - "ilp_literal":       exact ILP on literal flows (CBC). Small cells only.
       - "cpsat_literal":     exact CP-SAT on literal flows (OR-Tools). Faster
         than ilp_literal on this structure due to native at-most-one constraints

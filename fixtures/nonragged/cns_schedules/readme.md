@@ -204,6 +204,75 @@ three very different schedules is the prior evidence for that reading. A
 payload-size sweep separates it — if ICI-bound, the orbit-vs-P2P gap holds
 or widens with payload; if overhead-bound, it shrinks.
 
+## Window-model schedules — `orbit_block_seq` (2026-07-26)
+
+Three measurements retired every objective the schedulers above optimize:
+the per-step barrier gains nothing (pfc == non-pfc, so **barrier-step count
+is not a physical quantity**); `orbitpackk6c3shuf*` at edge load 8 ties
+`orbitpackk6c3` at load 3 (so the **`C` cap is inert**); and the benefit of
+any schedule **shrinks as DMA payload grows**.
+
+Diagnosis. With no barrier the kernel issues a flat `.start()` stream and the
+DMA queues decide concurrency. All 128 devices walk their dest tables in
+lockstep, so the hardware-concurrent set is a **sliding window of W
+dest-table columns** — W set by outstanding descriptors (payload ÷ 32 KB
+packets) and widened by the engine's **LRU arbitration**, which is itself a
+fair-share scheduler competing with the software one. Measuring max
+whole-path edge load over W consecutive columns reproduces every result:
+
+| order | W=6 | W=12 | W=24 | W=48 | W=96 | W=127 |
+|---|---:|---:|---:|---:|---:|---:|
+| P2P rotation | 15 | 27 | 40 | 61 | 75 | 75 |
+| `orbitfull` | 8 | 13 | 20 | 36 | 66 | 75 |
+| `orbitpackk6c3` | 9 | 12 | 21 | 36 | 63 | 75 |
+| `orbitpackk6c3shuf0` | 13 | 17 | 25 | 40 | 65 | 75 |
+
+P2P's disadvantage runs 1.9–2.1× at W=6–24, decays to 1.15 at W=96, and is
+**exactly 1.00 at W=127** where every schedule equals LB=75 (same flows, same
+routes). That decay *is* the payload-size trend.
+
+So the objective is window load, with lower bound
+`LB(W) = ceil(W × 75 / 127)`.
+
+`orbit_block_seq` targets it. A flat least-burstiness-next greedy was tried
+first and **failed** — it beat `orbitfull` only at its tuning window and
+regressed elsewhere (`greedy(W=24)` scored 22 vs `orbitfull`'s 20 at W=24).
+The fix is structural: `orbit_pack`'s ragged bins (sizes 4–6) let a 6-column
+window straddle **three** bins, so 3+3+3 = 9 — exactly the measured value.
+Forcing every block to size ≥ W caps the straddle at two, then blocks are
+ordered by bottleneck-greedy so adjacent unions stay light.
+
+| CNS filename | Source fixture | W | W=6 | W=12 | W=24 | W=48 | W=96 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| *(baseline)* `schedule_orbitfull_4x4x8_twisted.json` | — | — | 8 | 13 | 20 | 36 | 66 |
+| `schedule_orbitblockseqw6_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_block_seq_w6.json` | 6 | 7 | 11 | 18 | 32 | 60 |
+| `schedule_orbitblockseqw12_4x4x8_twisted.json` | `schedule_8x4x4_loaded_orbit_block_seq_w12.json` | 12 | **7** | **11** | **17** | **31** | **60** |
+
+`w=12` dominates: 12.5 / 15.4 / 15.0 / 13.9 / 9.1% below `orbitfull` at
+W = 6/12/24/48/96, with no window regressing. Ratio above `LB(W)` falls from
+`orbitfull`'s 2.00/1.62/1.33/1.24/1.16 to 1.75/1.38/1.13/1.07/1.05.
+
+These emit **one orbit per round** (127 rounds), so dest-table column `k` is
+orbit `k` for every source. Sharing a round across a block would let the
+codegen's `(round, dst)` sort order the block differently per source and
+scramble the optimized sequence. Consequently there are **no `_pfc`
+variants** — 127 barriers would be pointless, and the barrier already
+measured inert. Benchmark the non-pfc kernels
+`pallas_kernel/outputs/_ragged_a2a_kernel_orbit_block_seq_w{6,12}_8_4_4.py`
+against `_ragged_a2a_kernel_orbit_greedy_full_8_4_4.py` and the P2P
+reference. Regenerate via `eval/regenerate_8x4x4_orbit_block_seq_kernels.sh`.
+
+> **Read this before trusting the 15%.** The window model has only been
+> validated as an *ordinal* predictor — it ranks P2P worst, shuffled
+> middling, `orbitfull`/`orbitpackk6c3` best, matching hardware. It has
+> **never been checked as a quantitative one.** Before reading much into a
+> 13–15% model gain, confirm that predicted ratios track measured ratios
+> across the schedules already benchmarked; that costs no hardware time.
+> Note also that the payload sweep says the benefit lives in the narrow-W
+> regime, so at production payload this may measure as nothing — in which
+> case the lever is bounding W (credit-based issue throttling), not
+> improving the ordering.
+
 ## ⚠ Note on `schedule_orbit_4x4x8_twisted.json`
 
 This is the schedule produced by the pre-Task-10 `orbit_greedy` algorithm,

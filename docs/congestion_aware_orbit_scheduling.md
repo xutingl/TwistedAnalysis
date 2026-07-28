@@ -232,10 +232,18 @@ points:
   spreading, packing, caps — is carried by this ordering; the kernel body is
   identical across schedules, so measured differences are attributable to the
   order alone.
-- **Uniformity by construction.** Because every step is a union of
-  permutations, all devices issue the same number of DMAs per step and the
-  kernel is a single symmetric SPMD program — no per-device specialization,
-  no idle devices, no incast hot spots.
+- **Uniformity by construction.** Devices share the *offset* sequence, not
+  the destinations: in the round firing orbit `δ`, device `u` sends to
+  `u ⊕ δ`, so the N concurrent destinations are pairwise distinct and every
+  device sends and receives exactly one message per orbit — incast is
+  structurally impossible. Each device's destination table is the
+  translate-by-`u` of one shared offset schedule, so all devices issue the
+  same number of DMAs per step and run one identical SPMD program (only the
+  device id differs): no per-device specialization, no idle devices. One
+  caveat: the `(round, dst)` sort aligns devices at *step* granularity —
+  within a step holding K > 1 orbits, the K offsets may fire in different
+  orders on different sources; only a one-orbit-per-round schedule keeps
+  every device in lockstep column-by-column.
 - **Packet chunking.** Each per-destination payload is split into fixed-size
   packets; packet size is a tunable with a hardware-dependent sweet spot
   (32 KB on the platforms measured to date; both smaller and larger lose
@@ -249,9 +257,13 @@ points:
   the true total received bytes, because under non-uniform workloads a device
   receives a different byte count than it sends per step, and a per-step
   receive wait keyed on sent bytes deadlocks.
-- **Destination-table placement.** The table ships either as an SMEM input or
-  baked into the program (`--inline-destinations`, per-step destinations as
-  `jax.lax.switch` branches) — a code-size vs. preamble-cost trade-off.
+- **Destination-table placement.** The default (and shipped) mode passes the
+  table to the kernel as an SMEM input. An alternative bakes it into the
+  program (`--inline-destinations`, per-step destinations as `jax.lax.switch`
+  branches), eliminating the table input and its preamble cost — but it grows
+  code size, and the `jax.lax.switch` dispatch adds per-step overhead that
+  made the kernel measure slower than the baseline. We therefore decided
+  against the inline approach; the flag defaults to off.
 
 ## 6. Results
 
